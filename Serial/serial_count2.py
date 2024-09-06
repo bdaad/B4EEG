@@ -29,20 +29,20 @@ while True:
 
 # データ受信回数のカウンター
 count = 0
-start_time = time.time()
+start_time = time.perf_counter()  # 高精度なタイマーに変更
 
 while True:
     result = ser.readline()  # 改行コードまで読み込む
     if result:
         result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
-        print(result.decode())  # バイト列を文字列に変換
-        # result.decode()
+        result.decode()  # バイト列を文字列に変換
         count += 1  # カウントを増やす
 
     # 一秒ごとにカウントを出力
-    current_time = time.time()
-    if current_time - start_time >= 1:
-        print(f"1秒間に受信したデータ数: {count}回")
+    current_time = time.perf_counter()  # 高精度なタイマーに変更
+    if current_time - start_time >= 600:
+        sampling_rate = count / (current_time - start_time)  # サンプリングレート計算
+        print(f"1秒間に受信したデータ数: {count}回, サンプリングレート: {sampling_rate} サンプル/秒")
         count = 0  # カウンターをリセット
         start_time = current_time  # タイマーをリセット
 
