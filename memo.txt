@@ -56,3 +56,12 @@ int型の番号で2~3secの配列を3
 
 2024/09/06
 自宅のミニPC環境では全画面にすると60Hzにならなかった（win_test4.py)
+最有力候補の
+・視覚刺激はwin_test5.py
+・Serialはnew2.py
+・ArduinoはEEG_req_win
+
+
+.\Serial_視覚\test4.pyが視覚とserialの最新
+
+.\Serial_視覚\test5.pyが視覚とserialの最新
