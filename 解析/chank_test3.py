@@ -47,7 +47,7 @@ def input_com():
     return com
 
 # 1000Hzでデータ要求を送信し、受信も行い、データの数をカウントする関数
-def communicate_and_count(ser , received_list, lock_receive_list, receive_value, lock_receive_value, clock_signal, lock_clock_signal):
+def communicate_and_count(ser , received_list, receive_value, clock_signal, lock):
 
     interval = 1.0 / 1000  # 1000Hz
     next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
@@ -88,10 +88,10 @@ def communicate_and_count(ser , received_list, lock_receive_list, receive_value,
                     print("ValueError")
                     int_list_data = last_data
 
-                with lock_receive_list:  # ロックを使って排他制御
+                with lock:  # ロックを使って排他制御
                     received_list.append(receive_value)
                     # received_list.append(result.decode())  # 共有リストに追加
-                with lock_receive_value:
+                with lock:
                     clock_signal.value = True
                     receive_value[:] = int_list_data
                     # print("receive_value: ", receive_value)
@@ -189,7 +189,7 @@ def func_1():
 
     
 
-def func_visual(flag_blink, lock_flag_blink):
+def func_visual(flag_blink, lock):
     if not glfw.init():
         return
 
@@ -250,7 +250,7 @@ def func_visual(flag_blink, lock_flag_blink):
         # print("circle2.frame_count: ", circle2.frame_count)
 
         if circle1.frame_count_not_reset % refresh_rate == 0:
-            with lock_flag_blink:
+            with lock:
                 if flag_blink.value == True:
                     flag_blink.value = False
                 else:
@@ -290,16 +290,16 @@ def func_visual(flag_blink, lock_flag_blink):
 
 
 
-def func_serial(com, shared_receive_list, lock_receive_list, receive_value, lock_receive_value, clock_signal, lock_clock_signal):
+def func_serial(com, shared_receive_list, receive_value, clock_signal, lock):
     # global received_data  # グローバル変数を参照
     ser = serial.Serial(com, bitRate, timeout=None)
-    communicate_and_count(ser, shared_receive_list, lock_receive_list, receive_value, lock_receive_value, clock_signal, lock_clock_signal)
+    communicate_and_count(ser, shared_receive_list, receive_value, clock_signal, lock)
     # print("shared_receive_list: ", shared_receive_list)
     # print("len of shared_receive_list: ", len(shared_receive_list))
 
 
 import copy
-def func_chank(receive_value, lock_receive_value, flag_blink, lock_flag_blink, chank_list, lock_chank_list, clock_signal, lock_clock_signal, adjust_chank_list):
+def func_chank(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock):
     # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
 
     flag_state = None
@@ -314,7 +314,7 @@ def func_chank(receive_value, lock_receive_value, flag_blink, lock_flag_blink, c
             break
         #計測の最初は、必ずflag_blink=Trueのときにデータを受け取る.
         if flag_state is None:
-            with lock_flag_blink:
+            with lock:
                 print("flag_blink: ", flag_blink.value)
                 if flag_blink.value == True:
                     flag_state = True
@@ -322,32 +322,32 @@ def func_chank(receive_value, lock_receive_value, flag_blink, lock_flag_blink, c
         else:
             if flag_blink.value == True:
                 if len(chank_chank_list_2) != 0:    
-                    with lock_chank_list:
+                    with lock:
                         chank_list.append(chank_chank_list_2)
                     chank_chank_list_2 = []
                     po = po + 1
-                    with lock_chank_list:
+                    with lock:
                         chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
                         adjust_chank_list.append(adjust_data_to_1000(chank_list_copy))
                     # print("po: ", po)
                 
-                with lock_receive_value:
+                with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_1.append(receive_value[0])
                         clock_signal.value = False
 
             elif flag_blink.value == False:
                 if len(chank_chank_list_1) != 0:    
-                    with lock_chank_list:
+                    with lock:
                         chank_list.append(chank_chank_list_1)
                     chank_chank_list_1 = []
                     po = po + 1
-                    with lock_chank_list:
+                    with lock:
                         chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
                         adjust_chank_list.append(adjust_data_to_1000(chank_list_copy))
                     # print("po: ", po)
 
-                with lock_receive_value:
+                with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_2.append(receive_value[0])
                         clock_signal.value = False
@@ -438,15 +438,15 @@ def main():
         # 共有リストとロックを作成
     manager = multiprocessing.Manager()
     shared_receive_list = manager.list()  # 共有リスト
-    lock_receive_list = multiprocessing.Lock()  # ロック
+    # lock_receive_list = multiprocessing.Lock()  # ロック
     flag_blink = manager.Value('b', True)
-    lock_flag_blink = multiprocessing.Lock()
+    # lock_flag_blink = multiprocessing.Lock()
     chank_list = manager.list()
-    lock_chank_list = multiprocessing.Lock()
+    # lock_chank_list = multiprocessing.Lock()
     receive_value = manager.list()  # 共有リスト
-    lock_receive_value = multiprocessing.Lock()
+    # lock_receive_value = multiprocessing.Lock()
     clock_signal = manager.Value('b', False)
-    lock_clock_signal = multiprocessing.Lock()
+    # lock_clock_signal = multiprocessing.Lock()
     adjust_chank_list = manager.list()
     lock = multiprocessing.Lock()
 
@@ -462,9 +462,9 @@ def main():
     #     e.submit(func_serial, com)
     #     # e.submit(func_visual)
     # 並列処理で実行するプロセスを定義
-    process1 = multiprocessing.Process(target=func_serial, args=(com, shared_receive_list, lock_receive_list, receive_value, lock_receive_value, clock_signal, lock_clock_signal))
-    process2 = multiprocessing.Process(target=func_chank, args=(receive_value, lock_receive_value, flag_blink, lock_flag_blink, chank_list, lock_chank_list, clock_signal, lock_clock_signal, adjust_chank_list))
-    process3 = multiprocessing.Process(target=func_visual, args=(flag_blink, lock_flag_blink))
+    process1 = multiprocessing.Process(target=func_serial, args=(com, shared_receive_list, receive_value, clock_signal, lock))
+    process2 = multiprocessing.Process(target=func_chank, args=(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock))
+    process3 = multiprocessing.Process(target=func_visual, args=(flag_blink, lock))
     process4 = multiprocessing.Process(target=func_analysis, args=(adjust_chank_list, lock))
 
     # プロセスの開始
