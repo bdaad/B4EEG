@@ -110,60 +110,7 @@ from OpenGL.GLU import *
 import time
 import math
 
-# 点滅する円を描画するクラス
-class BlinkingCircle:
-    def __init__(self, position, size, color, display_time, frequency, refresh_rate, start_on=True):
-        self.position = position  # 円の位置 (x, y)
-        self.size = size  # 円のサイズ（半径）
-        self.color = color  # 円の色 (r, g, b)
-        self.display_time = display_time  # 表示秒数
-        self.frequency = frequency  # 点滅の周波数
-        self.refresh_rate = refresh_rate  # 垂直同期のリフレッシュレート（例: 60Hz）
-        self.toggle = start_on  # 点滅の初期状態（ON/OFF）
-        self.start_time = time.time()  # 開始時刻
-        if frequency > 0:
-            self.frames_per_blink = refresh_rate / (2 * frequency)  # 1回の点滅（オンまたはオフ）に必要なフレーム数
-        else:
-            self.frames_per_blink = None  # 点滅なし（常時点灯）
-        self.frame_count = 0  # フレームカウンタ
-        self.frame_count_not_reset = 0  # リセット無しフレームカウンタ
 
-    def draw_circle(self):
-        # 塗りつぶされた円を描画するための関数
-        glBegin(GL_POLYGON)  # 多角形として描画し、内部を塗りつぶす
-        num_segments = 100
-        for i in range(num_segments):
-            theta = 2.0 * math.pi * i / num_segments  # 角度を計算
-            x = self.size * math.cos(theta) + self.position[0]  # x座標
-            y = self.size * math.sin(theta) + self.position[1]  # y座標
-            glVertex2f(x, y)  # 頂点を設定
-        glEnd()
-
-    def update(self):
-        # 点滅のロジック
-        current_time = time.time()
-        elapsed_time = current_time - self.start_time  # 経過時間を秒に変換
-        if self.display_time is not None and elapsed_time >= self.display_time:
-            return False  # 表示秒数が経過したらFalseを返す
-
-        if self.frames_per_blink is not None:
-            # フレームカウンタを更新
-            self.frame_count += 1
-            self.frame_count_not_reset += 1
-            if self.frame_count == self.frames_per_blink:
-                self.toggle = not self.toggle  # フラグを反転させて点滅を切り替える
-                self.frame_count = 0  # カウンタをリセット
-
-        # 色の設定
-        if self.toggle or self.frames_per_blink is None:
-            glColor3f(*self.color)
-        else:
-            glColor3f(0, 0, 0)  # 黒で円を非表示にする
-
-        # 円を描画
-        self.draw_circle()
-
-        return True  # 表示継続中
 
 def enable_vsync(enable=True):
     if enable:
@@ -176,7 +123,242 @@ def enable_vsync(enable=True):
 
 # /***********************************************************/
 
+from PIL import Image
+# def load_texture(image_path):
+#     image = Image.open(image_path)
+#     image = image.transpose(Image.FLIP_TOP_BOTTOM)  # OpenGL用に上下を反転
+#     img_data = image.convert("RGB").tobytes()
 
+#     texture_id = glGenTextures(1)
+#     glBindTexture(GL_TEXTURE_2D, texture_id)
+#     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, img_data)
+    
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+#     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+#     return texture_id
+
+# def draw_image(texture_id, x, y, width, height):
+#     glEnable(GL_TEXTURE_2D)
+#     glBindTexture(GL_TEXTURE_2D, texture_id)
+    
+#     glBegin(GL_QUADS)
+#     # 四角形の頂点とテクスチャ座標
+#     glTexCoord2f(0, 0); glVertex2f(x - width / 2, y - height / 2)
+#     glTexCoord2f(1, 0); glVertex2f(x + width / 2, y - height / 2)
+#     glTexCoord2f(1, 1); glVertex2f(x + width / 2, y + height / 2)
+#     glTexCoord2f(0, 1); glVertex2f(x - width / 2, y + height / 2)
+#     glEnd()
+    
+#     glDisable(GL_TEXTURE_2D)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from PIL import Image
+import numpy as np
+from OpenGL.GL.shaders import compileProgram, compileShader
+
+
+# シンプルな頂点シェーダー
+vertex_shader_code = """
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec2 aTexCoord;
+
+uniform mat4 model;
+uniform mat4 projection;
+
+out vec2 TexCoord;
+
+void main()
+{
+    gl_Position = projection * model * vec4(aPos, 1.0);
+    TexCoord = aTexCoord;
+}
+"""
+
+# シンプルなフラグメントシェーダー
+fragment_shader_code = """
+#version 330 core
+out vec4 FragColor;
+in vec2 TexCoord;
+uniform sampler2D texture1;
+void main()
+{
+    FragColor = texture(texture1, TexCoord);
+}
+"""
+
+# シェーダーをコンパイルしてプログラムを作成
+def create_shader_program():
+    vertex_shader = compileShader(vertex_shader_code, GL_VERTEX_SHADER)
+    fragment_shader = compileShader(fragment_shader_code, GL_FRAGMENT_SHADER)
+    shader_program = compileProgram(vertex_shader, fragment_shader)
+    return shader_program
+
+
+# 点滅する画像を描画するクラス
+class BlinkingImage:
+    def __init__(self, position, size, image_path, display_time, frequency, refresh_rate, start_on, projection):
+        self.position = position  # 画像の位置 (x, y)
+        self.size = size  # 画像のサイズ（幅と高さのタプル）
+        self.display_time = display_time  # 表示秒数
+        self.frequency = frequency  # 点滅の周波数
+        self.refresh_rate = refresh_rate  # 垂直同期のリフレッシュレート（例: 60Hz）
+        self.toggle = start_on  # 点滅の初期状態（ON/OFF）
+        self.start_time = time.time()  # 開始時刻
+        if frequency > 0:
+            self.frames_per_blink = refresh_rate / (2 * frequency)  # 1回の点滅（オンまたはオフ）に必要なフレーム数
+        else:
+            self.frames_per_blink = None  # 点滅なし（常時表示）
+        self.frame_count = 0  # フレームカウンタ
+        self.frame_count_not_reset = 0  # リセット無しフレームカウンタ
+
+
+        self.projection = projection
+
+        # 画像のロードとテクスチャの設定
+        self.texture_id = self.load_texture(image_path)
+
+        # シェーダープログラムを作成
+        self.shader_program = create_shader_program()
+
+        # 頂点データを設定
+        self.vao, self.vbo, self.ebo = self.create_quad()
+
+
+
+        
+
+    def load_texture(self, image_path):
+        image = Image.open(image_path)
+        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # 画像を上下反転する
+        image_data = np.array(image, np.uint8)
+
+        texture_id = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, texture_id)
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
+        glGenerateMipmap(GL_TEXTURE_2D)
+        print(f"Texture ID for {image_path}: {texture_id}")  # テクスチャIDを出力
+        return texture_id
+
+    def create_quad(self):
+        # 四角形の頂点データ (位置とテクスチャ座標)
+        x, y = self.position  # 画像の中心位置
+        w, h = self.size      # 画像の幅と高さ
+
+        vertices = np.array([
+            # 位置            テクスチャ座標
+            x - w/2, y - h/2, 0.0,  0.0, 0.0,  # 左下
+            x + w/2, y - h/2, 0.0,  1.0, 0.0,  # 右下
+            x + w/2, y + h/2, 0.0,  1.0, 1.0,  # 右上
+            x - w/2, y + h/2, 0.0,  0.0, 1.0   # 左上
+        ], dtype=np.float32)
+
+        indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
+
+        vao = glGenVertexArrays(1)
+        vbo = glGenBuffers(1)
+        ebo = glGenBuffers(1)
+
+        glBindVertexArray(vao)
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
+
+        # 頂点の位置属性
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(0))
+        glEnableVertexAttribArray(0)
+
+        # テクスチャ座標属性
+        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(3 * vertices.itemsize))
+        glEnableVertexAttribArray(1)
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0)
+        glBindVertexArray(0)
+
+        return vao, vbo, ebo
+
+
+    def draw_image(self):
+        glUseProgram(self.shader_program)
+
+        # モデル行列を設定 (位置とサイズを反映)
+        model = glm.mat4(1.0)
+        model = glm.translate(model, glm.vec3(self.position[0], self.position[1], 0.0))
+        model = glm.scale(model, glm.vec3(self.size[0], self.size[1], 1.0))
+
+        # モデル行列と投影行列をシェーダーに渡す
+        model_location = glGetUniformLocation(self.shader_program, "model")
+        glUniformMatrix4fv(model_location, 1, GL_FALSE, glm.value_ptr(model))
+
+        projection_location = glGetUniformLocation(self.shader_program, "projection")
+        glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm.value_ptr(self.projection))
+
+
+
+
+        # テクスチャのバインド
+        glActiveTexture(GL_TEXTURE0)
+        glBindTexture(GL_TEXTURE_2D, self.texture_id)
+
+        # 四角形を描画
+        glBindVertexArray(self.vao)
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
+        glBindVertexArray(0)
+
+    def update(self):
+        # 点滅のロジック
+        current_time = time.time()
+        elapsed_time = current_time - self.start_time  # 経過時間を秒に変換
+        if self.display_time is not None and elapsed_time >= self.display_time:
+            return False  # 表示秒数が経過したらFalseを返す
+
+        if self.frames_per_blink is not None:
+            # フレームカウンタを更新
+            self.frame_count += 1
+            self.frame_count_not_reset += 1
+            if self.frame_count >= self.frames_per_blink:
+                self.toggle = not self.toggle  # フラグを反転させて点滅を切り替える
+                self.frame_count = 0  # カウンタをリセット
+
+        # 点滅がオンのときだけ画像を描画
+        if self.toggle or self.frames_per_blink is None:
+            self.draw_image()
+        # print(f"frame_count_not: {self.frame_count_not_reset}, toggle: {self.toggle}") 
+        return True  # 表示継続中
+
+
+# GLFW初期化とウィンドウ作成
+def init_glfw(width, height, title):
+    if not glfw.init():
+        return None
+    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
+    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
+    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
+    window = glfw.create_window(width, height, title, None, None)
+    if not window:
+        glfw.terminate()
+        return None
+    glfw.make_context_current(window)
+    return window
 
 # /**************並列処理関連**********************************************/
 
@@ -191,7 +373,7 @@ def func_1():
         print('func_1')
 
     
-
+import glm  # OpenGL Mathematicsライブラリを使用
 def func_visual(flag_blink, lock):
     if not glfw.init():
         return
@@ -204,36 +386,73 @@ def func_visual(flag_blink, lock):
     print(f"Monitor Resolution: {monitor_width}x{monitor_height}")
 
     # フルスクリーンウィンドウを作成
-    window = glfw.create_window(monitor_width, monitor_height, "V-Sync Blinking Circles with FPS", None, None)
-    if not window:
-        glfw.terminate()
-        return
+    # window = glfw.create_window(monitor_width, monitor_height, "V-Sync Blinking Circles with FPS", None, None)
+    # if not window:
+    #     glfw.terminate()
+    #     return
+    window = init_glfw(monitor_width, monitor_height, "Blinking Image")
 
-    glfw.make_context_current(window)
+    # glfw.make_context_current(window)
 
     # refresh_rate = video_mode.refresh_rate  # 垂直同期のリフレッシュレート
     refresh_rate = 60
     enable_vsync(True)  # V-Syncを有効にする
 
-    # 画面サイズを取得
+ # --- ここから修正 ---
+    # 画面サイズを取得し、アスペクト比を維持する
     width, height = glfw.get_framebuffer_size(window)
     
-    # OpenGLの視点とカメラ設定
-    glMatrixMode(GL_PROJECTION)
-    glLoadIdentity()
-    gluPerspective(45, (width / height), 0.1, 50.0)
+# ビューポートを1:1の比率で設定（中央に正方形で表示）
+    # if width > height:
+    #     glViewport((width - height) // 2, 0, height, height)
+    # else:
+    #     glViewport(0, (height - width) // 2, width, width)
+
+    # ビューポートをウィンドウ全体に設定
+    glViewport(0, 0, width, height)
+
+    # # 1:1の正射影行列を設定
+    # projection = glm.ortho(-1.0, 1.0, -1.0, 1.0)
+    # 投影行列を設定（1:1比率を維持）
+    projection = setup_projection_for_circle(width, height)
+
+    # シェーダープログラムを使用して投影行列を渡す
+    shader_program = create_shader_program()
+    glUseProgram(shader_program)
+    projection_location = glGetUniformLocation(shader_program, "projection")
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm.value_ptr(projection))
+    print("shader done!!!!")
+
+
+
+    # # OpenGLの視点とカメラ設定
+    # glMatrixMode(GL_PROJECTION)
+    # glLoadIdentity()
+    # gluPerspective(45, (width / height), 0.1, 50.0)
     
-    # カメラの位置を設定（z方向に-5移動してシーンを表示）
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-    glTranslatef(0.0, 0.0, -5)
+    # # カメラの位置を設定（z方向に-5移動してシーンを表示）
+    # glMatrixMode(GL_MODELVIEW)
+    # glLoadIdentity()
+    # glTranslatef(0.0, 0.0, -5)
 
-    # 指定された円の設定
-    point_center = BlinkingCircle(position=(0.0, 0.0), size=0.03, color=(1.0, 1.0, 0.0), display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True)
-    circle1 = BlinkingCircle(position=(-2.0, 0.0), size=0.2, color=(1.0, 1.0, 1.0), display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True)
-    circle2 = BlinkingCircle(position=(2.0, 0.0), size=0.2, color=(1.0, 1.0, 1.0), display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False)
 
-    circles = [point_center, circle1, circle2]  # 全ての円をリストに追加
+    # 画像の読み込み
+
+    blinking_image = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=2, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image2 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=2, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image3 = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=3, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image4 = BlinkingImage(position=(-0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=3, refresh_rate=refresh_rate, start_on=False, projection=projection)
+
+
+    character_image = BlinkingImage(position=(1.0, 0.5), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image2 = BlinkingImage(position=(0.5, 0.5), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+
+
+
+    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2]
+    
+    # images = [blinking_image]
+
 
     previous_time = time.time()
     frame_count = 0
@@ -243,16 +462,24 @@ def func_visual(flag_blink, lock):
     while not glfw.window_should_close(window):
         glClear(GL_COLOR_BUFFER_BIT)
 
+
         # 各円を更新して描画
-        for circle in circles:
-            if not circle.update():
-                circles.remove(circle)  # 表示秒数が経過したらリストから削除
+        # for circle in circles:
+        #     if not circle.update():
+        #         circles.remove(circle)  # 表示秒数が経過したらリストから削除
+        # BlinkingImageを更新して描画
+        for image in images:
+            if not image.update():
+                images.remove(image)  # 表示時間が経過したらリストから削除
+        # if not blinking_image.update():
+        #     break  # 表示時間が経過したら終了
         
         #circleのself.frame_countを出力する
         # print("circle1.frame_count: ", circle1.frame_count_not_reset)
         # print("circle2.frame_count: ", circle2.frame_count)
+        # print("frame_count_not: ", blinking_image.frame_count_not_reset)
 
-        if circle1.frame_count_not_reset % refresh_rate == 0:
+        if blinking_image.frame_count_not_reset % refresh_rate == 0:
             with lock:
                 if flag_blink.value == True:
                     flag_blink.value = False
@@ -290,6 +517,23 @@ def func_visual(flag_blink, lock):
 
     glfw.destroy_window(window)
     glfw.terminate()
+
+
+
+def setup_projection_for_circle(width, height):
+    # ウィンドウのアスペクト比を取得
+    aspect_ratio = width / height
+
+    # アスペクト比に基づいてオルソグラフィック投影の範囲を調整
+    if aspect_ratio >= 1.0:
+        # 横長の場合、X軸を拡張
+        projection = glm.ortho(-aspect_ratio, aspect_ratio, -1.0, 1.0)
+    else:
+        # 縦長の場合、Y軸を拡張
+        projection = glm.ortho(-1.0, 1.0, -1.0/aspect_ratio, 1.0/aspect_ratio)
+
+    return projection
+
 
 
 

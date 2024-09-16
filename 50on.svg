@@ -1,0 +1,846 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="5000"
+   height="2000"
+   viewBox="0 0 1322.9165 529.1666"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.3.2 (091e20e, 2023-11-25, custom)"
+   sodipodi:docname="50on.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#f7f7f7"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="0.78"
+     inkscape:cx="784.61538"
+     inkscape:cy="416.02564"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <rect
+       x="-50.847458"
+       y="-36.440678"
+       width="221.18645"
+       height="656.77966"
+       id="rect10" />
+    <rect
+       x="-112.5"
+       y="-21.111111"
+       width="263.33334"
+       height="260.55557"
+       id="rect9" />
+    <rect
+       x="-43.611111"
+       y="-36.666668"
+       width="201.11111"
+       height="185.83333"
+       id="rect7" />
+    <linearGradient
+       id="swatch6">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0;"
+         offset="0"
+         id="stop6" />
+    </linearGradient>
+    <rect
+       x="-135.55556"
+       y="-38.611111"
+       width="99.722221"
+       height="137.5"
+       id="rect5" />
+    <rect
+       x="-145.55556"
+       y="26.944445"
+       width="77.777779"
+       height="64.722221"
+       id="rect3" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#swatch6"
+       id="linearGradient7"
+       gradientUnits="userSpaceOnUse"
+       x1="-57.385189"
+       y1="-16.29944"
+       x2="-47.595596"
+       y2="-16.29944" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8"
+       width="26.458334"
+       height="26.458334"
+       x="1.9960264"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text3"
+       style="font-size:12px;white-space:pre;shape-inside:url(#rect3);fill:#000000;fill-opacity:0;stroke:#000000" />
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text5"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';text-align:center;white-space:pre;shape-inside:url(#rect5);opacity:0.47;fill:#000000;fill-opacity:0;stroke:#008080" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS UI Gothic';-inkscape-font-specification:'MS UI Gothic';text-align:center;text-anchor:middle;opacity:1;mix-blend-mode:lighten;fill:url(#linearGradient7);stroke:#008080;stroke-width:0.264583"
+       x="-52.622684"
+       y="-11.024305"
+       id="text6"><tspan
+         sodipodi:role="line"
+         id="tspan6"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Cambria;-inkscape-font-specification:Cambria;fill:url(#linearGradient7);fill-opacity:1;fill-rule:evenodd;stroke-width:0.264583"
+         x="-52.622684"
+         y="-11.024305" /></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text7"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;white-space:pre;shape-inside:url(#rect7);opacity:1;fill:#808080;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';opacity:1;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="15.181096"
+       y="23.595381"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="15.181096"
+         y="23.595381">あ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1"
+       width="26.458334"
+       height="26.458334"
+       x="1.9960264"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="15.004707"
+       y="53.024708"
+       id="text4-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-4"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="15.004707"
+         y="53.024708">い</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text9"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;white-space:pre;shape-inside:url(#rect9);opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5"
+       width="26.458334"
+       height="26.458334"
+       x="1.9960264"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="15.269291"
+       y="114.04613"
+       id="text4-67"><tspan
+         sodipodi:role="line"
+         id="tspan4-6"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="15.269291"
+         y="114.04613">え</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7"
+       width="26.458334"
+       height="26.458334"
+       x="1.9960264"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="15.577971"
+       y="83.731224"
+       id="text4-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-7"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="15.577971"
+         y="83.731224">う</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2"
+       width="26.458334"
+       height="26.458334"
+       x="1.9960264"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="14.960609"
+       y="142.39743"
+       id="text4-7"><tspan
+         sodipodi:role="line"
+         id="tspan4-8"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="14.960609"
+         y="142.39743">お</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-9"
+       width="26.458334"
+       height="26.458334"
+       x="78.126854"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="91.311928"
+       y="23.948158"
+       id="text4-5"><tspan
+         sodipodi:role="line"
+         id="tspan4-2"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="91.311928"
+         y="23.948158">か</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-6"
+       width="26.458334"
+       height="26.458334"
+       x="78.126854"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="91.356026"
+       y="53.509777"
+       id="text4-6-1"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-52"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="91.356026"
+         y="53.509777">き</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-95"
+       width="26.458334"
+       height="26.458334"
+       x="78.126862"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="90.694565"
+       y="113.73745"
+       id="text4-67-64"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="90.694565"
+         y="113.73745">け</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-44"
+       width="26.458334"
+       height="26.458334"
+       x="78.126854"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="91.26783"
+       y="84.039902"
+       id="text4-2-4"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="91.26783"
+         y="84.039902">く</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-7"
+       width="26.458334"
+       height="26.458334"
+       x="78.126854"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="91.223732"
+       y="142.17696"
+       id="text4-7-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-3"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="91.223732"
+         y="142.17696">こ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-9-3"
+       width="26.458334"
+       height="26.458334"
+       x="119.81351"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="132.99857"
+       y="23.948158"
+       id="text4-5-4"><tspan
+         sodipodi:role="line"
+         id="tspan4-2-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="132.99857"
+         y="23.948158">か</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-6-7"
+       width="26.458334"
+       height="26.458334"
+       x="119.81351"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="133.04266"
+       y="53.509777"
+       id="text4-6-1-0"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-52-4"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="133.04266"
+         y="53.509777">き</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-95-2"
+       width="26.458334"
+       height="26.458334"
+       x="119.81351"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="132.38121"
+       y="113.73745"
+       id="text4-67-64-4"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-1-3"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="132.38121"
+         y="113.73745">け</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-44-2"
+       width="26.458334"
+       height="26.458334"
+       x="119.8135"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="132.95448"
+       y="84.039902"
+       id="text4-2-4-8"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-1-9"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="132.95448"
+         y="84.039902">く</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-7-0"
+       width="26.458334"
+       height="26.458334"
+       x="119.81351"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="132.91039"
+       y="142.17696"
+       id="text4-7-6-3"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-3-4"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="132.91039"
+         y="142.17696">こ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-8"
+       width="26.458334"
+       height="26.458334"
+       x="31.357525"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.542595"
+       y="23.595381"
+       id="text4-1"><tspan
+         sodipodi:role="line"
+         id="tspan4-80"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="44.542595"
+         y="23.595381">あ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-7"
+       width="26.458334"
+       height="26.458334"
+       x="31.357525"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.366207"
+       y="53.024708"
+       id="text4-6-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-5"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="44.366207"
+         y="53.024708">い</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-9"
+       width="26.458334"
+       height="26.458334"
+       x="31.357525"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.630791"
+       y="114.04613"
+       id="text4-67-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-5"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="44.630791"
+         y="114.04613">え</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-4"
+       width="26.458334"
+       height="26.458334"
+       x="31.357525"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.939468"
+       y="83.731224"
+       id="text4-2-7"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-9"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="44.939468"
+         y="83.731224">う</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-2"
+       width="26.458334"
+       height="26.458334"
+       x="31.357525"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.322109"
+       y="142.39743"
+       id="text4-7-5"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-7"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="44.322109"
+         y="142.39743">お</tspan></text>
+    <text
+       xml:space="preserve"
+       transform="scale(0.26458333)"
+       id="text10"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:85.3333px;line-height:0;font-family:Cambria;-inkscape-font-specification:Cambria;text-align:center;white-space:pre;shape-inside:url(#rect10);opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none" />
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-4"
+       width="26.458334"
+       height="26.458334"
+       x="165.15685"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="178.29781"
+       y="23.727673"
+       id="text4-57"><tspan
+         sodipodi:role="line"
+         id="tspan4-3"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="178.29781"
+         y="23.727673">さ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-4"
+       width="26.458334"
+       height="26.458334"
+       x="165.15685"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="177.63635"
+       y="53.024708"
+       id="text4-6-7"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-9"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="177.63635"
+         y="53.024708">し</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-7"
+       width="26.458334"
+       height="26.458334"
+       x="165.15683"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="178.56239"
+       y="113.82564"
+       id="text4-67-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-55"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="178.56239"
+         y="113.82564">せ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-8"
+       width="26.458334"
+       height="26.458334"
+       x="165.15685"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="178.60649"
+       y="83.775322"
+       id="text4-2-77"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-3"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="178.60649"
+         y="83.775322">す</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-8"
+       width="26.458334"
+       height="26.458334"
+       x="165.15685"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="178.4742"
+       y="141.95647"
+       id="text4-7-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="178.4742"
+         y="141.95647">そ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-94"
+       width="26.458334"
+       height="26.458334"
+       x="253.68912"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="267.09467"
+       y="23.90406"
+       id="text4-72"><tspan
+         sodipodi:role="line"
+         id="tspan4-66"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="267.09467"
+         y="23.90406">た</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-0"
+       width="26.458334"
+       height="26.458334"
+       x="253.68912"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="267.84433"
+       y="53.33147"
+       id="text4-6-9"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-0"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="267.84433"
+         y="53.33147">ち</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-72"
+       width="26.458334"
+       height="26.458334"
+       x="253.68912"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="266.91827"
+       y="113.42876"
+       id="text4-67-22"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-7"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="266.91827"
+         y="113.42876">て</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-9"
+       width="26.458334"
+       height="26.458334"
+       x="253.68912"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="267.27106"
+       y="83.246155"
+       id="text4-2-75"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-19"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="267.27106"
+         y="83.246155">つ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-71"
+       width="26.458334"
+       height="26.458334"
+       x="253.68912"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="266.56552"
+       y="142.75021"
+       id="text4-7-9"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-6"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#808080;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="266.56552"
+         y="142.75021">と</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-4-1"
+       width="26.458334"
+       height="26.458334"
+       x="206.05411"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="219.19508"
+       y="23.727673"
+       id="text4-57-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-3-8"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="219.19508"
+         y="23.727673">さ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-4-8"
+       width="26.458334"
+       height="26.458334"
+       x="206.05411"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="218.53362"
+       y="53.024708"
+       id="text4-6-7-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-9-0"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="218.53362"
+         y="53.024708">し</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-7-6"
+       width="26.458334"
+       height="26.458334"
+       x="206.05411"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="219.45967"
+       y="113.82564"
+       id="text4-67-2-8"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-55-8"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="219.45967"
+         y="113.82564">せ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-8-8"
+       width="26.458334"
+       height="26.458334"
+       x="206.05411"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="219.50375"
+       y="83.775322"
+       id="text4-2-77-0"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-3-3"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="219.50375"
+         y="83.775322">す</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-8-6"
+       width="26.458334"
+       height="26.458334"
+       x="206.05411"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="219.37148"
+       y="141.95647"
+       id="text4-7-2-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-1-0"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="219.37148"
+         y="141.95647">そ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-94-5"
+       width="26.458334"
+       height="26.458334"
+       x="294.58636"
+       y="2.252316" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="307.99194"
+       y="23.90406"
+       id="text4-72-2"><tspan
+         sodipodi:role="line"
+         id="tspan4-66-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="307.99194"
+         y="23.90406">た</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-1-0-1"
+       width="26.458334"
+       height="26.458334"
+       x="294.58636"
+       y="31.90213" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="308.74158"
+       y="53.33147"
+       id="text4-6-9-1"><tspan
+         sodipodi:role="line"
+         id="tspan4-4-0-7"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="308.74158"
+         y="53.33147">ち</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-5-72-7"
+       width="26.458334"
+       height="26.458334"
+       x="294.58636"
+       y="92.658966" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="307.81555"
+       y="113.42876"
+       id="text4-67-22-8"><tspan
+         sodipodi:role="line"
+         id="tspan4-6-7-4"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="307.81555"
+         y="113.42876">て</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-7-9-7"
+       width="26.458334"
+       height="26.458334"
+       x="294.58636"
+       y="62.476353" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="308.16833"
+       y="83.246155"
+       id="text4-2-75-7"><tspan
+         sodipodi:role="line"
+         id="tspan4-7-19-8"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="308.16833"
+         y="83.246155">つ</tspan></text>
+    <rect
+       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.264583"
+       id="rect8-2-71-9"
+       width="26.458334"
+       height="26.458334"
+       x="294.58636"
+       y="121.05437" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:22.5778px;line-height:0;font-family:'MS PGothic';-inkscape-font-specification:'MS PGothic';fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="307.46277"
+       y="142.75021"
+       id="text4-7-9-6"><tspan
+         sodipodi:role="line"
+         id="tspan4-8-6-1"
+         style="font-size:22.5778px;line-height:0;text-align:center;text-anchor:middle;opacity:0.47;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:0.264583"
+         x="307.46277"
+         y="142.75021">と</tspan></text>
+  </g>
+</svg>
