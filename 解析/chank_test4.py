@@ -383,6 +383,11 @@ def func_visual(flag_blink, lock):
     video_mode = glfw.get_video_mode(primary_monitor)
     monitor_width = video_mode.size.width
     monitor_height = video_mode.size.height
+
+    #テスト用
+    monitor_width = 800
+    monitor_height = 300
+
     print(f"Monitor Resolution: {monitor_width}x{monitor_height}")
 
     # フルスクリーンウィンドウを作成
@@ -438,18 +443,19 @@ def func_visual(flag_blink, lock):
 
     # 画像の読み込み
 
-    blinking_image = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=2, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image2 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=2, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=3, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image4 = BlinkingImage(position=(-0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=3, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-    character_image = BlinkingImage(position=(1.0, 0.5), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image2 = BlinkingImage(position=(0.5, 0.5), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image2 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image3 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/sa_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-
-    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2]
+    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
     
     # images = [blinking_image]
 
@@ -556,6 +562,8 @@ def func_chank(receive_value, flag_blink, chank_list, clock_signal, adjust_chank
 
     po = 0
 
+    
+
     while True:
         if po >= 20:
             break
@@ -575,7 +583,7 @@ def func_chank(receive_value, flag_blink, chank_list, clock_signal, adjust_chank
                     po = po + 1
                     with lock:
                         chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
-                        adjust_chank_list.append(adjust_data_to_1000(chank_list_copy))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=1000))
                     # print("po: ", po)
                 
                 with lock:
@@ -591,7 +599,7 @@ def func_chank(receive_value, flag_blink, chank_list, clock_signal, adjust_chank
                     po = po + 1
                     with lock:
                         chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
-                        adjust_chank_list.append(adjust_data_to_1000(chank_list_copy))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=1000))
                     # print("po: ", po)
 
                 with lock:
@@ -641,40 +649,77 @@ def func_analysis(adjust_chank_list, lock):
 
 
 # すべての列を100個のデータに揃える処理
-def adjust_data_to_1000(data):
+# def adjust_data_to_1000(data):
+#     # 行数を取得
+#     row = len(data)
+#     if row == 0:
+#         print("No data available")
+#         return data
+#     elif row == 1:
+#         # 行数が1行の場合でも、データを1000に揃える処理
+#         if len(data[0]) < 1000:
+#             print("len(data[0]) < 1000")
+#             needed_length = 1000 - len(data[0])
+#             # データが不足している場合、0で埋める
+#             data[0] = [0] * needed_length + data[0]
+#         elif len(data[0]) > 1000:
+#             data[0] = data[0][:1000]  # 最初の1000個に切り捨て
+#         return data[0]
+#     else:
+#         # 最後の行の要素数が1000未満の場合
+#         if len(data[row - 1]) < 1000:
+#             print("len(data[row - 1]) < 1000")
+#             # 最後の行の要素数が1000未満の場合、最後の行の要素数を1000個にする
+#             # data[row - 1] = data[row - 2][len(data[row - 1]) : 1000] + data[row - 1]
+#             # return data[row - 1]
+#             needed_length = 1000 - len(data[row - 1])
+#             data[row - 1] = data[row - 2][-needed_length:] + data[row - 1]
+#             return data[row - 1]
+#         elif len(data[row - 1]) > 1000:
+#             print("len(data[row - 1]) > 1000")
+#             # 最後の行の要素数が1000より大きい場合、最後の行の要素数を1000個にする
+#             remainder = len(data[row - 1]) - 1000
+#             data[row - 1] = data[row - 1][int(remainder/2):int(remainder/2) + 1000]
+#             return data[row - 1]
+#         else:
+#             return data[row - 1]
+
+
+
+def adjust_data_to_size(data, target_size):
     # 行数を取得
     row = len(data)
     if row == 0:
         print("No data available")
         return data
     elif row == 1:
-        # 行数が1行の場合でも、データを1000に揃える処理
-        if len(data[0]) < 1000:
-            print("len(data[0]) < 1000")
-            needed_length = 1000 - len(data[0])
+        # 行数が1行の場合でも、データをtarget_sizeに揃える処理
+        if len(data[0]) < target_size:
+            print(f"len(data[0]) < {target_size}")
+            needed_length = target_size - len(data[0])
             # データが不足している場合、0で埋める
             data[0] = [0] * needed_length + data[0]
-        elif len(data[0]) > 1000:
-            data[0] = data[0][:1000]  # 最初の1000個に切り捨て
+        elif len(data[0]) > target_size:
+            data[0] = data[0][:target_size]  # 最初のtarget_size個に切り捨て
         return data[0]
     else:
-        # 最後の行の要素数が1000未満の場合
-        if len(data[row - 1]) < 1000:
-            print("len(data[row - 1]) < 1000")
-            # 最後の行の要素数が1000未満の場合、最後の行の要素数を1000個にする
-            # data[row - 1] = data[row - 2][len(data[row - 1]) : 1000] + data[row - 1]
-            # return data[row - 1]
-            needed_length = 1000 - len(data[row - 1])
+        # 最後の行の要素数がtarget_size未満の場合
+        if len(data[row - 1]) < target_size:
+            print(f"len(data[row - 1]) < {target_size}")
+            # 最後の行の要素数がtarget_size未満の場合、最後の行の要素数をtarget_size個にする
+            needed_length = target_size - len(data[row - 1])
             data[row - 1] = data[row - 2][-needed_length:] + data[row - 1]
             return data[row - 1]
-        elif len(data[row - 1]) > 1000:
-            print("len(data[row - 1]) > 1000")
-            # 最後の行の要素数が1000より大きい場合、最後の行の要素数を1000個にする
-            remainder = len(data[row - 1]) - 1000
-            data[row - 1] = data[row - 1][int(remainder/2):int(remainder/2) + 1000]
+        elif len(data[row - 1]) > target_size:
+            print(f"len(data[row - 1]) > {target_size}")
+            # 最後の行の要素数がtarget_sizeより大きい場合、最後の行の要素数をtarget_size個にする
+            remainder = len(data[row - 1]) - target_size
+            data[row - 1] = data[row - 1][int(remainder/2):int(remainder/2) + target_size]
             return data[row - 1]
         else:
             return data[row - 1]
+
+
 
 
 
@@ -700,7 +745,7 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM7"
+    com = "COM3"
     print(com)
 
     
