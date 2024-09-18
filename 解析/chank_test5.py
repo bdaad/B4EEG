@@ -548,7 +548,7 @@ def func_chank_2(receive_value, flag_blink, chank_list, clock_signal, adjust_cha
     chank_chank_list_2 = []
     po = 0
     while True:
-        if po >= 20:
+        if po >= 30:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
@@ -682,7 +682,7 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM7"
+    com = "COM3"
     print(com)
 
     
@@ -694,21 +694,21 @@ def main():
     process1 = multiprocessing.Process(target=func_serial, args=(com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock))
     process2 = multiprocessing.Process(target=func_chank_1, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
     process3 = multiprocessing.Process(target=func_visual, args=(flag_blink_1, flag_blink_2, lock))
-    process4 = multiprocessing.Process(target=func_analysis, args=(adjust_chank_list_1, lock))
+    # process4 = multiprocessing.Process(target=func_analysis, args=(adjust_chank_list_1, lock))
     process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
 
     # プロセスの開始
     process1.start()
     process2.start()
     process3.start()
-    process4.start()
+    # process4.start()
     process5.start()
 
     # プロセスの終了を待つ
     process1.join()
     process2.join()
     process3.join()
-    process4.join()
+    # process4.join()
     process5.join()
 # /***********************************************************/
 
