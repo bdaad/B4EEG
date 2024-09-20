@@ -28,21 +28,24 @@ list_com()
 while True:
     try:
         com = input_com()
+        com = "COM3"
         ser = serial.Serial(com, bitRate, timeout=None)
         break
     except serial.SerialException:
         print("COMポートが開けませんでした。再度入力してください。")
 
-
+print("ヒラケマシタ")
 
 
 
 # ser = serial.Serial(COM, bitRate, timeout=None)
 
 while True:
+    ser.write(b"req\n")
+    time.sleep(1)
     result = ser.readline() # 改行コードまで読み込む
     if result:
-        result = re.sub(rb'\r\n$', b'', result) # 改行コードを削除
+        # result = re.sub(rb'\r\n$', b'', result) # 改行コードを削除
         print(result.decode()) # バイト列を文字列に変換
 
 ser.close()

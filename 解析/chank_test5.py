@@ -474,7 +474,15 @@ def setup_projection_for_circle(width, height):
 
 def func_serial(com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock):
     # global received_data  # グローバル変数を参照
-    ser = serial.Serial(com, bitRate, timeout=None)
+    while True:
+        try:
+            # com = input_com()
+            # com = "COM3"
+            ser = serial.Serial(com, bitRate, timeout=None)
+            break
+        except serial.SerialException:
+            print("COMポートが開けませんでした。再度入力してください。")
+
     communicate_and_count(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
     # print("shared_receive_list: ", shared_receive_list)
     # print("len of shared_receive_list: ", len(shared_receive_list))
@@ -531,7 +539,7 @@ def func_chank_1(receive_value, flag_blink, chank_list, clock_signal, adjust_cha
     # print("chank_list: ", chank_list)
     # テキストファイルにデータを追記
     # append_data_to_file(receive_data_txt, adjust_chank_list)
-    print("len of chank_list: ", len(chank_list))               
+    print("len of chank_list 10Hz: ", len(chank_list))               
     # 各行の列数を出力
     for i, row in enumerate(chank_list):
         print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
@@ -548,7 +556,7 @@ def func_chank_2(receive_value, flag_blink, chank_list, clock_signal, adjust_cha
     chank_chank_list_2 = []
     po = 0
     while True:
-        if po >= 30:
+        if po >= 20:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
@@ -790,7 +798,8 @@ def main():
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
     com = "COM3"
-    print(com)
+    # com = input_com()
+    # print(com)
 
     
     # with ProcessPoolExecutor(max_workers=2) as e:
@@ -799,25 +808,32 @@ def main():
     #     # e.submit(func_visual)
     # 並列処理で実行するプロセスを定義
     process1 = multiprocessing.Process(target=func_serial, args=(com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock))
-    # process2 = multiprocessing.Process(target=func_chank_1, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
-    process2 = multiprocessing.Process(target=func_chank_all, args=(receive_value, flag_blink_1, flag_blink_2, chank_list_1, chank_list_2, clock_signal_1, clock_signal_2, adjust_chank_list_1, adjust_chank_list_2, lock))
+    
+    
+    process2 = multiprocessing.Process(target=func_chank_1, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
+    
+    
+    # process2 = multiprocessing.Process(target=func_chank_all, args=(receive_value, flag_blink_1, flag_blink_2, chank_list_1, chank_list_2, clock_signal_1, clock_signal_2, adjust_chank_list_1, adjust_chank_list_2, lock))
     process3 = multiprocessing.Process(target=func_visual, args=(flag_blink_1, flag_blink_2, lock))
+    
+    
+    
     # process4 = multiprocessing.Process(target=func_analysis, args=(adjust_chank_list_1, lock))
-    # process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
+    process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
 
     # プロセスの開始
     process1.start()
     process2.start()
     process3.start()
     # process4.start()
-    # process5.start()
+    process5.start()
 
     # プロセスの終了を待つ
     process1.join()
     process2.join()
     process3.join()
     # process4.join()
-    # process5.join()
+    process5.join()
 # /***********************************************************/
 
 
