@@ -104,6 +104,66 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
             time.sleep(sleep_time)  # 必要な場合のみスリープ
     
 
+
+
+# 1000Hzでデータ要求を送信しないで、受信も行い、データの数をカウントする関数
+def communicate_and_count_test(ser , received_list, receive_value, clock_signal_1, clock_signal_2, lock):
+
+    interval = 1.0 / 1000  # 1000Hz
+    next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
+    start_time = time.perf_counter()  # 計測開始時間
+    data_count = 0  # データのカウント
+    # t = 1
+    last_data = None # 最後に受信したデータ(補間用)
+
+    while True:
+    # for i in range(10000000):
+        current_time = time.perf_counter()  # 現在のタイムスタンプを取得
+
+        # 10秒経過したらループを終了
+        # if current_time - start_time >= 10 * t:
+        if current_time - start_time >= 10:
+            # 10秒間で受信したデータの数を表示
+            print(f"10秒間で受信したデータの数: {data_count}")
+            data_count = 0
+            # t = t + 1
+
+
+        # 1000Hzでデータ要求を送信
+        # if current_time >= next_time:
+        #     ser.write(b"req\n")  # Arduinoにデータ要求コマンドを送信
+        #     next_time += interval  # 次の送信時間を設定
+
+        # データを受信しカウント
+        if ser.in_waiting > 0:  # 受信データがあるか確認
+            result = ser.readline()  # 改行コードまで読み込む
+            if result:
+                data_count += 1  # データをカウント
+                result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
+                # print(result.decode())  # バイト列を文字列に変換
+                # received_data.append(result.decode())  # グローバル配列に追加
+                try:
+                    int_list_data = [int(x) for x in result.decode().split(',')]
+                    last_data = int_list_data
+                except ValueError:
+                    print("ValueError")
+                    int_list_data = last_data
+
+                with lock:  # ロックを使って排他制御
+                    received_list.append(receive_value)
+                    # received_list.append(result.decode())  # 共有リストに追加
+                with lock:
+                    clock_signal_1.value = True
+                    clock_signal_2.value = True
+                    receive_value[:] = int_list_data
+                    # print("receive_value: ", receive_value)
+                    # print(type(receive_value))
+
+        # 次のタイムスタンプまでの残り時間を計算
+        # sleep_time = next_time - current_time
+        # if sleep_time > 0:
+        #     time.sleep(sleep_time)  # 必要な場合のみスリープ
+ 
 # /**************グラフィック関連**********************************************/
 import glfw
 from OpenGL.GL import *
@@ -510,13 +570,15 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                 if len(chank_chank_list_2) != 0:    
                     with lock:
                         chank_list.append(chank_chank_list_2)
+                        chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
                     chank_chank_list_2 = []
                     po = po + 1
                     print("po: ", po)
-                    with lock:
+                    # with lock:
                         # chank_list_copy = copy.deepcopy(list(chank_list[-3:])) #最後の3つのデータをコピー
-                        chank_list_copy = copy.deepcopy(list(chank_list[-1:])) #最後の1つのデータをコピー
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
+                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:])) #最後の1つのデータをコピー
+                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
                     # print("po: ", po)      
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
@@ -527,12 +589,14 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                 if len(chank_chank_list_1) != 0:    
                     with lock:
                         chank_list.append(chank_chank_list_1)
+                        chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
                     chank_chank_list_1 = []
                     po = po + 1
-                    with lock:
+                    # with lock:
                         # chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
-                        chank_list_copy = copy.deepcopy(list(chank_list[-1:]))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
+                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:]))
+                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
                     # print("po: ", po)
 
                 with lock:
