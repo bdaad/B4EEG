@@ -130,7 +130,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
             if current_time - start_time >= 10 * t2:
                 print(f"10秒間で受信したデータの数: {data_count_10}")
-                print("time: ", time.time())
+                print("Dtime: ", time.time())
             data_count_10 = 0
             t2 = t2 + 1
 
@@ -492,7 +492,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
 
         if frame_count % 600 == 0:
             print("frame_count: ", frame_count)
-            print("time :", time.time())
+            print("Time :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
         if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
