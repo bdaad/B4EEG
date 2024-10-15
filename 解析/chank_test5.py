@@ -130,9 +130,9 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
             if current_time - start_time >= 10 * t2:
                 print(f"10秒間で受信したデータの数: {data_count_10}")
-                print("Dtime: ", time.time())
-            data_count_10 = 0
-            t2 = t2 + 1
+                print("DDDDDDDDtime: ", time.time())
+                data_count_10 = 0
+                t2 = t2 + 1
 
         # データを受信しカウント
         if ser.in_waiting > 0:  # 受信データがあるか確認
