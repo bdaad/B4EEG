@@ -121,7 +121,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
 
         # 10秒経過したらループを終了
-        if current_time - start_time >= 1* t -  0.0006:
+        if current_time - start_time >= 1* t:
             print(f"1秒間で受信したデータの数: {data_count}")
             data_count = 0
             t = t + 1
@@ -474,7 +474,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
         current_time = time.time()
 
         # 1秒ごとにFPSを計算して出力
-        if current_time - previous_time >= 0.999:
+        if current_time - previous_time >= 1.0:
             fps = frame_count / (current_time - previous_time)
             print(f"FPS: {fps:.2f}")
             print(f"frame_count: {frame_count}")
