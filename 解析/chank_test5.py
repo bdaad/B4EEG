@@ -121,18 +121,10 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
 
         # 10秒経過したらループを終了
-        # if current_time - start_time >= 10 * t:
         if current_time - start_time >= 1* t -  0.0006:
-            # 10秒間で受信したデータの数を表示
-            print(f"10秒間で受信したデータの数: {data_count}")
+            print(f"1秒間で受信したデータの数: {data_count}")
             data_count = 0
             t = t + 1
-
-
-        # 1000Hzでデータ要求を送信
-        # if current_time >= next_time:
-        #     ser.write(b"req\n")  # Arduinoにデータ要求コマンドを送信
-        #     next_time += interval  # 次の送信時間を設定
 
         # データを受信しカウント
         if ser.in_waiting > 0:  # 受信データがあるか確認
@@ -140,8 +132,6 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             if result:
                 data_count += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
-                # print(result.decode())  # バイト列を文字列に変換
-                # received_data.append(result.decode())  # グローバル配列に追加
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
                     last_data = int_list_data
@@ -151,18 +141,13 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
                 with lock:  # ロックを使って排他制御
                     received_list.append(receive_value)
-                    # received_list.append(result.decode())  # 共有リストに追加
-                with lock:
+                # with lock:
                     clock_signal_1.value = True
                     clock_signal_2.value = True
                     receive_value[:] = int_list_data
-                    # print("receive_value: ", receive_value)
-                    # print(type(receive_value))
 
-        # 次のタイムスタンプまでの残り時間を計算
-        # sleep_time = next_time - current_time
-        # if sleep_time > 0:
-        #     time.sleep(sleep_time)  # 必要な場合のみスリープ
+
+
  
 # /**************グラフィック関連**********************************************/
 import glfw
