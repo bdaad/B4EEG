@@ -490,9 +490,9 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             previous_time = current_time
             frame_count = 0
 
-        if frame_count % 600 == 0:
-            print("frame_count: ", frame_count)
-            print("Time :", time.time())
+        if blinking_image.frame_count_not_reset % 600 == 0:
+            print("frame_count: ", blinking_image.frame_count_not_reset)
+            print("Ftime :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
         if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
