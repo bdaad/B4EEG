@@ -541,8 +541,8 @@ def func_serial(com, shared_receive_list, receive_value, clock_signal_1, clock_s
         except serial.SerialException:
             print("COMポートが開けませんでした。再度入力してください。")
 
-    communicate_and_count(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
-    # communicate_and_count_test(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
+    # communicate_and_count(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
+    communicate_and_count_test(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
     # print("shared_receive_list: ", shared_receive_list)
     # print("len of shared_receive_list: ", len(shared_receive_list))
 
