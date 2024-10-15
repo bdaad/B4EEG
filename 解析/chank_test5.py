@@ -464,7 +464,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
                 images.remove(image)  # 表示時間が経過したらリストから削除
 
         # 10Hzの1周期分.. 60/10 = 6
-        if blinking_image.frame_count_not_reset % 6 == 0:
+        if blinking_image.frame_count_not_reset % 18 == 0:
             with lock:
                 if flag_blink_1.value == True:
                     flag_blink_1.value = False
@@ -474,7 +474,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             # print("frame_count_a", circle1.frame_count)
         
         # 12Hzの1周期分.. 60/12 = 5
-        if blinking_image.frame_count_not_reset % 5 == 0:
+        if blinking_image.frame_count_not_reset % 15 == 0:
             with lock:
                 if flag_blink_2.value == True:
                     flag_blink_2.value = False
@@ -576,7 +576,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                     with lock:
                         chank_list.append(chank_chank_list_2)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=300)) #1000data / 10Hz = 100data
                     chank_chank_list_2 = []
                     po = po + 1
                     # print("po: ", po)
@@ -595,7 +595,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                     with lock:
                         chank_list.append(chank_chank_list_1)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=300))
                     chank_chank_list_1 = []
                     po = po + 1
                     # with lock:
@@ -651,7 +651,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                     with lock:
                         chank_list.append(chank_chank_list_2)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=83)) #1000data / 12Hz = 83.33333data
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=250)) #1000data / 12Hz = 83.33333data
                     chank_chank_list_2 = []
                     po = po + 1
                     # print("po: ", po)
@@ -670,7 +670,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                     with lock:
                         chank_list.append(chank_chank_list_1)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=83))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=250))
                     chank_chank_list_1 = []
                     po = po + 1
                     # with lock:
