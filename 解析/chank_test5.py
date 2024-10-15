@@ -113,7 +113,9 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
+    data_count_10 = 0  # データのカウント10秒.
     t = 1
+    t2 = 1
     last_data = None # 最後に受信したデータ(補間用)
 
     while True:
@@ -126,11 +128,18 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             data_count = 0
             t = t + 1
 
+            if current_time - start_time >= 10 * t:
+                print(f"10秒間で受信したデータの数: {data_count_10}")
+                print("time: ", time.time())
+            data_count_10 = 0
+            t2 = t2 + 1
+
         # データを受信しカウント
         if ser.in_waiting > 0:  # 受信データがあるか確認
             result = ser.readline()  # 改行コードまで読み込む
             if result:
                 data_count += 1  # データをカウント
+                data_count_10 += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
@@ -480,6 +489,10 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             print(f"frame_count: {frame_count}")
             previous_time = current_time
             frame_count = 0
+
+        if frame_count % 600 == 0:
+            print("frame_count: ", frame_count)
+            print("time :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
         if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
