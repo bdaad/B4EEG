@@ -954,7 +954,7 @@ def adjust_data_to_size(data, target_size):
     elif row >= 1:
         # 行数が1行の場合でも、データをtarget_sizeに揃える処理
         if len(data) < target_size: #行数がtarget_size未満の場合
-            print(f"len(data) < {target_size}")
+            # print(f"len(data) < {target_size}")
             needed_length = target_size - len(data)
             # データが不足している場合、0で埋める
             data = [0] * needed_length + data
