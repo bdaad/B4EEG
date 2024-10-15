@@ -620,6 +620,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     for i, row in enumerate(adjust_chank_list):
         print(f"Row {i+1} length: {len(row)}")
 
+    func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock)
 
 
 def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock):
@@ -694,7 +695,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     for i, row in enumerate(adjust_chank_list):
         print(f"Row {i+1} length: {len(row)}")
 
-
+    func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock)
 
 
 def func_chank_1(receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, lock):
