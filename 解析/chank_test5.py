@@ -128,7 +128,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             data_count = 0
             t = t + 1
 
-            if current_time - start_time >= 10 * t:
+            if current_time - start_time >= 10 * t2:
                 print(f"10秒間で受信したデータの数: {data_count_10}")
                 print("time: ", time.time())
             data_count_10 = 0
