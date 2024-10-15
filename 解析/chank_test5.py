@@ -879,32 +879,32 @@ def adjust_data_to_size(data, target_size):
     if row == 0:
         print("No data available")
         return data
-    elif row == 1:
+    elif row >= 1:
         # 行数が1行の場合でも、データをtarget_sizeに揃える処理
-        if len(data[0]) < target_size:
-            print(f"len(data[0]) < {target_size}")
-            needed_length = target_size - len(data[0])
-            # データが不足している場合、0で埋める
-            data[0] = [0] * needed_length + data[0]
-        elif len(data[0]) > target_size:
-            data[0] = data[0][:target_size]  # 最初のtarget_size個に切り捨て
-        return data[0]
-    else:
-        # 最後の行の要素数がtarget_size未満の場合
-        if len(data) < target_size:
+        if len(data) < target_size: #行数がtarget_size未満の場合
             print(f"len(data) < {target_size}")
-            # 最後の行の要素数がtarget_size未満の場合、最後の行の要素数をtarget_size個にする
             needed_length = target_size - len(data)
-            data = data[row - 2][-needed_length:] + data
-            return data
-        elif len(data) > target_size:
-            print(f"len(data) > {target_size}")
-            # 最後の行の要素数がtarget_sizeより大きい場合、最後の行の要素数をtarget_size個にする
-            remainder = len(data) - target_size
-            data = data[int(remainder/2):int(remainder/2) + target_size]
-            return data
-        else:
-            return data
+            # データが不足している場合、0で埋める
+            data = [0] * needed_length + data
+        elif len(data) > target_size: #行数がtarget_sizeより大きい場合
+            data = data[:target_size]  # 最初のtarget_size個に切り捨て
+        return data
+    # else:
+    #     # 最後の行の要素数がtarget_size未満の場合
+    #     if len(data) < target_size:
+    #         print(f"len(data) < {target_size}")
+    #         # 最後の行の要素数がtarget_size未満の場合、最後の行の要素数をtarget_size個にする
+    #         needed_length = target_size - len(data)
+    #         data = data[row - 2][-needed_length:] + data
+    #         return data
+    #     elif len(data) > target_size:
+    #         print(f"len(data) > {target_size}")
+    #         # 最後の行の要素数がtarget_sizeより大きい場合、最後の行の要素数をtarget_size個にする
+    #         remainder = len(data) - target_size
+    #         data = data[int(remainder/2):int(remainder/2) + target_size]
+    #         return data
+    #     else:
+    #         return data
 
 
 
