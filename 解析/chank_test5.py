@@ -580,7 +580,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=300)) #1000data / 10Hz = 100data
                     chank_chank_list_2 = []
                     po = po + 1
-                    # print("po: ", po)
+                    print("po: ", po)
                     # with lock:
                         # chank_list_copy = copy.deepcopy(list(chank_list[-3:])) #最後の3つのデータをコピー
                         # chank_list_copy = copy.deepcopy(list(chank_list[-1:])) #最後の1つのデータをコピー
