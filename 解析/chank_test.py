@@ -298,8 +298,8 @@ def main():
     with ProcessPoolExecutor(max_workers=2) as e:
         # e.submit(func_1)
         e.submit(func_serial, com)
-        e.submit(funk_chunk)
-        # e.submit(func_visual)
+        # e.submit(funk_chunk)
+        e.submit(func_visual)
 
 
 # /***********************************************************/
