@@ -14,6 +14,9 @@ if not window:
 # コンテキストを作成
 glfw.make_context_current(window)
 
+# V-Syncを有効にする（1で有効、0で無効）
+glfw.swap_interval(1)
+
 # 計測用の初期化
 start_time = time.time()
 frame_count = 0
