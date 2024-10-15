@@ -122,11 +122,11 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
         # 10秒経過したらループを終了
         # if current_time - start_time >= 10 * t:
-        if current_time - start_time >= 10:
-            # 10秒間で受信したデータの数を表示
-            print(f"10秒間で受信したデータの数: {data_count}")
-            data_count = 0
-            # t = t + 1
+        # if current_time - start_time >= 10:
+        #     # 10秒間で受信したデータの数を表示
+        #     print(f"10秒間で受信したデータの数: {data_count}")
+        #     data_count = 0
+        #     # t = t + 1
 
 
         # 1000Hzでデータ要求を送信
