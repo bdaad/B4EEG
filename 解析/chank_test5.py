@@ -113,7 +113,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
-    # t = 1
+    t = 1
     last_data = None # 最後に受信したデータ(補間用)
 
     while True:
@@ -122,11 +122,11 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
         # 10秒経過したらループを終了
         # if current_time - start_time >= 10 * t:
-        # if current_time - start_time >= 10:
-        #     # 10秒間で受信したデータの数を表示
-        #     print(f"10秒間で受信したデータの数: {data_count}")
-        #     data_count = 0
-        #     # t = t + 1
+        if current_time - start_time >= 1* t -  0.0006:
+            # 10秒間で受信したデータの数を表示
+            print(f"10秒間で受信したデータの数: {data_count}")
+            data_count = 0
+            t = t + 1
 
 
         # 1000Hzでデータ要求を送信
@@ -487,7 +487,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
         current_time = time.time()
 
         # 1秒ごとにFPSを計算して出力
-        if current_time - previous_time >= 1.0:
+        if current_time - previous_time >= 0.99:
             fps = frame_count / (current_time - previous_time)
             print(f"FPS: {fps:.2f}")
             print(f"frame_count: {frame_count}")
