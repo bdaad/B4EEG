@@ -891,20 +891,20 @@ def adjust_data_to_size(data, target_size):
         return data[0]
     else:
         # 最後の行の要素数がtarget_size未満の場合
-        if len(data[row - 1]) < target_size:
-            print(f"len(data[row - 1]) < {target_size}")
+        if len(data) < target_size:
+            print(f"len(data) < {target_size}")
             # 最後の行の要素数がtarget_size未満の場合、最後の行の要素数をtarget_size個にする
-            needed_length = target_size - len(data[row - 1])
-            data[row - 1] = data[row - 2][-needed_length:] + data[row - 1]
-            return data[row - 1]
-        elif len(data[row - 1]) > target_size:
-            print(f"len(data[row - 1]) > {target_size}")
+            needed_length = target_size - len(data)
+            data = data[row - 2][-needed_length:] + data
+            return data
+        elif len(data) > target_size:
+            print(f"len(data) > {target_size}")
             # 最後の行の要素数がtarget_sizeより大きい場合、最後の行の要素数をtarget_size個にする
-            remainder = len(data[row - 1]) - target_size
-            data[row - 1] = data[row - 1][int(remainder/2):int(remainder/2) + target_size]
-            return data[row - 1]
+            remainder = len(data) - target_size
+            data = data[int(remainder/2):int(remainder/2) + target_size]
+            return data
         else:
-            return data[row - 1]
+            return data
 
 
 
