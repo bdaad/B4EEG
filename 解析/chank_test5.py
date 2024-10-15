@@ -1027,7 +1027,7 @@ def main():
     
     # process2 = multiprocessing.Process(target=func_chank_1, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
     process2 = multiprocessing.Process(target=func_chank_10hz, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
-    process3 = multiprocessing.Process(target=func_chank_12hz, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
+    # process3 = multiprocessing.Process(target=func_chank_12hz, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
     
     
     # process2 = multiprocessing.Process(target=func_chank_all, args=(receive_value, flag_blink_1, flag_blink_2, chank_list_1, chank_list_2, clock_signal_1, clock_signal_2, adjust_chank_list_1, adjust_chank_list_2, lock))
@@ -1041,14 +1041,14 @@ def main():
     # プロセスの開始
     process1.start()
     process2.start()
-    process3.start()
+    # process3.start()
     process4.start()
     # process5.start()
 
     # プロセスの終了を待つ
     process1.join()
     process2.join()
-    process3.join()
+    # process3.join()
     process4.join()
     # process5.join()
 # /***********************************************************/
