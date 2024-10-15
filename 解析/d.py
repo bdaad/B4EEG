@@ -6,7 +6,7 @@ if not glfw.init():
     raise Exception("GLFWの初期化に失敗しました")
 
 # ウィンドウを作成
-window = glfw.create_window(800, 600, "Refresh Rate Measurement", None, None)
+window = glfw.create_window(800, 600, "Frame Rate Measurement", None, None)
 if not window:
     glfw.terminate()
     raise Exception("ウィンドウの作成に失敗しました")
@@ -19,7 +19,7 @@ glfw.swap_interval(1)
 
 # 計測用の初期化
 frame_count = 0
-start_time = time.perf_counter()  # より高精度のタイマーを使用
+start_time = time.perf_counter()  # 高精度タイマーを使用
 last_time = start_time
 
 # 計測開始
@@ -36,11 +36,11 @@ while not glfw.window_should_close(window):
     # 現在の時間を取得
     current_time = time.perf_counter()
 
-    # 1秒ごとにリフレッシュレートを表示
+    # 1秒ごとにフレームレートを表示
     if current_time - last_time >= 1.0:
         elapsed_time = current_time - last_time
-        refresh_rate = frame_count / elapsed_time
-        print(f"推定リフレッシュレート: {refresh_rate:.2f} Hz")
+        frame_rate = frame_count / elapsed_time
+        print(f"フレームレート: {frame_rate:.2f} FPS")
 
         # カウンタをリセット
         last_time = current_time
