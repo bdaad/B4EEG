@@ -37,7 +37,7 @@ while not glfw.window_should_close(window):
     current_time = time.perf_counter()
 
     # 1秒ごとにフレームレートを表示
-    if current_time - last_time >= 1.0:
+    if current_time - last_time >= 10.0:
         elapsed_time = current_time - last_time
         frame_rate = frame_count / elapsed_time
         print(f"フレームレート: {frame_rate:.2f} FPS")
