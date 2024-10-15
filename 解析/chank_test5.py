@@ -446,8 +446,8 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
     character_image4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
-    
+    # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
+    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
     # images = [blinking_image]
 
 
