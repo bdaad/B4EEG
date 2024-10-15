@@ -326,10 +326,12 @@ class BlinkingImage:
 
     def update(self):
         # 点滅のロジック
-        current_time = time.time()
-        elapsed_time = current_time - self.start_time  # 経過時間を秒に変換
-        if self.display_time is not None and elapsed_time >= self.display_time:
-            return False  # 表示秒数が経過したらFalseを返す
+
+        #表示時間に関する重要なコード↓...
+        # current_time = time.time()
+        # elapsed_time = current_time - self.start_time  # 経過時間を秒に変換
+        # if self.display_time is not None and elapsed_time >= self.display_time:
+        #     return False  # 表示秒数が経過したらFalseを返す
 
         if self.frames_per_blink is not None:
             # フレームカウンタを更新
@@ -472,7 +474,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
         current_time = time.time()
 
         # 1秒ごとにFPSを計算して出力
-        if current_time - previous_time >= 0.99:
+        if current_time - previous_time >= 0.999:
             fps = frame_count / (current_time - previous_time)
             print(f"FPS: {fps:.2f}")
             print(f"frame_count: {frame_count}")
