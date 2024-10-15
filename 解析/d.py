@@ -18,8 +18,8 @@ glfw.make_context_current(window)
 glfw.swap_interval(1)
 
 # 計測用の初期化
-start_time = time.time()
 frame_count = 0
+start_time = time.perf_counter()  # より高精度のタイマーを使用
 last_time = start_time
 
 # 計測開始
@@ -34,11 +34,12 @@ while not glfw.window_should_close(window):
     frame_count += 1
 
     # 現在の時間を取得
-    current_time = time.time()
+    current_time = time.perf_counter()
 
     # 1秒ごとにリフレッシュレートを表示
     if current_time - last_time >= 1.0:
-        refresh_rate = frame_count / (current_time - last_time)
+        elapsed_time = current_time - last_time
+        refresh_rate = frame_count / elapsed_time
         print(f"推定リフレッシュレート: {refresh_rate:.2f} Hz")
 
         # カウンタをリセット
