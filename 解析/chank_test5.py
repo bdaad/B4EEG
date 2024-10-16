@@ -460,7 +460,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
                 images.remove(image)  # 表示時間が経過したらリストから削除
 
         # 10Hzの1周期分.. 60/10 = 6
-        if blinking_image.frame_count_not_reset % 6 == 0 and blinking_image.frame_count_not_reset > 59:
+        if blinking_image.frame_count_not_reset % 6 == 0:
             with lock:
                 if flag_blink_1.value == True:
                     flag_blink_1.value = False
@@ -470,7 +470,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             # print("frame_count_a", circle1.frame_count)
         
         # 12Hzの1周期分.. 60/12 = 5
-        if blinking_image.frame_count_not_reset % 5 == 0 and blinking_image.frame_count_not_reset > 59:
+        if blinking_image.frame_count_not_reset % 5 == 0:
             with lock:
                 if flag_blink_2.value == True:
                     flag_blink_2.value = False
