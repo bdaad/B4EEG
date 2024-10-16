@@ -1,197 +1,3495 @@
-import time
-from OpenGL.GL import *
-from OpenGL.GLUT import *
-from OpenGL.GLU import *
-import glfw
-import numpy as np
-from PIL import Image
-
-# シンプルなシェーダー
-vertex_shader_code = """
-#version 330 core
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec2 aTexCoord;
-out vec2 TexCoord;
-void main()
-{
-    gl_Position = vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
-}
-"""
-
-fragment_shader_code = """
-#version 330 core
-out vec4 FragColor;
-in vec2 TexCoord;
-uniform sampler2D texture1;
-void main()
-{
-    FragColor = texture(texture1, TexCoord);
-}
-"""
-
-# シェーダーをコンパイルしてプログラムを作成
-def create_shader_program():
-    vertex_shader = glCreateShader(GL_VERTEX_SHADER)
-    glShaderSource(vertex_shader, vertex_shader_code)
-    glCompileShader(vertex_shader)
-
-    fragment_shader = glCreateShader(GL_FRAGMENT_SHADER)
-    glShaderSource(fragment_shader, fragment_shader_code)
-    glCompileShader(fragment_shader)
-
-    shader_program = glCreateProgram()
-    glAttachShader(shader_program, vertex_shader)
-    glAttachShader(shader_program, fragment_shader)
-    glLinkProgram(shader_program)
-
-    glDeleteShader(vertex_shader)
-    glDeleteShader(fragment_shader)
-
-    return shader_program
-
-# 点滅する画像を描画するクラス
-class BlinkingImage:
-    def __init__(self, position, size, image_path, frequency, refresh_rate):
-        self.position = position
-        self.size = size
-        self.frequency = frequency  # 点滅の周波数
-        self.refresh_rate = refresh_rate  # 垂直同期のリフレッシュレート
-        self.toggle = True  # 点滅の初期状態（ON/OFF）
-        self.start_time = time.time()  # 開始時刻
-        self.frames_per_blink = refresh_rate / (2 * frequency)  # 点滅切り替えのフレーム数
-
-        # テスト用に frames_per_blink を固定値に設定
-        self.frames_per_blink = 30  # 30フレームごとに切り替わる
-
-        self.frame_count = 0  # フレームカウンタ
-        self.frame_count_not_reset = 0  # リセットなしフレームカウンタ
-
-        # 画像のロードとテクスチャの設定
-        self.texture_id = self.load_texture(image_path)
-
-        # シェーダープログラムを作成
-        self.shader_program = create_shader_program()
-
-        # 頂点データを設定
-        self.vao, self.vbo, self.ebo = self.create_quad()
-
-    def load_texture(self, image_path):
-        image = Image.open(image_path)
-        image = image.transpose(Image.FLIP_TOP_BOTTOM)  # 画像を上下反転する
-        image_data = np.array(image, np.uint8)
-
-        texture_id = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture_id)
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
-        glGenerateMipmap(GL_TEXTURE_2D)
-
-        return texture_id
-
-    def create_quad(self):
-        # 四角形の頂点データ (位置とテクスチャ座標)
-        vertices = np.array([
-            # 位置           テクスチャ座標
-            -0.5, -0.5, 0.0,  0.0, 0.0,  # 左下
-             0.5, -0.5, 0.0,  1.0, 0.0,  # 右下
-             0.5,  0.5, 0.0,  1.0, 1.0,  # 右上
-            -0.5,  0.5, 0.0,  0.0, 1.0   # 左上
-        ], dtype=np.float32)
-
-        indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
-
-        vao = glGenVertexArrays(1)
-        vbo = glGenBuffers(1)
-        ebo = glGenBuffers(1)
-
-        glBindVertexArray(vao)
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo)
-        glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
-
-        # 頂点の位置属性
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(0))
-        glEnableVertexAttribArray(0)
-
-        # テクスチャ座標属性
-        glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(3 * vertices.itemsize))
-        glEnableVertexAttribArray(1)
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0)
-        glBindVertexArray(0)
-
-        return vao, vbo, ebo
-
-    def draw_image(self):
-        glUseProgram(self.shader_program)
-
-        # テクスチャのバインド
-        glActiveTexture(GL_TEXTURE0)
-        glBindTexture(GL_TEXTURE_2D, self.texture_id)
-
-        # 四角形を描画
-        glBindVertexArray(self.vao)
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, None)
-        glBindVertexArray(0)
-
-    def update(self):
-        # 点滅のロジック
-        self.frame_count += 1
-        self.frame_count_not_reset += 1
-
-        # フレームカウントがframes_per_blinkに達したらtoggleを反転
-        if self.frame_count >= self.frames_per_blink:
-            self.toggle = not self.toggle
-            self.frame_count = 0  # カウンタをリセット
-
-        # 点滅がオンのときだけ画像を描画
-        if self.toggle:
-            self.draw_image()
-
-        # テスト用のデバッグ出力
-        print(f"frame_count_not: {self.frame_count_not_reset}, toggle: {self.toggle}")
-
-# GLFW初期化とウィンドウ作成
-def init_glfw(width, height, title):
-    if not glfw.init():
-        return None
-    glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
-    glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
-    glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-    window = glfw.create_window(width, height, title, None, None)
-    if not window:
-        glfw.terminate()
-        return None
-    glfw.make_context_current(window)
-    return window
-
-def main():
-    # ウィンドウサイズ
-    monitor_width = 800
-    monitor_height = 800
-
-    window = init_glfw(monitor_width, monitor_height, "Blinking Image Test")
-
-    refresh_rate = 60
-
-    # 画像の点滅設定
-    blinking_image = BlinkingImage(position=(0.0, 0.0), size=(1.0, 1.0), image_path="./circle.png", frequency=5, refresh_rate=refresh_rate)
-
-    while not glfw.window_should_close(window):
-        glClear(GL_COLOR_BUFFER_BIT)
-
-        # 画像を更新して描画
-        blinking_image.update()
-
-        glfw.swap_buffers(window)
-        glfw.poll_events()
-
-    glfw.destroy_window(window)
-    glfw.terminate()
-
-if __name__ == "__main__":
-    main()
+FPS: 61.17, frame_count: 62
+FPS: 55.87, frame_count: 56
+FPS: 60.04, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.01, frame_count: 61
+FPS: 60.24, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.00, frame_count: 61
+Ftime : 1729083263.3977196
+FPS: 59.93, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.18, frame_count: 61
+Ftime : 1729083273.3976984
+FPS: 59.96, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.92, frame_count: 60
+Ftime : 1729083283.401533
+FPS: 59.98, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.46, frame_count: 61
+FPS: 59.80, frame_count: 60
+Ftime : 1729083293.4032223
+FPS: 59.86, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.73, frame_count: 61
+FPS: 60.21, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.67, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.73, frame_count: 60
+Ftime : 1729083303.4050875
+FPS: 60.17, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.86, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.76, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 60.32, frame_count: 61
+FPS: 60.08, frame_count: 61
+Ftime : 1729083313.4017835
+FPS: 59.62, frame_count: 61
+FPS: 60.23, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 59.88, frame_count: 60
+FPS: 59.89, frame_count: 61
+FPS: 60.05, frame_count: 61
+Ftime : 1729083323.4013252
+FPS: 60.14, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.77, frame_count: 60
+FPS: 59.81, frame_count: 60
+FPS: 60.67, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.38, frame_count: 60
+Ftime : 1729083333.3928518
+FPS: 60.34, frame_count: 61
+FPS: 59.70, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.06, frame_count: 61
+Ftime : 1729083343.4014866
+FPS: 60.23, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.00, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.97, frame_count: 61
+Ftime : 1729083353.3946595
+FPS: 60.17, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.82, frame_count: 61
+FPS: 59.86, frame_count: 61
+FPS: 60.22, frame_count: 61
+Ftime : 1729083363.4025455
+FPS: 59.95, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.20, frame_count: 61
+FPS: 59.69, frame_count: 60
+Ftime : 1729083373.3985956
+FPS: 60.04, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 59.79, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.81, frame_count: 61
+Ftime : 1729083383.4024792
+FPS: 59.28, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.58, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 58.97, frame_count: 59
+FPS: 59.70, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 60.58, frame_count: 61
+FPS: 59.16, frame_count: 60
+Ftime : 1729083393.421215
+FPS: 60.09, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.79, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.91, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.88, frame_count: 60
+Ftime : 1729083403.4195268
+FPS: 60.14, frame_count: 61
+FPS: 59.67, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.82, frame_count: 61
+FPS: 60.43, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.79, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.40, frame_count: 61
+Ftime : 1729083413.4202092
+FPS: 59.62, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.99, frame_count: 61
+FPS: 60.39, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.73, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.92, frame_count: 60
+Ftime : 1729083423.4153855
+FPS: 59.98, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.08, frame_count: 61
+Ftime : 1729083433.4081874
+FPS: 59.93, frame_count: 61
+FPS: 60.21, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.89, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.45, frame_count: 61
+FPS: 59.67, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.67, frame_count: 60
+Ftime : 1729083443.421539
+FPS: 60.25, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.90, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.72, frame_count: 60
+Ftime : 1729083453.4151247
+FPS: 60.14, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.72, frame_count: 61
+FPS: 59.31, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.33, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 59.97, frame_count: 60
+Ftime : 1729083463.419217
+FPS: 60.46, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 60.12, frame_count: 61
+Ftime : 1729083473.4146118
+FPS: 59.76, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.32, frame_count: 61
+Ftime : 1729083483.4159985
+FPS: 59.84, frame_count: 60
+FPS: 59.80, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 60.20, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.56, frame_count: 61
+Ftime : 1729083493.422651
+FPS: 60.41, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.68, frame_count: 60
+FPS: 60.77, frame_count: 61
+FPS: 59.53, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.80, frame_count: 61
+Ftime : 1729083503.4164577
+FPS: 60.29, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.31, frame_count: 61
+FPS: 59.63, frame_count: 60
+FPS: 60.41, frame_count: 61
+FPS: 59.54, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.07, frame_count: 61
+Ftime : 1729083513.4203165
+FPS: 60.31, frame_count: 61
+FPS: 59.61, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.68, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.82, frame_count: 60
+Ftime : 1729083523.4184017
+FPS: 60.38, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 59.91, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.69, frame_count: 60
+Ftime : 1729083533.422079
+FPS: 60.31, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.73, frame_count: 61
+FPS: 60.42, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.84, frame_count: 61
+Ftime : 1729083543.4160676
+FPS: 60.11, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.63, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 59.55, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.30, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 59.99, frame_count: 60
+Ftime : 1729083553.4175348
+FPS: 59.85, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 56.97, frame_count: 57
+FPS: 60.25, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.67, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 60.47, frame_count: 61
+FPS: 60.21, frame_count: 61
+FPS: 59.76, frame_count: 60
+Ftime : 1729083563.469206
+FPS: 59.63, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.57, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.18, frame_count: 61
+Ftime : 1729083573.4714363
+FPS: 59.94, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.63, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.69, frame_count: 60
+Ftime : 1729083583.4696617
+FPS: 60.42, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.77, frame_count: 60
+FPS: 59.84, frame_count: 61
+FPS: 60.37, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.73, frame_count: 60
+Ftime : 1729083593.4698899
+FPS: 60.08, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.87, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.64, frame_count: 61
+FPS: 59.33, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.72, frame_count: 60
+Ftime : 1729083603.4698203
+FPS: 60.83, frame_count: 61
+FPS: 59.21, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.14, frame_count: 61
+Ftime : 1729083613.470585
+FPS: 59.65, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 60.10, frame_count: 61
+Ftime : 1729083623.4700089
+FPS: 59.72, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 60.01, frame_count: 61
+FPS: 59.81, frame_count: 61
+Ftime : 1729083633.4650788
+FPS: 60.10, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.88, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.80, frame_count: 60
+FPS: 60.52, frame_count: 61
+FPS: 59.52, frame_count: 60
+Ftime : 1729083643.4709835
+FPS: 60.34, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.73, frame_count: 60
+FPS: 59.90, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.55, frame_count: 61
+FPS: 59.27, frame_count: 60
+Ftime : 1729083653.4695418
+FPS: 60.14, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 59.98, frame_count: 61
+Ftime : 1729083663.4681098
+FPS: 60.10, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.85, frame_count: 61
+Ftime : 1729083673.4664662
+FPS: 59.62, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 59.71, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.74, frame_count: 61
+Ftime : 1729083683.4603002
+FPS: 60.14, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.38, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.81, frame_count: 60
+FPS: 60.24, frame_count: 61
+Ftime : 1729083693.4670138
+FPS: 59.90, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.70, frame_count: 60
+Ftime : 1729083703.465752
+FPS: 60.39, frame_count: 61
+FPS: 59.76, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.88, frame_count: 60
+FPS: 60.58, frame_count: 61
+FPS: 59.36, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.68, frame_count: 60
+Ftime : 1729083713.4718761
+FPS: 60.16, frame_count: 61
+FPS: 59.91, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 59.92, frame_count: 61
+FPS: 60.33, frame_count: 61
+FPS: 59.96, frame_count: 60
+Ftime : 1729083723.4689975
+FPS: 59.75, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.89, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.98, frame_count: 60
+Ftime : 1729083733.468146
+FPS: 59.94, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.60, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.77, frame_count: 60
+Ftime : 1729083743.4719498
+FPS: 59.86, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.62, frame_count: 61
+FPS: 59.47, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.67, frame_count: 61
+Ftime : 1729083753.4664614
+FPS: 59.26, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.33, frame_count: 61
+Ftime : 1729083763.4688907
+FPS: 59.74, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.90, frame_count: 61
+FPS: 60.44, frame_count: 61
+FPS: 59.58, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.43, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 59.80, frame_count: 60
+Ftime : 1729083773.4705162
+FPS: 60.08, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.64, frame_count: 61
+FPS: 59.59, frame_count: 60
+FPS: 59.91, frame_count: 60
+Ftime : 1729083783.4715843
+FPS: 59.90, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.19, frame_count: 61
+Ftime : 1729083793.464472
+FPS: 59.88, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.15, frame_count: 61
+Ftime : 1729083803.470297
+FPS: 59.93, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.11, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.89, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 60.17, frame_count: 61
+FPS: 59.96, frame_count: 61
+Ftime : 1729083813.4658163
+FPS: 60.06, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 60.00, frame_count: 61
+FPS: 60.33, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.07, frame_count: 61
+Ftime : 1729083823.4651515
+FPS: 59.61, frame_count: 61
+FPS: 60.30, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.85, frame_count: 60
+FPS: 59.93, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.25, frame_count: 61
+Ftime : 1729083833.470148
+FPS: 59.82, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.71, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.85, frame_count: 61
+Ftime : 1729083843.464804
+FPS: 59.76, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.85, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 59.93, frame_count: 61
+FPS: 60.34, frame_count: 61
+FPS: 59.79, frame_count: 60
+Ftime : 1729083853.4675708
+FPS: 60.34, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.16, frame_count: 61
+Ftime : 1729083863.472145
+FPS: 59.74, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 60.00, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 60.08, frame_count: 61
+Ftime : 1729083873.4659767
+FPS: 59.77, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.58, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 59.87, frame_count: 60
+Ftime : 1729083883.4714553
+FPS: 60.78, frame_count: 61
+FPS: 59.38, frame_count: 60
+FPS: 60.45, frame_count: 61
+FPS: 59.59, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.66, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.86, frame_count: 60
+Ftime : 1729083893.47033
+FPS: 59.92, frame_count: 60
+FPS: 59.89, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.19, frame_count: 61
+Ftime : 1729083903.471554
+FPS: 60.02, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.59, frame_count: 61
+FPS: 59.68, frame_count: 60
+Ftime : 1729083913.4693475
+FPS: 59.77, frame_count: 60
+FPS: 60.41, frame_count: 61
+FPS: 59.61, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 60.35, frame_count: 61
+Ftime : 1729083923.471429
+FPS: 60.40, frame_count: 61
+FPS: 59.33, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.73, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.71, frame_count: 61
+Ftime : 1729083933.47075
+FPS: 59.94, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.61, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.74, frame_count: 61
+FPS: 60.25, frame_count: 61
+Ftime : 1729083943.466892
+FPS: 59.78, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.81, frame_count: 61
+FPS: 59.03, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.79, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.88, frame_count: 60
+Ftime : 1729083953.4668207
+FPS: 60.11, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.90, frame_count: 61
+FPS: 60.38, frame_count: 61
+FPS: 59.72, frame_count: 60
+Ftime : 1729083963.4709952
+FPS: 60.19, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.65, frame_count: 61
+FPS: 59.45, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.66, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.95, frame_count: 60
+Ftime : 1729083973.4668064
+FPS: 60.12, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.79, frame_count: 61
+FPS: 60.00, frame_count: 61
+FPS: 60.39, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 59.90, frame_count: 61
+Ftime : 1729083983.4724064
+FPS: 60.05, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.81, frame_count: 61
+Ftime : 1729083993.4679282
+FPS: 60.14, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.67, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 60.41, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.81, frame_count: 60
+Ftime : 1729084003.4721358
+FPS: 59.77, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 59.94, frame_count: 60
+Ftime : 1729084013.4675508
+FPS: 60.07, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 60.23, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.83, frame_count: 60
+Ftime : 1729084023.4709427
+FPS: 59.94, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 60.55, frame_count: 61
+FPS: 59.35, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.88, frame_count: 61
+Ftime : 1729084033.4692485
+FPS: 59.15, frame_count: 60
+FPS: 60.37, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.38, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 60.09, frame_count: 61
+Ftime : 1729084043.4674742
+FPS: 59.82, frame_count: 60
+FPS: 60.34, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.25, frame_count: 61
+Ftime : 1729084053.46553
+FPS: 59.62, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 60.44, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 59.84, frame_count: 61
+Ftime : 1729084063.4724703
+FPS: 60.14, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.77, frame_count: 60
+FPS: 60.34, frame_count: 61
+Ftime : 1729084073.4651382
+FPS: 59.78, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.34, frame_count: 61
+FPS: 59.56, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 60.15, frame_count: 61
+Ftime : 1729084083.4717717
+FPS: 59.97, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 60.54, frame_count: 61
+FPS: 59.56, frame_count: 60
+FPS: 59.68, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.82, frame_count: 60
+Ftime : 1729084093.4714944
+FPS: 60.09, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.17, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.35, frame_count: 61
+Ftime : 1729084103.4667032
+FPS: 59.86, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.36, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.81, frame_count: 60
+Ftime : 1729084113.470419
+FPS: 60.16, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.72, frame_count: 60
+FPS: 60.34, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 59.81, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.73, frame_count: 61
+Ftime : 1729084123.4719336
+FPS: 59.47, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.85, frame_count: 61
+FPS: 60.00, frame_count: 61
+FPS: 60.45, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.57, frame_count: 61
+FPS: 60.03, frame_count: 61
+Ftime : 1729084133.470301
+FPS: 59.97, frame_count: 61
+FPS: 60.01, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.85, frame_count: 61
+FPS: 60.31, frame_count: 61
+FPS: 59.70, frame_count: 60
+FPS: 60.36, frame_count: 61
+Ftime : 1729084143.4681563
+FPS: 60.09, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.81, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.74, frame_count: 61
+FPS: 59.48, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.22, frame_count: 61
+Ftime : 1729084153.4690714
+FPS: 59.78, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.87, frame_count: 61
+FPS: 60.36, frame_count: 61
+FPS: 59.98, frame_count: 60
+Ftime : 1729084163.465488
+FPS: 59.87, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.70, frame_count: 61
+Ftime : 1729084173.4666898
+FPS: 60.37, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.82, frame_count: 60
+FPS: 59.84, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.75, frame_count: 60
+FPS: 60.01, frame_count: 61
+Ftime : 1729084183.464611
+FPS: 60.13, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.82, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.16, frame_count: 61
+Ftime : 1729084193.46754
+FPS: 59.94, frame_count: 60
+FPS: 59.87, frame_count: 61
+FPS: 60.38, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.58, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.70, frame_count: 61
+FPS: 60.30, frame_count: 61
+Ftime : 1729084203.465228
+FPS: 59.75, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.83, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.38, frame_count: 61
+Ftime : 1729084213.4659846
+FPS: 59.81, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.58, frame_count: 60
+FPS: 60.25, frame_count: 61
+Ftime : 1729084223.4654355
+FPS: 60.02, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.82, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.88, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.98, frame_count: 61
+FPS: 60.31, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 59.96, frame_count: 60
+Ftime : 1729084233.4689844
+FPS: 60.19, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.73, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 60.44, frame_count: 61
+FPS: 59.56, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.88, frame_count: 60
+Ftime : 1729084243.4663773
+FPS: 59.77, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 60.42, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.61, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.86, frame_count: 60
+Ftime : 1729084253.4684272
+FPS: 59.75, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.80, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.89, frame_count: 61
+Ftime : 1729084263.4686642
+FPS: 59.99, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.89, frame_count: 60
+Ftime : 1729084273.4660094
+FPS: 59.88, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 60.24, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.81, frame_count: 60
+Ftime : 1729084283.4709296
+FPS: 59.91, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 59.81, frame_count: 61
+Ftime : 1729084293.4728622
+FPS: 60.00, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.80, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 60.68, frame_count: 61
+Ftime : 1729084303.471236
+FPS: 59.62, frame_count: 60
+FPS: 59.57, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.71, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.84, frame_count: 61
+FPS: 60.25, frame_count: 61
+Ftime : 1729084313.4725547
+FPS: 59.78, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.84, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 59.83, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.39, frame_count: 61
+Ftime : 1729084323.4715123
+FPS: 59.82, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.62, frame_count: 61
+FPS: 60.19, frame_count: 61
+Ftime : 1729084333.4696205
+FPS: 59.86, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 59.67, frame_count: 60
+Ftime : 1729084343.4663467
+FPS: 59.96, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.38, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 59.74, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.59, frame_count: 60
+Ftime : 1729084353.4721358
+FPS: 60.14, frame_count: 61
+FPS: 60.11, frame_count: 61
+FPS: 59.94, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.15, frame_count: 61
+Ftime : 1729084363.472062
+FPS: 59.93, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.33, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 60.27, frame_count: 61
+Ftime : 1729084373.468794
+FPS: 59.66, frame_count: 60
+FPS: 59.95, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 60.22, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 60.00, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.23, frame_count: 61
+Ftime : 1729084383.4698873
+FPS: 59.86, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.65, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 60.09, frame_count: 61
+Ftime : 1729084393.4720652
+FPS: 59.74, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.68, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.90, frame_count: 61
+FPS: 59.96, frame_count: 61
+FPS: 60.36, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.05, frame_count: 61
+Ftime : 1729084403.4659286
+FPS: 59.91, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.72, frame_count: 60
+Ftime : 1729084413.4728584
+FPS: 60.32, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.83, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.93, frame_count: 60
+Ftime : 1729084423.4661393
+FPS: 60.43, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.33, frame_count: 61
+FPS: 59.56, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.87, frame_count: 61
+FPS: 60.03, frame_count: 61
+Ftime : 1729084433.4692621
+FPS: 60.03, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 59.70, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.37, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.79, frame_count: 61
+FPS: 60.27, frame_count: 61
+Ftime : 1729084443.4711478
+FPS: 59.89, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.69, frame_count: 61
+Ftime : 1729084453.470986
+FPS: 60.03, frame_count: 61
+FPS: 60.31, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 59.85, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 60.31, frame_count: 61
+Ftime : 1729084463.466711
+FPS: 59.75, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 59.99, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.93, frame_count: 61
+FPS: 59.82, frame_count: 61
+FPS: 60.36, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 60.09, frame_count: 61
+Ftime : 1729084473.4718857
+FPS: 59.86, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.92, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.66, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.38, frame_count: 61
+FPS: 59.82, frame_count: 60
+Ftime : 1729084483.4724107
+FPS: 60.15, frame_count: 61
+FPS: 59.59, frame_count: 60
+FPS: 60.36, frame_count: 61
+FPS: 59.65, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 60.20, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.60, frame_count: 60
+FPS: 60.27, frame_count: 61
+Ftime : 1729084493.4713402
+FPS: 59.87, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.67, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 60.53, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.77, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.79, frame_count: 60
+Ftime : 1729084503.4671926
+FPS: 59.89, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 60.44, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.57, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.79, frame_count: 60
+Ftime : 1729084513.4698951
+FPS: 60.11, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 59.95, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 59.99, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.87, frame_count: 60
+Ftime : 1729084523.472449
+FPS: 60.00, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.57, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 60.79, frame_count: 61
+FPS: 59.48, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 59.77, frame_count: 60
+Ftime : 1729084533.4654038
+FPS: 59.99, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.41, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 60.11, frame_count: 61
+FPS: 60.15, frame_count: 61
+Ftime : 1729084543.4705157
+FPS: 59.66, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.89, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.93, frame_count: 60
+Ftime : 1729084553.465792
+FPS: 60.45, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.67, frame_count: 60
+FPS: 60.22, frame_count: 61
+Ftime : 1729084563.4724572
+FPS: 59.86, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 59.97, frame_count: 60
+Ftime : 1729084573.4693246
+FPS: 59.93, frame_count: 60
+FPS: 59.87, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.98, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.93, frame_count: 60
+Ftime : 1729084583.472779
+FPS: 59.93, frame_count: 60
+FPS: 60.36, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.96, frame_count: 60
+Ftime : 1729084593.4708192
+FPS: 59.74, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 60.01, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.67, frame_count: 61
+Ftime : 1729084603.472169
+FPS: 60.09, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 59.96, frame_count: 61
+FPS: 60.21, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.15, frame_count: 61
+Ftime : 1729084613.4693172
+FPS: 60.17, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 59.83, frame_count: 61
+FPS: 60.33, frame_count: 61
+FPS: 59.91, frame_count: 60
+Ftime : 1729084623.4690363
+FPS: 59.81, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 39.02, frame_count: 40
+FPS: 28.96, frame_count: 29
+FPS: 28.93, frame_count: 30
+FPS: 29.38, frame_count: 30
+FPS: 28.66, frame_count: 29
+FPS: 29.67, frame_count: 30
+FPS: 15.34, frame_count: 16
+FPS: 25.40, frame_count: 26
+FPS: 23.84, frame_count: 24
+FPS: 24.23, frame_count: 25
+FPS: 24.88, frame_count: 26
+FPS: 12.72, frame_count: 13
+FPS: 24.86, frame_count: 26
+FPS: 25.99, frame_count: 26
+FPS: 25.99, frame_count: 26
+FPS: 25.88, frame_count: 26
+FPS: 24.44, frame_count: 25
+Ftime : 1729084643.9064972
+FPS: 25.09, frame_count: 26
+FPS: 24.35, frame_count: 25
+FPS: 26.32, frame_count: 27
+FPS: 24.86, frame_count: 25
+FPS: 25.08, frame_count: 26
+FPS: 24.88, frame_count: 26
+FPS: 26.06, frame_count: 27
+FPS: 25.82, frame_count: 26
+FPS: 23.92, frame_count: 25
+FPS: 24.23, frame_count: 25
+FPS: 25.47, frame_count: 26
+FPS: 26.36, frame_count: 27
+FPS: 25.82, frame_count: 26
+FPS: 24.70, frame_count: 25
+FPS: 25.55, frame_count: 26
+FPS: 24.53, frame_count: 25
+FPS: 24.84, frame_count: 25
+FPS: 23.02, frame_count: 24
+FPS: 22.92, frame_count: 24
+FPS: 24.27, frame_count: 25
+FPS: 25.75, frame_count: 27
+FPS: 25.88, frame_count: 27
+FPS: 24.59, frame_count: 25
+FPS: 11.80, frame_count: 12
+Ftime : 1729084668.482935
+FPS: 24.14, frame_count: 25
+FPS: 24.17, frame_count: 25
+FPS: 10.03, frame_count: 20
+FPS: 22.45, frame_count: 23
+FPS: 21.34, frame_count: 22
+FPS: 23.33, frame_count: 24
+FPS: 21.77, frame_count: 22
+FPS: 21.54, frame_count: 22
+FPS: 22.19, frame_count: 23
+FPS: 21.87, frame_count: 22
+FPS: 24.30, frame_count: 25
+FPS: 26.13, frame_count: 27
+FPS: 28.61, frame_count: 29
+FPS: 26.58, frame_count: 27
+FPS: 26.24, frame_count: 27
+FPS: 13.74, frame_count: 14
+FPS: 15.66, frame_count: 19
+FPS: 26.32, frame_count: 27
+FPS: 26.45, frame_count: 27
+FPS: 27.48, frame_count: 28
+FPS: 14.87, frame_count: 17
+FPS: 25.46, frame_count: 26
+FPS: 26.81, frame_count: 28
+FPS: 27.47, frame_count: 28
+FPS: 28.43, frame_count: 29
+Ftime : 1729084695.048717
+FPS: 26.96, frame_count: 28
+FPS: 26.80, frame_count: 27
+FPS: 12.71, frame_count: 13
+FPS: 26.64, frame_count: 27
+FPS: 25.87, frame_count: 26
+FPS: 25.82, frame_count: 26
+FPS: 26.98, frame_count: 27
+FPS: 26.61, frame_count: 27
+FPS: 27.81, frame_count: 28
+FPS: 26.90, frame_count: 27
+FPS: 26.85, frame_count: 27
+FPS: 25.99, frame_count: 26
+FPS: 27.12, frame_count: 28
+FPS: 25.73, frame_count: 26
+FPS: 26.65, frame_count: 27
+FPS: 28.17, frame_count: 29
+FPS: 26.26, frame_count: 27
+FPS: 12.71, frame_count: 13
+FPS: 26.85, frame_count: 27
+FPS: 25.90, frame_count: 26
+FPS: 24.81, frame_count: 26
+FPS: 20.84, frame_count: 21
+FPS: 25.65, frame_count: 26
+FPS: 12.51, frame_count: 13
+Ftime : 1729084719.5394044
+FPS: 15.30, frame_count: 19
+FPS: 25.70, frame_count: 26
+FPS: 25.53, frame_count: 26
+FPS: 26.28, frame_count: 27
+FPS: 27.18, frame_count: 28
+FPS: 26.78, frame_count: 28
+FPS: 27.69, frame_count: 28
+FPS: 26.83, frame_count: 27
+FPS: 25.32, frame_count: 26
+FPS: 25.36, frame_count: 26
+FPS: 26.07, frame_count: 27
+FPS: 25.83, frame_count: 26
+FPS: 25.81, frame_count: 27
+FPS: 26.51, frame_count: 27
+FPS: 27.58, frame_count: 28
+FPS: 25.87, frame_count: 26
+FPS: 26.44, frame_count: 27
+FPS: 26.90, frame_count: 27
+FPS: 25.23, frame_count: 26
+FPS: 26.49, frame_count: 27
+FPS: 24.59, frame_count: 25
+FPS: 25.99, frame_count: 26
+FPS: 25.30, frame_count: 26
+Ftime : 1729084742.9730263
+FPS: 27.52, frame_count: 28
+FPS: 26.33, frame_count: 27
+FPS: 25.66, frame_count: 26
+FPS: 27.48, frame_count: 28
+FPS: 25.00, frame_count: 26
+FPS: 26.18, frame_count: 27
+FPS: 18.40, frame_count: 27
+FPS: 25.51, frame_count: 26
+FPS: 14.64, frame_count: 16
+FPS: 26.97, frame_count: 28
+FPS: 26.49, frame_count: 27
+FPS: 25.95, frame_count: 26
+FPS: 25.60, frame_count: 26
+FPS: 24.64, frame_count: 25
+FPS: 28.78, frame_count: 29
+FPS: 12.59, frame_count: 13
+FPS: 26.52, frame_count: 27
+FPS: 27.16, frame_count: 28
+FPS: 26.42, frame_count: 27
+FPS: 26.34, frame_count: 27
+FPS: 26.65, frame_count: 27
+FPS: 26.63, frame_count: 27
+FPS: 26.77, frame_count: 27
+Ftime : 1729084767.1737616
+FPS: 25.45, frame_count: 26
+FPS: 24.71, frame_count: 25
+FPS: 25.78, frame_count: 26
+FPS: 12.95, frame_count: 13
+FPS: 11.82, frame_count: 12
+FPS: 25.13, frame_count: 26
+FPS: 23.38, frame_count: 24
+FPS: 10.61, frame_count: 11
+FPS: 23.64, frame_count: 24
+FPS: 10.99, frame_count: 11
+FPS: 13.57, frame_count: 14
+FPS: 23.51, frame_count: 24
+FPS: 25.90, frame_count: 26
+FPS: 27.56, frame_count: 28
+FPS: 13.91, frame_count: 14
+FPS: 24.92, frame_count: 25
+FPS: 23.72, frame_count: 24
+FPS: 24.47, frame_count: 25
+FPS: 23.92, frame_count: 25
+FPS: 25.72, frame_count: 26
+FPS: 9.99, frame_count: 10
+FPS: 26.45, frame_count: 27
+FPS: 26.38, frame_count: 27
+FPS: 25.17, frame_count: 26
+FPS: 12.91, frame_count: 13
+FPS: 27.65, frame_count: 28
+FPS: 26.44, frame_count: 27
+FPS: 25.96, frame_count: 27
+Ftime : 1729084795.1494339
+FPS: 27.20, frame_count: 28
+FPS: 26.37, frame_count: 27
+FPS: 25.01, frame_count: 26
+FPS: 26.14, frame_count: 27
+FPS: 26.81, frame_count: 28
+FPS: 24.85, frame_count: 25
+FPS: 26.76, frame_count: 27
+FPS: 26.49, frame_count: 27
+FPS: 26.59, frame_count: 27
+FPS: 16.10, frame_count: 24
+FPS: 25.70, frame_count: 26
+FPS: 25.54, frame_count: 26
+FPS: 26.17, frame_count: 27
+FPS: 26.52, frame_count: 27
+FPS: 28.17, frame_count: 29
+FPS: 26.95, frame_count: 27
+FPS: 25.89, frame_count: 26
+FPS: 27.82, frame_count: 28
+FPS: 25.02, frame_count: 26
+FPS: 14.47, frame_count: 15
+FPS: 27.68, frame_count: 28
+FPS: 14.45, frame_count: 15
+FPS: 14.59, frame_count: 15
+Ftime : 1729084819.856202
+FPS: 25.82, frame_count: 27
+FPS: 26.23, frame_count: 27
+FPS: 26.56, frame_count: 27
+FPS: 26.82, frame_count: 27
+FPS: 27.49, frame_count: 28
+FPS: 25.60, frame_count: 26
+FPS: 26.00, frame_count: 26
+FPS: 26.03, frame_count: 27
+FPS: 26.91, frame_count: 28
+FPS: 25.65, frame_count: 26
+FPS: 26.49, frame_count: 27
+FPS: 25.01, frame_count: 26
+FPS: 26.51, frame_count: 27
+FPS: 25.60, frame_count: 26
+FPS: 25.80, frame_count: 26
+FPS: 25.84, frame_count: 26
+FPS: 13.40, frame_count: 14
+FPS: 25.46, frame_count: 26
+FPS: 26.52, frame_count: 27
+FPS: 27.42, frame_count: 28
+FPS: 25.96, frame_count: 26
+FPS: 27.06, frame_count: 28
+FPS: 25.52, frame_count: 26
+Ftime : 1729084843.2039688
+FPS: 27.81, frame_count: 28
+FPS: 25.86, frame_count: 26
+FPS: 25.92, frame_count: 26
+FPS: 25.98, frame_count: 27
+FPS: 25.62, frame_count: 26
+FPS: 26.77, frame_count: 28
+FPS: 25.70, frame_count: 26
+FPS: 26.62, frame_count: 27
+FPS: 25.56, frame_count: 26
+FPS: 24.63, frame_count: 25
+FPS: 27.25, frame_count: 28
+FPS: 27.41, frame_count: 28
+FPS: 28.30, frame_count: 29
+FPS: 26.09, frame_count: 27
+FPS: 26.34, frame_count: 27
+FPS: 25.93, frame_count: 26
+FPS: 26.84, frame_count: 27
+FPS: 26.93, frame_count: 27
+FPS: 24.35, frame_count: 25
+FPS: 26.37, frame_count: 27
+FPS: 26.13, frame_count: 27
+FPS: 26.08, frame_count: 27
+FPS: 24.84, frame_count: 25
+Ftime : 1729084866.1531103
+FPS: 25.81, frame_count: 26
+FPS: 25.42, frame_count: 26
+FPS: 24.94, frame_count: 25
+FPS: 25.75, frame_count: 27
+FPS: 24.97, frame_count: 26
+FPS: 27.51, frame_count: 28
+FPS: 26.32, frame_count: 27
+FPS: 27.63, frame_count: 28
+FPS: 26.77, frame_count: 27
+FPS: 27.46, frame_count: 28
+FPS: 26.00, frame_count: 27
+FPS: 25.52, frame_count: 26
+FPS: 26.90, frame_count: 27
+FPS: 27.48, frame_count: 28
+FPS: 27.56, frame_count: 28
+FPS: 27.19, frame_count: 28
+FPS: 26.98, frame_count: 28
+FPS: 28.39, frame_count: 29
+FPS: 25.47, frame_count: 26
+FPS: 25.21, frame_count: 26
+FPS: 26.62, frame_count: 27
+FPS: 26.90, frame_count: 28
+Ftime : 1729084888.8078566
+FPS: 26.10, frame_count: 27
+FPS: 25.81, frame_count: 27
+FPS: 26.22, frame_count: 27
+FPS: 26.10, frame_count: 27
+FPS: 27.88, frame_count: 28
+FPS: 27.20, frame_count: 28
+FPS: 26.86, frame_count: 27
+FPS: 24.85, frame_count: 25
+FPS: 16.64, frame_count: 23
+FPS: 27.38, frame_count: 28
+FPS: 27.24, frame_count: 28
+FPS: 27.03, frame_count: 28
+FPS: 26.52, frame_count: 27
+FPS: 26.07, frame_count: 27
+FPS: 28.23, frame_count: 29
+FPS: 27.41, frame_count: 28
+FPS: 26.07, frame_count: 27
+FPS: 25.80, frame_count: 27
+FPS: 25.55, frame_count: 26
+FPS: 13.54, frame_count: 14
+FPS: 27.29, frame_count: 28
+FPS: 26.68, frame_count: 27
+Ftime : 1729084912.4218066
+FPS: 25.34, frame_count: 26
+FPS: 26.24, frame_count: 27
+FPS: 25.30, frame_count: 26
+FPS: 26.67, frame_count: 27
+FPS: 14.17, frame_count: 16
+FPS: 24.56, frame_count: 25
+FPS: 26.61, frame_count: 27
+FPS: 23.71, frame_count: 24
+FPS: 24.52, frame_count: 25
+FPS: 25.22, frame_count: 26
+FPS: 12.86, frame_count: 14
+FPS: 27.81, frame_count: 28
+FPS: 26.56, frame_count: 27
+FPS: 25.84, frame_count: 26
+FPS: 25.82, frame_count: 27
+FPS: 14.14, frame_count: 16
+FPS: 24.08, frame_count: 25
+FPS: 26.69, frame_count: 27
+FPS: 26.40, frame_count: 27
+FPS: 25.75, frame_count: 26
+FPS: 25.83, frame_count: 26
+FPS: 26.67, frame_count: 27
+FPS: 26.97, frame_count: 27
+FPS: 26.35, frame_count: 27
+FPS: 24.41, frame_count: 25
+Ftime : 1729084937.2267928
+FPS: 26.92, frame_count: 27
+FPS: 25.59, frame_count: 26
+FPS: 24.89, frame_count: 26
+FPS: 26.50, frame_count: 27
+FPS: 25.98, frame_count: 26
+FPS: 25.43, frame_count: 26
+FPS: 25.46, frame_count: 26
+FPS: 25.92, frame_count: 26
+FPS: 11.98, frame_count: 12
+FPS: 27.48, frame_count: 28
+FPS: 25.64, frame_count: 26
+FPS: 26.94, frame_count: 28
+FPS: 26.62, frame_count: 27
+FPS: 24.59, frame_count: 25
+FPS: 25.72, frame_count: 26
+FPS: 27.00, frame_count: 27
+FPS: 26.45, frame_count: 27
+FPS: 15.43, frame_count: 19
+FPS: 25.68, frame_count: 26
+FPS: 27.50, frame_count: 28
+FPS: 13.47, frame_count: 15
+FPS: 27.52, frame_count: 28
+FPS: 27.14, frame_count: 28
+Ftime : 1729084961.7025526
+FPS: 25.71, frame_count: 26
+FPS: 25.98, frame_count: 27
+FPS: 27.25, frame_count: 28
+FPS: 25.10, frame_count: 26
+FPS: 26.93, frame_count: 27
+FPS: 25.64, frame_count: 26
+FPS: 24.89, frame_count: 26
+FPS: 25.79, frame_count: 26
+FPS: 26.86, frame_count: 27
+FPS: 24.76, frame_count: 25
+FPS: 26.91, frame_count: 27
+FPS: 24.90, frame_count: 25
+FPS: 25.60, frame_count: 26
+FPS: 23.76, frame_count: 24
+FPS: 27.06, frame_count: 28
+FPS: 27.49, frame_count: 28
+FPS: 24.83, frame_count: 26
+FPS: 24.60, frame_count: 25
+FPS: 24.14, frame_count: 25
+FPS: 25.38, frame_count: 26
+FPS: 27.38, frame_count: 28
+FPS: 26.50, frame_count: 27
+FPS: 25.97, frame_count: 27
+Ftime : 1729084984.9477139
+FPS: 26.90, frame_count: 27
+FPS: 27.03, frame_count: 28
+FPS: 26.98, frame_count: 27
+FPS: 26.03, frame_count: 27
+FPS: 25.77, frame_count: 27
+FPS: 26.56, frame_count: 27
+FPS: 26.20, frame_count: 27
+FPS: 18.19, frame_count: 28
+FPS: 24.30, frame_count: 25
+FPS: 26.57, frame_count: 27
+FPS: 12.71, frame_count: 13
+FPS: 25.60, frame_count: 26
+FPS: 25.66, frame_count: 26
+FPS: 26.14, frame_count: 27
+FPS: 27.72, frame_count: 28
+FPS: 24.48, frame_count: 25
+FPS: 14.56, frame_count: 16
+FPS: 27.52, frame_count: 28
+FPS: 25.91, frame_count: 26
+FPS: 26.47, frame_count: 27
+FPS: 27.59, frame_count: 28
+FPS: 25.92, frame_count: 27
+FPS: 28.97, frame_count: 29
+Ftime : 1729085009.1972272
+FPS: 25.60, frame_count: 26
+FPS: 27.02, frame_count: 28
+FPS: 26.98, frame_count: 27
+FPS: 26.95, frame_count: 28
+FPS: 26.76, frame_count: 27
+FPS: 27.90, frame_count: 28
+FPS: 26.90, frame_count: 27
+FPS: 26.32, frame_count: 27
+FPS: 15.23, frame_count: 21
+FPS: 24.65, frame_count: 25
+FPS: 25.74, frame_count: 27
+FPS: 26.83, frame_count: 27
+FPS: 25.57, frame_count: 26
+FPS: 25.67, frame_count: 26
+FPS: 27.66, frame_count: 28
+FPS: 24.82, frame_count: 26
+FPS: 25.48, frame_count: 26
+FPS: 27.40, frame_count: 28
+FPS: 24.68, frame_count: 25
+FPS: 24.98, frame_count: 25
+FPS: 25.94, frame_count: 26
+FPS: 26.64, frame_count: 27
+FPS: 27.68, frame_count: 28
+Ftime : 1729085032.5660894
+FPS: 27.30, frame_count: 28
+FPS: 26.78, frame_count: 27
+FPS: 13.91, frame_count: 14
+FPS: 25.89, frame_count: 27
+FPS: 26.94, frame_count: 27
+FPS: 28.68, frame_count: 29
+FPS: 25.81, frame_count: 26
+FPS: 27.84, frame_count: 28
+FPS: 27.06, frame_count: 28
+FPS: 26.39, frame_count: 27
+FPS: 25.72, frame_count: 26
+FPS: 25.89, frame_count: 26
+FPS: 26.85, frame_count: 27
+FPS: 28.16, frame_count: 29
+FPS: 26.67, frame_count: 27
+FPS: 25.37, frame_count: 26
+FPS: 26.01, frame_count: 27
+FPS: 26.16, frame_count: 27
+FPS: 26.67, frame_count: 27
+FPS: 15.46, frame_count: 19
+FPS: 24.74, frame_count: 25
+FPS: 27.92, frame_count: 28
+FPS: 28.64, frame_count: 29
+Ftime : 1729085056.0351553
+FPS: 26.41, frame_count: 27
+FPS: 26.63, frame_count: 27
+FPS: 27.54, frame_count: 28
+FPS: 26.74, frame_count: 27
+FPS: 25.47, frame_count: 26
+FPS: 25.78, frame_count: 27
+FPS: 26.59, frame_count: 27
+FPS: 27.41, frame_count: 28
+FPS: 26.53, frame_count: 27
+FPS: 26.92, frame_count: 27
+FPS: 25.82, frame_count: 27
+FPS: 26.55, frame_count: 27
+FPS: 27.70, frame_count: 28
+FPS: 27.65, frame_count: 28
+FPS: 27.80, frame_count: 28
+FPS: 26.97, frame_count: 27
+FPS: 24.66, frame_count: 25
+FPS: 27.84, frame_count: 28
+FPS: 27.75, frame_count: 29
+FPS: 26.22, frame_count: 27
+FPS: 28.64, frame_count: 29
+FPS: 25.97, frame_count: 27
+Ftime : 1729085078.3966477
+FPS: 28.62, frame_count: 29
+FPS: 28.26, frame_count: 29
+FPS: 24.67, frame_count: 25
+FPS: 14.98, frame_count: 19
+FPS: 26.44, frame_count: 27
+FPS: 25.97, frame_count: 26
+FPS: 27.25, frame_count: 28
+FPS: 27.96, frame_count: 28
+FPS: 25.91, frame_count: 26
+FPS: 25.96, frame_count: 26
+FPS: 27.60, frame_count: 28
+FPS: 27.41, frame_count: 28
+FPS: 27.42, frame_count: 28
+FPS: 27.45, frame_count: 28
+FPS: 26.54, frame_count: 27
+FPS: 26.44, frame_count: 27
+FPS: 26.89, frame_count: 27
+FPS: 13.50, frame_count: 14
+FPS: 26.58, frame_count: 27
+FPS: 26.62, frame_count: 27
+FPS: 26.88, frame_count: 27
+FPS: 26.22, frame_count: 27
+Ftime : 1729085101.791253
+FPS: 18.07, frame_count: 27
+FPS: 26.79, frame_count: 27
+FPS: 12.81, frame_count: 13
+FPS: 25.22, frame_count: 26
+FPS: 25.95, frame_count: 26
+FPS: 25.71, frame_count: 26
+FPS: 26.49, frame_count: 27
+FPS: 28.36, frame_count: 29
+FPS: 25.68, frame_count: 26
+FPS: 26.37, frame_count: 27
+FPS: 13.85, frame_count: 14
+FPS: 27.37, frame_count: 28
+FPS: 26.65, frame_count: 27
+FPS: 25.94, frame_count: 26
+FPS: 26.66, frame_count: 27
+FPS: 26.75, frame_count: 27
+FPS: 12.63, frame_count: 13
+FPS: 27.96, frame_count: 28
+FPS: 26.94, frame_count: 27
+FPS: 26.52, frame_count: 27
+FPS: 17.32, frame_count: 26
+FPS: 12.34, frame_count: 13
+FPS: 26.88, frame_count: 28
+FPS: 26.44, frame_count: 27
+FPS: 27.67, frame_count: 28
+Ftime : 1729085127.4945507
+FPS: 26.38, frame_count: 27
+FPS: 27.94, frame_count: 29
+FPS: 25.84, frame_count: 27
+FPS: 26.68, frame_count: 27
+FPS: 25.49, frame_count: 26
+FPS: 26.51, frame_count: 27
+FPS: 25.70, frame_count: 26
+FPS: 25.33, frame_count: 26
+FPS: 26.67, frame_count: 27
+FPS: 26.49, frame_count: 27
+FPS: 13.63, frame_count: 14
+FPS: 26.99, frame_count: 27
+FPS: 26.76, frame_count: 27
+FPS: 25.78, frame_count: 26
+FPS: 26.88, frame_count: 27
+FPS: 26.91, frame_count: 27
+FPS: 26.23, frame_count: 27
+FPS: 26.90, frame_count: 27
+FPS: 25.93, frame_count: 26
+FPS: 27.42, frame_count: 28
+FPS: 25.83, frame_count: 26
+FPS: 27.17, frame_count: 28
+FPS: 26.47, frame_count: 27
+Ftime : 1729085150.638528
+FPS: 28.38, frame_count: 29
+FPS: 26.97, frame_count: 27
+FPS: 27.39, frame_count: 28
+FPS: 26.48, frame_count: 27
+FPS: 27.66, frame_count: 28
+FPS: 27.08, frame_count: 28
+FPS: 26.11, frame_count: 27
+FPS: 26.56, frame_count: 27
+FPS: 26.15, frame_count: 27
+FPS: 25.67, frame_count: 26
+FPS: 13.67, frame_count: 14
+FPS: 26.29, frame_count: 27
+FPS: 25.82, frame_count: 26
+FPS: 26.99, frame_count: 28
+FPS: 26.09, frame_count: 27
+FPS: 25.70, frame_count: 26
+FPS: 17.73, frame_count: 26
+FPS: 25.10, frame_count: 26
+FPS: 25.72, frame_count: 26
+FPS: 25.33, frame_count: 26
+FPS: 25.47, frame_count: 26
+FPS: 25.31, frame_count: 26
+Ftime : 1729085174.407129
+FPS: 26.98, frame_count: 27
+FPS: 27.10, frame_count: 28
+FPS: 26.78, frame_count: 27
+FPS: 26.72, frame_count: 27
+FPS: 27.03, frame_count: 28
+FPS: 27.43, frame_count: 28
+FPS: 28.15, frame_count: 29
+FPS: 26.78, frame_count: 28
+FPS: 27.81, frame_count: 28
+FPS: 12.84, frame_count: 13
+FPS: 25.51, frame_count: 26
+FPS: 28.37, frame_count: 29
+FPS: 26.66, frame_count: 27
+FPS: 27.78, frame_count: 28
+FPS: 25.50, frame_count: 26
+FPS: 26.81, frame_count: 27
+FPS: 25.22, frame_count: 26
+FPS: 26.69, frame_count: 27
+FPS: 27.84, frame_count: 28
+FPS: 27.31, frame_count: 28
+FPS: 16.84, frame_count: 24
+FPS: 25.95, frame_count: 26
+FPS: 25.69, frame_count: 26
+Ftime : 1729085197.7715554
+FPS: 26.56, frame_count: 27
+FPS: 26.69, frame_count: 27
+FPS: 27.88, frame_count: 28
+FPS: 27.15, frame_count: 28
+FPS: 5.72, frame_count: 7
+FPS: 25.91, frame_count: 27
+FPS: 27.56, frame_count: 28
+FPS: 27.66, frame_count: 28
+FPS: 26.11, frame_count: 27
+FPS: 26.69, frame_count: 27
+FPS: 24.91, frame_count: 26
+FPS: 25.49, frame_count: 26
+FPS: 27.15, frame_count: 28
+FPS: 26.64, frame_count: 27
+FPS: 27.39, frame_count: 28
+FPS: 26.94, frame_count: 27
+FPS: 27.64, frame_count: 28
+FPS: 26.90, frame_count: 27
+FPS: 26.81, frame_count: 27
+FPS: 27.05, frame_count: 28
+FPS: 26.95, frame_count: 28
+FPS: 26.18, frame_count: 27
+FPS: 26.20, frame_count: 28
+Ftime : 1729085221.204816
+FPS: 25.68, frame_count: 26
+FPS: 24.87, frame_count: 25
+FPS: 25.26, frame_count: 26
+FPS: 16.25, frame_count: 23
+FPS: 26.43, frame_count: 27
+FPS: 26.01, frame_count: 27
+FPS: 26.92, frame_count: 28
+FPS: 27.35, frame_count: 28
+FPS: 26.79, frame_count: 27
+FPS: 26.14, frame_count: 27
+FPS: 27.40, frame_count: 28
+FPS: 25.94, frame_count: 27
+FPS: 24.88, frame_count: 25
+FPS: 26.41, frame_count: 27
+FPS: 27.91, frame_count: 29
+FPS: 27.72, frame_count: 28
+FPS: 26.36, frame_count: 27
+FPS: 26.92, frame_count: 28
+FPS: 27.31, frame_count: 28
+FPS: 27.53, frame_count: 28
+FPS: 25.88, frame_count: 26
+FPS: 12.53, frame_count: 13
+Ftime : 1729085244.9128091
+FPS: 26.98, frame_count: 28
+FPS: 27.67, frame_count: 28
+FPS: 28.00, frame_count: 29
+FPS: 28.43, frame_count: 29
+FPS: 25.26, frame_count: 26
+FPS: 26.78, frame_count: 27
+FPS: 26.46, frame_count: 27
+FPS: 26.96, frame_count: 27
+FPS: 27.42, frame_count: 28
+FPS: 26.71, frame_count: 27
+FPS: 26.41, frame_count: 27
+FPS: 25.66, frame_count: 26
+FPS: 13.58, frame_count: 14
+FPS: 25.40, frame_count: 26
+FPS: 26.74, frame_count: 27
+FPS: 27.02, frame_count: 28
+FPS: 28.43, frame_count: 29
+FPS: 26.97, frame_count: 27
+FPS: 25.99, frame_count: 27
+FPS: 27.16, frame_count: 28
+FPS: 26.52, frame_count: 27
+FPS: 26.20, frame_count: 27
+FPS: 26.13, frame_count: 27
+Ftime : 1729085267.8377154
+FPS: 24.97, frame_count: 25
+FPS: 28.65, frame_count: 29
+FPS: 26.23, frame_count: 27
+FPS: 27.22, frame_count: 28
+FPS: 28.61, frame_count: 30
+FPS: 25.64, frame_count: 26
+FPS: 27.84, frame_count: 28
+FPS: 26.63, frame_count: 27
+FPS: 27.48, frame_count: 28
+FPS: 26.11, frame_count: 27
+FPS: 25.13, frame_count: 26
+FPS: 26.70, frame_count: 27
+FPS: 26.77, frame_count: 27
+FPS: 26.77, frame_count: 28
+FPS: 26.62, frame_count: 27
+FPS: 27.13, frame_count: 28
+FPS: 27.01, frame_count: 28
+FPS: 26.85, frame_count: 27
+FPS: 26.67, frame_count: 27
+FPS: 25.88, frame_count: 26
+FPS: 7.56, frame_count: 11
+FPS: 25.47, frame_count: 26
+Ftime : 1729085291.3882024
+FPS: 25.69, frame_count: 26
+FPS: 25.58, frame_count: 26
+FPS: 26.21, frame_count: 27
+FPS: 12.91, frame_count: 13
+FPS: 26.26, frame_count: 27
+FPS: 25.42, frame_count: 26
+FPS: 26.91, frame_count: 27
+FPS: 25.26, frame_count: 26
+FPS: 25.72, frame_count: 26
+FPS: 26.99, frame_count: 27
+FPS: 26.79, frame_count: 27
+FPS: 25.27, frame_count: 26
+FPS: 25.76, frame_count: 26
+FPS: 15.96, frame_count: 22
+FPS: 25.21, frame_count: 26
+FPS: 26.59, frame_count: 27
+FPS: 25.38, frame_count: 26
+FPS: 23.99, frame_count: 24
+FPS: 26.23, frame_count: 27
+FPS: 25.31, frame_count: 26
+FPS: 27.89, frame_count: 28
+FPS: 15.75, frame_count: 19
+FPS: 25.91, frame_count: 26
+FPS: 26.60, frame_count: 27
+Ftime : 1729085315.9901364
+FPS: 26.49, frame_count: 27
+FPS: 26.81, frame_count: 27
+FPS: 26.77, frame_count: 28
+FPS: 26.50, frame_count: 27
+FPS: 26.07, frame_count: 27
+FPS: 25.69, frame_count: 26
+FPS: 26.29, frame_count: 27
+FPS: 12.89, frame_count: 13
+FPS: 26.97, frame_count: 28
+FPS: 26.78, frame_count: 27
+FPS: 25.80, frame_count: 26
+FPS: 26.83, frame_count: 27
+FPS: 27.04, frame_count: 28
+FPS: 26.43, frame_count: 27
+FPS: 26.94, frame_count: 27
+FPS: 26.10, frame_count: 27
+FPS: 26.67, frame_count: 27
+FPS: 25.89, frame_count: 26
+FPS: 26.22, frame_count: 27
+FPS: 26.98, frame_count: 27
+FPS: 25.12, frame_count: 26
+FPS: 27.09, frame_count: 28
+FPS: 26.71, frame_count: 27
+Ftime : 1729085339.2092364
+FPS: 25.66, frame_count: 26
+FPS: 25.97, frame_count: 26
+FPS: 25.72, frame_count: 26
+FPS: 25.17, frame_count: 26
+FPS: 21.31, frame_count: 22
+FPS: 24.12, frame_count: 25
+FPS: 23.53, frame_count: 24
+FPS: 12.09, frame_count: 13
+FPS: 23.16, frame_count: 24
+FPS: 23.09, frame_count: 24
+FPS: 23.75, frame_count: 24
+FPS: 26.41, frame_count: 27
+FPS: 25.77, frame_count: 27
+FPS: 26.78, frame_count: 27
+FPS: 26.76, frame_count: 27
+FPS: 25.97, frame_count: 26
+FPS: 11.87, frame_count: 12
+FPS: 27.48, frame_count: 28
+FPS: 27.89, frame_count: 29
+FPS: 25.79, frame_count: 26
+FPS: 25.65, frame_count: 26
+FPS: 27.88, frame_count: 29
+FPS: 26.57, frame_count: 27
+FPS: 26.72, frame_count: 27
+Ftime : 1729085363.827411
+FPS: 25.38, frame_count: 26
+FPS: 28.11, frame_count: 29
+FPS: 27.36, frame_count: 28
+FPS: 27.90, frame_count: 29
+FPS: 26.47, frame_count: 27
+FPS: 26.40, frame_count: 27
+FPS: 27.58, frame_count: 28
+FPS: 25.97, frame_count: 27
+FPS: 26.54, frame_count: 27
+FPS: 26.17, frame_count: 27
+FPS: 6.20, frame_count: 8
+FPS: 26.00, frame_count: 27
+FPS: 27.63, frame_count: 28
+FPS: 26.84, frame_count: 27
+FPS: 13.31, frame_count: 15
+FPS: 27.61, frame_count: 28
+FPS: 13.84, frame_count: 14
+FPS: 27.13, frame_count: 28
+FPS: 27.58, frame_count: 28
+FPS: 26.21, frame_count: 27
+FPS: 24.79, frame_count: 25
+FPS: 25.98, frame_count: 27
+FPS: 26.46, frame_count: 27
+FPS: 27.27, frame_count: 28
+Ftime : 1729085388.3168824
+FPS: 25.83, frame_count: 27
+FPS: 26.64, frame_count: 27
+FPS: 27.07, frame_count: 28
+FPS: 26.84, frame_count: 27
+FPS: 26.80, frame_count: 27
+FPS: 16.04, frame_count: 20
+FPS: 26.08, frame_count: 27
+FPS: 25.65, frame_count: 26
+FPS: 12.83, frame_count: 13
+FPS: 26.40, frame_count: 27
+FPS: 27.32, frame_count: 28
+FPS: 27.61, frame_count: 28
+FPS: 26.83, frame_count: 27
+FPS: 26.53, frame_count: 27
+FPS: 27.65, frame_count: 28
+FPS: 26.00, frame_count: 26
+FPS: 26.94, frame_count: 28
+FPS: 26.43, frame_count: 27
+FPS: 25.86, frame_count: 26
+FPS: 15.45, frame_count: 20
+FPS: 25.61, frame_count: 26
+FPS: 25.89, frame_count: 26
+FPS: 24.59, frame_count: 25
+Ftime : 1729085412.5840232
+FPS: 25.88, frame_count: 26
+FPS: 25.80, frame_count: 26
+FPS: 16.49, frame_count: 21
+FPS: 26.41, frame_count: 27
+FPS: 27.76, frame_count: 28
+FPS: 26.52, frame_count: 27
+FPS: 26.95, frame_count: 27
+FPS: 24.46, frame_count: 25
+FPS: 26.54, frame_count: 27
+FPS: 27.06, frame_count: 28
+FPS: 25.78, frame_count: 27
+FPS: 13.72, frame_count: 14
+FPS: 25.66, frame_count: 26
+FPS: 25.74, frame_count: 26
+FPS: 25.18, frame_count: 26
+FPS: 25.90, frame_count: 27
+FPS: 25.49, frame_count: 26
+FPS: 26.68, frame_count: 27
+FPS: 25.96, frame_count: 26
+FPS: 27.77, frame_count: 28
+FPS: 26.33, frame_count: 27
+FPS: 25.93, frame_count: 26
+FPS: 24.98, frame_count: 25
+Ftime : 1729085436.4685307
+FPS: 26.76, frame_count: 28
+FPS: 25.76, frame_count: 26
+FPS: 24.78, frame_count: 25
+FPS: 25.81, frame_count: 26
+FPS: 25.41, frame_count: 26
+FPS: 25.21, frame_count: 26
+FPS: 25.93, frame_count: 26
+FPS: 25.26, frame_count: 26
+FPS: 24.99, frame_count: 25
+FPS: 25.24, frame_count: 26
+FPS: 24.70, frame_count: 25
+FPS: 25.56, frame_count: 26
+FPS: 25.60, frame_count: 26
+FPS: 24.93, frame_count: 25
+FPS: 27.86, frame_count: 28
+FPS: 16.75, frame_count: 25
+FPS: 25.41, frame_count: 26
+FPS: 26.61, frame_count: 27
+FPS: 25.30, frame_count: 26
+FPS: 27.17, frame_count: 28
+FPS: 25.98, frame_count: 26
+FPS: 26.57, frame_count: 27
+FPS: 24.43, frame_count: 25
+Ftime : 1729085460.3421476
+FPS: 26.96, frame_count: 27
+FPS: 13.78, frame_count: 14
+FPS: 25.56, frame_count: 26
+FPS: 26.06, frame_count: 27
+FPS: 25.02, frame_count: 26
+FPS: 26.41, frame_count: 27
+FPS: 27.91, frame_count: 28
+FPS: 15.74, frame_count: 21
+FPS: 25.96, frame_count: 27
+FPS: 26.25, frame_count: 27
+FPS: 27.46, frame_count: 28
+FPS: 25.85, frame_count: 26
+FPS: 13.00, frame_count: 13
+FPS: 26.33, frame_count: 27
+FPS: 25.39, frame_count: 26
+FPS: 26.72, frame_count: 27
+FPS: 26.62, frame_count: 28
+FPS: 26.64, frame_count: 27
+FPS: 25.96, frame_count: 26
+FPS: 26.80, frame_count: 27
+FPS: 27.53, frame_count: 28
+FPS: 26.39, frame_count: 27
+FPS: 26.67, frame_count: 27
+FPS: 26.95, frame_count: 27
+Ftime : 1729085484.5632312
+FPS: 26.08, frame_count: 27
+FPS: 27.55, frame_count: 28
+FPS: 26.53, frame_count: 27
+FPS: 13.54, frame_count: 14
+FPS: 28.19, frame_count: 29
+FPS: 26.41, frame_count: 27
+FPS: 24.45, frame_count: 25
+FPS: 27.38, frame_count: 28
+FPS: 25.14, frame_count: 26
+FPS: 25.26, frame_count: 26
+FPS: 25.22, frame_count: 26
+FPS: 26.85, frame_count: 28
+FPS: 27.45, frame_count: 28
+FPS: 24.81, frame_count: 25
+FPS: 25.97, frame_count: 27
+FPS: 27.11, frame_count: 28
+FPS: 26.03, frame_count: 27
+FPS: 26.76, frame_count: 27
+FPS: 27.57, frame_count: 28
+FPS: 24.82, frame_count: 25
+FPS: 27.28, frame_count: 28
+FPS: 25.39, frame_count: 26
+Ftime : 1729085507.921404
+FPS: 25.70, frame_count: 26
+FPS: 12.47, frame_count: 13
+FPS: 27.64, frame_count: 28
+FPS: 25.93, frame_count: 26
+FPS: 27.05, frame_count: 28
+FPS: 27.19, frame_count: 28
+FPS: 25.79, frame_count: 26
+FPS: 25.90, frame_count: 26
+FPS: 27.21, frame_count: 28
+FPS: 12.56, frame_count: 13
+FPS: 25.94, frame_count: 26
+FPS: 27.47, frame_count: 28
+FPS: 25.87, frame_count: 26
+FPS: 26.96, frame_count: 27
+FPS: 26.17, frame_count: 27
+FPS: 26.74, frame_count: 27
+FPS: 24.95, frame_count: 25
+FPS: 17.64, frame_count: 25
+FPS: 26.49, frame_count: 27
+FPS: 26.60, frame_count: 27
+FPS: 25.58, frame_count: 26
+FPS: 25.67, frame_count: 26
+FPS: 26.57, frame_count: 27
+FPS: 26.68, frame_count: 27
+Ftime : 1729085532.1713157
+FPS: 25.93, frame_count: 27
+FPS: 27.49, frame_count: 28
+FPS: 26.24, frame_count: 27
+FPS: 13.94, frame_count: 14
+FPS: 26.95, frame_count: 28
+FPS: 27.51, frame_count: 28
+FPS: 25.11, frame_count: 26
+FPS: 27.22, frame_count: 28
+FPS: 26.63, frame_count: 27
+FPS: 27.64, frame_count: 28
+FPS: 27.23, frame_count: 28
+FPS: 26.68, frame_count: 27
+FPS: 25.34, frame_count: 26
+FPS: 27.51, frame_count: 28
+FPS: 27.07, frame_count: 28
+FPS: 26.72, frame_count: 27
+FPS: 12.70, frame_count: 13
+FPS: 26.48, frame_count: 27
+FPS: 27.26, frame_count: 28
+FPS: 25.61, frame_count: 26
+FPS: 16.95, frame_count: 25
+FPS: 26.36, frame_count: 27
+FPS: 27.38, frame_count: 28
+Ftime : 1729085556.1905744
+FPS: 15.28, frame_count: 17
+FPS: 27.03, frame_count: 28
+FPS: 28.20, frame_count: 29
+FPS: 26.88, frame_count: 27
+FPS: 27.29, frame_count: 28
+FPS: 25.23, frame_count: 26
+FPS: 27.24, frame_count: 28
+FPS: 13.72, frame_count: 16
+FPS: 26.95, frame_count: 28
+FPS: 26.84, frame_count: 27
+FPS: 14.56, frame_count: 16
+FPS: 25.91, frame_count: 26
+FPS: 27.24, frame_count: 28
+FPS: 25.45, frame_count: 26
+FPS: 26.22, frame_count: 27
+FPS: 12.95, frame_count: 13
+FPS: 27.97, frame_count: 29
+FPS: 13.78, frame_count: 14
+FPS: 27.42, frame_count: 28
+FPS: 27.35, frame_count: 28
+FPS: 27.82, frame_count: 29
+FPS: 26.95, frame_count: 28
+FPS: 25.76, frame_count: 26
+FPS: 26.88, frame_count: 27
+Ftime : 1729085581.1202705
+FPS: 15.79, frame_count: 21
+FPS: 25.83, frame_count: 26
+FPS: 25.05, frame_count: 26
+FPS: 26.30, frame_count: 27
+FPS: 26.35, frame_count: 27
+FPS: 26.87, frame_count: 27
+FPS: 26.89, frame_count: 27
+FPS: 26.99, frame_count: 27
+FPS: 12.93, frame_count: 13
+FPS: 27.09, frame_count: 28
+FPS: 26.89, frame_count: 28
+FPS: 17.84, frame_count: 24
+FPS: 26.32, frame_count: 27
+FPS: 25.71, frame_count: 26
+FPS: 27.06, frame_count: 28
+FPS: 27.51, frame_count: 28
+FPS: 12.84, frame_count: 13
+FPS: 26.58, frame_count: 27
+FPS: 26.26, frame_count: 27
+FPS: 26.36, frame_count: 27
+FPS: 26.73, frame_count: 27
+FPS: 25.29, frame_count: 26
+FPS: 12.99, frame_count: 13
+FPS: 25.75, frame_count: 26
+Ftime : 1729085606.3408132
+FPS: 25.93, frame_count: 26
+FPS: 24.04, frame_count: 25
+FPS: 26.76, frame_count: 27
+FPS: 25.94, frame_count: 26
+FPS: 26.50, frame_count: 27
+FPS: 28.36, frame_count: 29
+FPS: 25.79, frame_count: 26
+FPS: 26.29, frame_count: 27
+FPS: 25.74, frame_count: 26
+FPS: 27.57, frame_count: 28
+FPS: 15.35, frame_count: 17
+FPS: 25.80, frame_count: 26
+FPS: 26.55, frame_count: 27
+FPS: 26.45, frame_count: 27
+FPS: 26.41, frame_count: 27
+FPS: 24.95, frame_count: 25
+FPS: 13.99, frame_count: 15
+FPS: 25.89, frame_count: 26
+FPS: 25.83, frame_count: 26
+FPS: 26.33, frame_count: 27
+FPS: 25.37, frame_count: 26
+FPS: 14.87, frame_count: 17
+FPS: 26.28, frame_count: 27
+FPS: 25.88, frame_count: 27
+Ftime : 1729085630.7258525
+FPS: 26.64, frame_count: 27
+FPS: 27.07, frame_count: 28
+FPS: 27.36, frame_count: 28
+FPS: 26.81, frame_count: 28
+FPS: 26.78, frame_count: 27
+FPS: 26.39, frame_count: 27
+FPS: 26.51, frame_count: 27
+FPS: 28.41, frame_count: 29
+FPS: 25.24, frame_count: 26
+FPS: 25.70, frame_count: 26
+FPS: 28.42, frame_count: 29
+FPS: 26.46, frame_count: 27
+FPS: 26.26, frame_count: 27
+FPS: 25.39, frame_count: 26
+FPS: 26.73, frame_count: 27
+FPS: 26.10, frame_count: 27
+FPS: 26.97, frame_count: 27
+FPS: 26.81, frame_count: 27
+FPS: 25.81, frame_count: 26
+FPS: 24.82, frame_count: 25
+FPS: 27.82, frame_count: 28
+FPS: 26.42, frame_count: 27
+Ftime : 1729085653.404472
+FPS: 24.08, frame_count: 25
+FPS: 24.89, frame_count: 25
+FPS: 26.29, frame_count: 27
+FPS: 25.60, frame_count: 26
+FPS: 25.51, frame_count: 26
+FPS: 26.85, frame_count: 27
+FPS: 25.89, frame_count: 26
+FPS: 27.88, frame_count: 28
+FPS: 25.67, frame_count: 26
+FPS: 25.94, frame_count: 26
+FPS: 27.30, frame_count: 28
+FPS: 26.45, frame_count: 27
+FPS: 27.58, frame_count: 28
+FPS: 26.05, frame_count: 27
+FPS: 25.97, frame_count: 26
+FPS: 27.92, frame_count: 28
+FPS: 26.34, frame_count: 27
+FPS: 13.66, frame_count: 14
+FPS: 29.41, frame_count: 30
+FPS: 27.85, frame_count: 28
+FPS: 26.13, frame_count: 27
+FPS: 26.44, frame_count: 27
+FPS: 28.35, frame_count: 29
+Ftime : 1729085676.419379
+FPS: 24.82, frame_count: 25
+FPS: 26.52, frame_count: 27
+FPS: 25.61, frame_count: 26
+FPS: 27.85, frame_count: 29
+FPS: 12.56, frame_count: 13
+FPS: 27.20, frame_count: 28
+FPS: 26.77, frame_count: 28
+FPS: 14.49, frame_count: 15
+FPS: 25.72, frame_count: 26
+FPS: 26.89, frame_count: 27
+FPS: 26.60, frame_count: 27
+FPS: 26.10, frame_count: 27
+FPS: 23.58, frame_count: 24
+FPS: 26.71, frame_count: 27
+FPS: 26.85, frame_count: 27
+FPS: 27.42, frame_count: 28
+FPS: 27.16, frame_count: 28
+FPS: 25.84, frame_count: 26
+FPS: 25.87, frame_count: 26
+FPS: 27.41, frame_count: 28
+FPS: 27.77, frame_count: 28
+FPS: 12.66, frame_count: 13
+FPS: 26.97, frame_count: 28
+Ftime : 1729085700.5829985
+FPS: 26.91, frame_count: 27
+FPS: 27.08, frame_count: 28
+FPS: 26.74, frame_count: 27
+FPS: 26.39, frame_count: 27
+FPS: 26.86, frame_count: 27
+FPS: 26.02, frame_count: 27
+FPS: 26.50, frame_count: 27
+FPS: 28.15, frame_count: 29
+FPS: 25.60, frame_count: 26
+FPS: 12.87, frame_count: 13
+FPS: 26.99, frame_count: 27
+FPS: 26.76, frame_count: 27
+FPS: 25.95, frame_count: 26
+FPS: 27.26, frame_count: 28
+FPS: 26.72, frame_count: 27
+FPS: 26.05, frame_count: 27
+FPS: 26.18, frame_count: 27
+FPS: 27.39, frame_count: 28
+FPS: 26.44, frame_count: 27
+FPS: 25.97, frame_count: 26
+FPS: 26.43, frame_count: 27
+FPS: 26.94, frame_count: 27
+FPS: 25.96, frame_count: 26
+FPS: 12.66, frame_count: 13
+Ftime : 1729085724.2078307
+FPS: 25.96, frame_count: 27
+FPS: 25.26, frame_count: 26
+FPS: 27.92, frame_count: 28
+FPS: 26.58, frame_count: 27
+FPS: 26.18, frame_count: 27
+FPS: 27.99, frame_count: 28
+FPS: 26.30, frame_count: 27
+FPS: 26.77, frame_count: 27
+FPS: 27.83, frame_count: 28
+FPS: 25.93, frame_count: 26
+FPS: 23.64, frame_count: 24
+FPS: 27.92, frame_count: 28
+FPS: 27.41, frame_count: 28
+FPS: 25.69, frame_count: 26
+FPS: 26.25, frame_count: 27
+FPS: 26.38, frame_count: 27
+FPS: 26.47, frame_count: 27
+FPS: 25.78, frame_count: 26
+FPS: 27.20, frame_count: 28
+FPS: 25.47, frame_count: 26
+FPS: 13.75, frame_count: 14
+FPS: 26.08, frame_count: 27
+Ftime : 1729085747.3565073
+FPS: 27.51, frame_count: 28
+FPS: 28.14, frame_count: 29
+FPS: 26.59, frame_count: 27
+FPS: 26.84, frame_count: 28
+FPS: 26.92, frame_count: 27
+FPS: 27.61, frame_count: 28
+FPS: 26.69, frame_count: 27
+FPS: 26.83, frame_count: 27
+FPS: 26.60, frame_count: 27
+FPS: 26.91, frame_count: 27
+FPS: 25.67, frame_count: 26
+FPS: 25.96, frame_count: 27
+FPS: 26.46, frame_count: 27
+FPS: 26.59, frame_count: 27
+FPS: 27.00, frame_count: 27
+FPS: 25.68, frame_count: 26
+FPS: 26.90, frame_count: 27
+FPS: 25.59, frame_count: 26
+FPS: 27.77, frame_count: 28
+FPS: 27.84, frame_count: 29
+FPS: 26.55, frame_count: 27
+FPS: 15.60, frame_count: 18
+FPS: 26.95, frame_count: 28
+Ftime : 1729085770.267179
+FPS: 26.31, frame_count: 27
+FPS: 25.93, frame_count: 26
+FPS: 27.22, frame_count: 28
+FPS: 26.47, frame_count: 27
+FPS: 25.51, frame_count: 26
+FPS: 26.27, frame_count: 27
+FPS: 3.54, frame_count: 4
+FPS: 26.13, frame_count: 27
+FPS: 26.96, frame_count: 27
+FPS: 25.44, frame_count: 26
+FPS: 25.09, frame_count: 26
+FPS: 26.89, frame_count: 27
+FPS: 27.44, frame_count: 28
+FPS: 27.37, frame_count: 28
+FPS: 25.42, frame_count: 26
+FPS: 25.49, frame_count: 26
+FPS: 25.87, frame_count: 26
+FPS: 27.13, frame_count: 28
+FPS: 16.94, frame_count: 23
+FPS: 12.39, frame_count: 13
+FPS: 26.22, frame_count: 27
+FPS: 25.62, frame_count: 26
+FPS: 26.24, frame_count: 27
+FPS: 26.38, frame_count: 27
+Ftime : 1729085795.1363204
+FPS: 25.59, frame_count: 26
+FPS: 25.99, frame_count: 26
+FPS: 26.24, frame_count: 27
+FPS: 27.93, frame_count: 28
+FPS: 25.37, frame_count: 26
+FPS: 27.29, frame_count: 28
+FPS: 26.77, frame_count: 27
+FPS: 12.86, frame_count: 13
+FPS: 27.33, frame_count: 28
+FPS: 27.69, frame_count: 28
+FPS: 29.77, frame_count: 30
+FPS: 59.72, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.49, frame_count: 61
+Ftime : 1729085811.4655204
+FPS: 59.59, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.79, frame_count: 61
+FPS: 59.58, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 60.57, frame_count: 61
+Ftime : 1729085821.4592934
+FPS: 59.38, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.99, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 60.37, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.53, frame_count: 60
+Ftime : 1729085831.467351
+FPS: 59.85, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 59.96, frame_count: 61
+Ftime : 1729085841.4685123
+FPS: 59.88, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.97, frame_count: 60
+Ftime : 1729085851.466768
+FPS: 59.55, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 60.74, frame_count: 61
+FPS: 59.33, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 59.98, frame_count: 60
+Ftime : 1729085861.4641104
+FPS: 60.30, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.77, frame_count: 61
+FPS: 60.16, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.78, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.96, frame_count: 60
+Ftime : 1729085871.4694116
+FPS: 59.80, frame_count: 61
+FPS: 60.35, frame_count: 61
+FPS: 59.70, frame_count: 60
+FPS: 60.69, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 59.80, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.28, frame_count: 61
+Ftime : 1729085881.4700983
+FPS: 59.75, frame_count: 60
+FPS: 60.54, frame_count: 61
+FPS: 59.45, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 59.82, frame_count: 61
+FPS: 60.37, frame_count: 61
+Ftime : 1729085891.4683247
+FPS: 59.59, frame_count: 60
+FPS: 59.94, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.33, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.89, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.91, frame_count: 60
+Ftime : 1729085901.4690619
+FPS: 60.04, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.28, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.91, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.84, frame_count: 60
+Ftime : 1729085911.4568179
+FPS: 59.88, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 59.93, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.29, frame_count: 61
+Ftime : 1729085921.4696321
+FPS: 59.65, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 60.20, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.35, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 59.94, frame_count: 60
+Ftime : 1729085931.467545
+FPS: 60.22, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.01, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.98, frame_count: 61
+FPS: 59.73, frame_count: 61
+FPS: 60.29, frame_count: 61
+Ftime : 1729085941.470172
+FPS: 59.76, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.74, frame_count: 61
+FPS: 60.17, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.15, frame_count: 61
+Ftime : 1729085951.4683077
+FPS: 59.84, frame_count: 60
+FPS: 60.42, frame_count: 61
+FPS: 59.56, frame_count: 60
+FPS: 59.99, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.91, frame_count: 60
+Ftime : 1729085961.4692974
+FPS: 59.81, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.65, frame_count: 61
+FPS: 59.50, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.59, frame_count: 60
+FPS: 60.44, frame_count: 61
+FPS: 59.59, frame_count: 60
+Ftime : 1729085971.4671643
+FPS: 60.07, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 59.92, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.93, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.38, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 59.80, frame_count: 60
+Ftime : 1729085981.4702284
+FPS: 60.45, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.34, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 59.88, frame_count: 60
+Ftime : 1729085991.470652
+FPS: 59.89, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.66, frame_count: 60
+FPS: 60.26, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 59.92, frame_count: 60
+Ftime : 1729086001.4660435
+FPS: 60.07, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.67, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 60.14, frame_count: 61
+Ftime : 1729086011.465259
+FPS: 60.43, frame_count: 61
+FPS: 59.40, frame_count: 60
+FPS: 59.83, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.93, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.86, frame_count: 60
+Ftime : 1729086021.4664207
+FPS: 59.91, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 59.69, frame_count: 60
+FPS: 59.93, frame_count: 60
+Ftime : 1729086031.4657018
+FPS: 60.27, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.86, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.88, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 60.02, frame_count: 61
+FPS: 60.22, frame_count: 61
+Ftime : 1729086041.471772
+FPS: 59.76, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.78, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.79, frame_count: 61
+FPS: 60.30, frame_count: 61
+FPS: 59.73, frame_count: 61
+Ftime : 1729086051.464923
+FPS: 60.04, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.21, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 59.92, frame_count: 61
+FPS: 60.15, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 59.92, frame_count: 61
+Ftime : 1729086061.4698675
+FPS: 60.34, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.32, frame_count: 61
+FPS: 59.75, frame_count: 60
+Ftime : 1729086071.4674692
+FPS: 59.79, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 60.09, frame_count: 61
+Ftime : 1729086081.469816
+FPS: 59.92, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.36, frame_count: 61
+FPS: 59.98, frame_count: 60
+Ftime : 1729086091.4722543
+FPS: 59.75, frame_count: 60
+FPS: 59.88, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.40, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.62, frame_count: 60
+Ftime : 1729086101.4702454
+FPS: 60.18, frame_count: 61
+FPS: 60.24, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.89, frame_count: 60
+FPS: 59.97, frame_count: 60
+Ftime : 1729086111.4669092
+FPS: 59.95, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.69, frame_count: 60
+FPS: 60.00, frame_count: 60
+FPS: 60.12, frame_count: 61
+Ftime : 1729086121.4704633
+FPS: 59.82, frame_count: 60
+FPS: 60.82, frame_count: 61
+FPS: 59.29, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.34, frame_count: 61
+FPS: 59.71, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 60.27, frame_count: 61
+Ftime : 1729086131.4653268
+FPS: 59.76, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.70, frame_count: 60
+FPS: 59.86, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.87, frame_count: 60
+Ftime : 1729086141.4718482
+FPS: 59.85, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 59.88, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.05, frame_count: 61
+Ftime : 1729086151.4657528
+FPS: 60.26, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.57, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.78, frame_count: 60
+FPS: 59.83, frame_count: 60
+FPS: 60.44, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.93, frame_count: 60
+Ftime : 1729086161.465367
+FPS: 59.65, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.24, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 60.20, frame_count: 61
+FPS: 60.07, frame_count: 61
+Ftime : 1729086171.4716592
+FPS: 59.76, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.59, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.98, frame_count: 60
+FPS: 60.25, frame_count: 61
+FPS: 59.93, frame_count: 60
+Ftime : 1729086181.470124
+FPS: 59.86, frame_count: 60
+FPS: 60.23, frame_count: 61
+FPS: 59.65, frame_count: 60
+FPS: 60.39, frame_count: 61
+FPS: 59.66, frame_count: 60
+FPS: 60.30, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 59.90, frame_count: 60
+FPS: 59.92, frame_count: 60
+Ftime : 1729086191.471022
+FPS: 60.05, frame_count: 61
+FPS: 59.96, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.26, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 60.14, frame_count: 61
+Ftime : 1729086201.4709613
+FPS: 60.07, frame_count: 61
+FPS: 59.88, frame_count: 60
+FPS: 60.27, frame_count: 61
+FPS: 59.61, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.91, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.56, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 59.68, frame_count: 60
+Ftime : 1729086211.4682527
+FPS: 60.03, frame_count: 61
+FPS: 60.20, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 59.85, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.10, frame_count: 61
+Ftime : 1729086221.4707265
+FPS: 59.98, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 60.03, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.11, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.72, frame_count: 60
+Ftime : 1729086231.4709692
+FPS: 60.33, frame_count: 61
+FPS: 59.59, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.80, frame_count: 61
+FPS: 60.34, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 59.92, frame_count: 61
+FPS: 60.25, frame_count: 61
+Ftime : 1729086241.4721262
+FPS: 59.98, frame_count: 60
+FPS: 60.04, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.36, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 60.20, frame_count: 61
+Ftime : 1729086251.4643934
+FPS: 59.83, frame_count: 60
+FPS: 60.12, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 59.81, frame_count: 60
+FPS: 59.89, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.91, frame_count: 60
+Ftime : 1729086261.4710743
+FPS: 60.12, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 60.14, frame_count: 61
+FPS: 59.99, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.92, frame_count: 60
+Ftime : 1729086271.4696825
+FPS: 60.25, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.37, frame_count: 61
+FPS: 59.65, frame_count: 61
+FPS: 60.23, frame_count: 61
+FPS: 60.12, frame_count: 61
+FPS: 59.82, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 59.74, frame_count: 60
+Ftime : 1729086281.469341
+FPS: 60.54, frame_count: 61
+FPS: 59.72, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.60, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.82, frame_count: 61
+FPS: 60.34, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.08, frame_count: 61
+Ftime : 1729086291.4650757
+FPS: 59.72, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 60.06, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.94, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 59.72, frame_count: 61
+FPS: 60.38, frame_count: 61
+FPS: 59.76, frame_count: 60
+Ftime : 1729086301.4683034
+FPS: 59.86, frame_count: 60
+FPS: 60.19, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 60.04, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 59.81, frame_count: 60
+FPS: 60.29, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.75, frame_count: 60
+Ftime : 1729086311.4696069
+FPS: 59.91, frame_count: 60
+FPS: 60.06, frame_count: 61
+FPS: 60.23, frame_count: 61
+FPS: 59.68, frame_count: 60
+FPS: 60.33, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 59.69, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 60.33, frame_count: 61
+Ftime : 1729086321.4723
+FPS: 59.78, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.71, frame_count: 60
+FPS: 60.00, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 59.57, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.18, frame_count: 61
+Ftime : 1729086331.4710586
+FPS: 60.15, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.05, frame_count: 61
+FPS: 59.80, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.92, frame_count: 61
+FPS: 60.31, frame_count: 61
+FPS: 59.64, frame_count: 61
+FPS: 60.27, frame_count: 61
+FPS: 59.96, frame_count: 60
+Ftime : 1729086341.46726
+FPS: 60.19, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 59.87, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.07, frame_count: 61
+FPS: 60.34, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.84, frame_count: 60
+FPS: 59.74, frame_count: 61
+FPS: 60.06, frame_count: 61
+Ftime : 1729086351.4668775
+FPS: 60.12, frame_count: 61
+FPS: 60.13, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 59.91, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 60.17, frame_count: 61
+FPS: 59.84, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 59.97, frame_count: 61
+Ftime : 1729086361.4714468
+FPS: 59.78, frame_count: 60
+FPS: 59.92, frame_count: 60
+FPS: 60.16, frame_count: 61
+FPS: 59.85, frame_count: 60
+FPS: 60.35, frame_count: 61
+FPS: 59.77, frame_count: 60
+FPS: 60.15, frame_count: 61
+FPS: 59.71, frame_count: 61
+FPS: 60.25, frame_count: 61
+FPS: 59.93, frame_count: 60
+Ftime : 1729086371.4721084
+FPS: 59.97, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 59.97, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 59.88, frame_count: 60
+FPS: 60.49, frame_count: 61
+FPS: 59.56, frame_count: 60
+FPS: 60.93, frame_count: 61
+FPS: 59.36, frame_count: 60
+FPS: 59.71, frame_count: 60
+Ftime : 1729086381.468757
+FPS: 60.00, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 60.09, frame_count: 61
+FPS: 59.90, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 60.10, frame_count: 61
+FPS: 59.70, frame_count: 61
+FPS: 60.28, frame_count: 61
+FPS: 59.83, frame_count: 60
+FPS: 60.13, frame_count: 61
+Ftime : 1729086391.4678981
+FPS: 60.19, frame_count: 61
+FPS: 59.94, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.62, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 59.96, frame_count: 61
+FPS: 59.96, frame_count: 61
+FPS: 60.86, frame_count: 61
+Ftime : 1729086401.4714253
+FPS: 59.36, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.05, frame_count: 61
+FPS: 59.74, frame_count: 61
+FPS: 60.19, frame_count: 61
+FPS: 60.24, frame_count: 61
+FPS: 59.95, frame_count: 60
+FPS: 59.97, frame_count: 60
+FPS: 59.72, frame_count: 61
+FPS: 59.98, frame_count: 60
+Ftime : 1729086411.471463
+FPS: 60.39, frame_count: 61
+FPS: 59.64, frame_count: 60
+FPS: 60.10, frame_count: 61
+FPS: 60.18, frame_count: 61
+FPS: 59.87, frame_count: 60
+FPS: 60.14, frame_count: 61
+FPS: 59.69, frame_count: 60
+FPS: 60.34, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.27, frame_count: 61
+Ftime : 1729086421.4700148
+FPS: 59.84, frame_count: 60
+FPS: 60.21, frame_count: 61
+FPS: 59.51, frame_count: 60
+FPS: 60.32, frame_count: 61
+FPS: 60.00, frame_count: 60
+FPS: 59.78, frame_count: 61
+FPS: 60.29, frame_count: 61
+FPS: 55.69, frame_count: 56
+FPS: 28.95, frame_count: 29
+FPS: 28.90, frame_count: 29
+FPS: 26.96, frame_count: 27
+FPS: 29.14, frame_count: 30
+FPS: 28.63, frame_count: 29
+Ftime : 1729086434.4781675
+FPS: 28.59, frame_count: 29
+FPS: 28.45, frame_count: 29
+FPS: 29.19, frame_count: 30
+FPS: 28.05, frame_count: 29
+FPS: 29.23, frame_count: 30
+FPS: 29.21, frame_count: 30
+FPS: 28.86, frame_count: 30
+FPS: 29.22, frame_count: 30
+FPS: 28.02, frame_count: 29
+FPS: 29.14, frame_count: 30
+FPS: 29.16, frame_count: 30
+FPS: 28.95, frame_count: 29
+FPS: 26.66, frame_count: 27
+FPS: 28.90, frame_count: 29
+FPS: 29.16, frame_count: 30
+FPS: 29.65, frame_count: 30
+FPS: 27.83, frame_count: 28
+FPS: 28.63, frame_count: 29
+FPS: 27.85, frame_count: 28
+FPS: 28.46, frame_count: 29
+FPS: 28.53, frame_count: 29
+Ftime : 1729086455.4259923
+FPS: 29.44, frame_count: 30
+FPS: 28.36, frame_count: 29
+FPS: 28.71, frame_count: 29
+FPS: 27.42, frame_count: 28
+FPS: 28.84, frame_count: 29
+FPS: 28.36, frame_count: 29
+FPS: 28.33, frame_count: 29
+FPS: 29.16, frame_count: 30
+FPS: 29.50, frame_count: 30
+FPS: 29.59, frame_count: 30
+FPS: 28.83, frame_count: 30
+FPS: 28.95, frame_count: 29
+FPS: 29.16, frame_count: 30
+FPS: 29.44, frame_count: 30
+FPS: 28.51, frame_count: 29
+FPS: 28.53, frame_count: 29
+FPS: 28.57, frame_count: 29
+FPS: 29.50, frame_count: 30
+FPS: 29.62, frame_count: 30
+FPS: 28.50, frame_count: 29
+Ftime : 1729086476.2011895
+FPS: 19.96, frame_count: 27
+FPS: 24.43, frame_count: 25
+FPS: 25.94, frame_count: 26
+FPS: 12.73, frame_count: 13
+FPS: 13.97, frame_count: 16
+FPS: 26.27, frame_count: 27
+FPS: 24.83, frame_count: 25
+FPS: 25.82, frame_count: 26
+FPS: 26.57, frame_count: 27
+FPS: 46.96, frame_count: 47
+FPS: 59.95, frame_count: 61
+FPS: 59.76, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 59.98, frame_count: 60
+Ftime : 1729086492.2395604
+FPS: 59.96, frame_count: 60
+FPS: 59.97, frame_count: 61
+FPS: 60.23, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.31, frame_count: 61
+FPS: 59.63, frame_count: 60
+FPS: 60.09, frame_count: 61
+FPS: 59.98, frame_count: 60
+FPS: 60.22, frame_count: 61
+FPS: 59.94, frame_count: 60
+Ftime : 1729086502.238482
+FPS: 60.18, frame_count: 61
+FPS: 59.75, frame_count: 60
+FPS: 59.95, frame_count: 60
+FPS: 59.89, frame_count: 61
+FPS: 60.07, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.43, frame_count: 61
+FPS: 59.56, frame_count: 60
+FPS: 60.02, frame_count: 61
+FPS: 60.45, frame_count: 61
+Ftime : 1729086512.2323952
+FPS: 59.85, frame_count: 61
+FPS: 59.74, frame_count: 60
+FPS: 59.96, frame_count: 60
+FPS: 60.13, frame_count: 61
+FPS: 59.99, frame_count: 60
+FPS: 59.94, frame_count: 60
+FPS: 59.99, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 59.93, frame_count: 60
+FPS: 60.28, frame_count: 61
+Ftime : 1729086522.2416422
+FPS: 59.77, frame_count: 60
+FPS: 60.18, frame_count: 61
+FPS: 59.99, frame_count: 61
+FPS: 59.79, frame_count: 60
+FPS: 60.11, frame_count: 61
+FPS: 59.90, frame_count: 61
+FPS: 59.95, frame_count: 61
+FPS: 60.35, frame_count: 61
+FPS: 59.73, frame_count: 60
+FPS: 60.35, frame_count: 61
+Ftime : 1729086532.2375977
+FPS: 59.60, frame_count: 60
+FPS: 60.03, frame_count: 61
+FPS: 60.08, frame_count: 61
+FPS: 59.92, frame_count: 60
+FPS: 60.08, frame_count: 61
+FPS: 59.90, frame_count: 61
+FPS: 60.63, frame_count: 61
+FPS: 59.46, frame_count: 60
+FPS: 60.17, frame_count: 61
+FPS: 60.55, frame_count: 61
+Ftime : 1729086542.2307382
+FPS: 59.33, frame_count: 60
+FPS: 59.68, frame_count: 60
+FPS: 60.59, frame_count: 62
+FPS: 59.55, frame_count: 60
+FPS: 60.48, frame_count: 61
