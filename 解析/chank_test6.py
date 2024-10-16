@@ -123,6 +123,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 # received_data.append(result.decode())  # グローバル配列に追加
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
+                    int_list_data = iir_real_time(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
@@ -134,8 +135,8 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 with lock:
                     clock_signal_1.value = True
                     clock_signal_2.value = True
-                    # receive_value[:] = int_list_data #フィルタ無し
-                    receive_value[:] = iir_real_time(int_list_data, a, b, y_prev, x_prev)
+                    receive_value[:] = int_list_data #フィルタ無し
+                    # receive_value[:] = iir_real_time(int_list_data, a, b, y_prev, x_prev)
                     # print("receive_value: ", receive_value)
                     # print(type(receive_value))
 
