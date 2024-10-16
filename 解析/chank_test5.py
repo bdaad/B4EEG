@@ -983,11 +983,12 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     # print("行: ", len(chank_copy))#行数
                     # print("列: ", len(chank_copy[0]))#列数
 
-                    plot_multiple_lines(chank_copy)
+                    # plot_multiple_lines(chank_copy)
+                    print("11111111111111111111")
                     flag = True
                 
                 elif analysis_flag.value == False and flag == True:
-                    print("分析終了")
+                    print("22222222222222222222")
                     flag = False
 
                 
