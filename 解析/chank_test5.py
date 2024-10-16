@@ -965,11 +965,13 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                         chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                         analysis_flag.value = False
                     # chank_copyの要素を出力する
-                    print("chank_copy")
-                    for row in chank_copy:
-                        print(row)
-                    break
-        break
+                    # print("chank_copy")
+                    # for row in chank_copy:
+                    #     print(row)
+                    
+                    print(len(chank_copy))#行数
+                    print(len(chank_copy[0]))#列数
+                    
                 
 
 
