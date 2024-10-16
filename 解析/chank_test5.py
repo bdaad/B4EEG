@@ -9,6 +9,7 @@
 import time
 from datetime import datetime
 from multiprocessing.managers import ListProxy
+import sys
 
 # 現在の日時をファイル名に追加
 current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -505,6 +506,10 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             glLoadIdentity()
             glTranslatef(0.0, 0.0, -5)
             fullscreen = False
+
+        # TABキーでプログラムを終了
+        if glfw.get_key(window, glfw.KEY_TAB) == glfw.PRESS:
+            sys.exit()
 
         glfw.swap_buffers(window)
         glfw.poll_events()
