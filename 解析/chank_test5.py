@@ -985,9 +985,8 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     print("分析終了")
                     print("分析終了")
                     time.sleep(1000)
-                else:
-                    print("flag analysis is None: ", analysis_flag.value)
-                    time.sleep(1000)
+        else:
+            print("分析3")
                     
                 
 import matplotlib.pyplot as plt
