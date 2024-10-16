@@ -131,7 +131,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
             time.sleep(sleep_time)  # 必要な場合のみスリープ
     
 
-
+import numpy as np
 
 # 1000Hzでデータ要求を送信しないで、受信も行い、データの数をカウントする関数
 def communicate_and_count_test(ser , received_list, receive_value, clock_signal_1, clock_signal_2, lock):
@@ -153,8 +153,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     a = [1.0, -1.9714359701251216, 0.9751778761806491]  # フィルタの係数a
     b = [0.9875889380903244, -1.9714359701251216, 0.9875889380903244] # フィルタの係数b
     # 過去の値を保持する配列
-    y_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
-    x_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
+    y_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値を保持する配列
+    x_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値を保持する配列
     # サンプリングレートを入力: 1000
     # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BPF
     # カットオフ周波数下限fc1を入力: 3
