@@ -1041,7 +1041,7 @@ def plot_phase_ana(y_values):
     plt.grid(True)
 
 
-    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
     file_name_path = f'./plt_img/phase_{current_time}.png'
     # dir_path = './plt_img'
     # path = os.path.join(dir_path, file_name)
