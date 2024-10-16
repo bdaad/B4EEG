@@ -485,8 +485,9 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
         # 1秒ごとにFPSを計算して出力
         if current_time - previous_time >= 1.0:
             fps = frame_count / (current_time - previous_time)
-            print(f"FPS: {fps:.2f}")
-            print(f"frame_count: {frame_count}")
+            # print(f"FPS: {fps:.2f}")
+            # print(f"frame_count: {frame_count}")
+            print(f"FPS: {fps:.2f}, frame_count: {frame_count}")
             previous_time = current_time
             frame_count = 0
 
