@@ -155,6 +155,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                     clock_signal_1.value = True
                     clock_signal_2.value = True
                     receive_value[:] = int_list_data
+        else:
+            print("No data")
 
 
 
