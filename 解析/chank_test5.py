@@ -966,9 +966,9 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                         analysis_flag.value = False
 
                     # chank_copyの要素を出力する
-                    # print("chank_copy")
-                    # for row in chank_copy:
-                    #     print(row)
+                    print("chank_copy")
+                    for row in chank_copy:
+                        print(row)
                     
                     # print("行: ", len(chank_copy))#行数
                     # print("列: ", len(chank_copy[0]))#列数
