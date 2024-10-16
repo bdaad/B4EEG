@@ -491,7 +491,7 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             frame_count = 0
 
         if blinking_image.frame_count_not_reset % 600 == 0:
-            print("frame_count: ", blinking_image.frame_count_not_reset)
+            # print("frame_count: ", blinking_image.frame_count_not_reset)
             print("Ftime :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
