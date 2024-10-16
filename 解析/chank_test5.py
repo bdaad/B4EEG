@@ -1025,7 +1025,7 @@ def plot_multiple_lines(y_values):
 
 
 def plot_phase_ana(y_values):
-    x = np.linspace(1, 10, 10)  # 0から10までの100個の等間隔の点
+    x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
