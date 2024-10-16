@@ -952,7 +952,7 @@ def func_chank_all(receive_value, flag_blink_A, flag_blink_B, chank_list_A, chan
 
 def func_analysis(adjust_chank_list, analysis_flag, lock):
     chank_copy = []
-    time.sleep(3)
+    time.sleep(4)
     print("分析")
     while True:
         if len(adjust_chank_list) >= 20:
