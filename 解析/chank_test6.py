@@ -123,7 +123,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 # received_data.append(result.decode())  # グローバル配列に追加
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
-                    int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
+                    int_list_data = [10,10,10]
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
