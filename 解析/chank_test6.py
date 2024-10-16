@@ -79,21 +79,6 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
     t = 1
     last_data = None # 最後に受信したデータ(補間用)
 
-    # フィルタのパラメータ設定
-    fs = 1000  # サンプリングレート
-    fc_digital = 10.0  # カットオフ周波数（テスト用）
-    a = [1.0, -1.9714359701251216, 0.9751778761806491]  # フィルタの係数a
-    b = [0.9875889380903244, -1.9714359701251216, 0.9875889380903244] # フィルタの係数b
-    # 過去の値を保持する配列
-    y_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
-    x_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
-    # サンプリングレートを入力: 1000
-    # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BPF
-    # カットオフ周波数下限fc1を入力: 3
-    # カットオフ周波数下限fc2を入力: 20
-    # テスト用正弦波の周波数: 50
-    # a: [1.0, -1.8962594398557984, 0.8985096404962453]
-    # b: [0.05074517975187733, 0.0, -0.05074517975187733]
 
 
     while True:
@@ -123,7 +108,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 # received_data.append(result.decode())  # グローバル配列に追加
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
-                    int_list_data = [10,10,10]
+                    # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
@@ -160,6 +145,24 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     t2 = 1
     last_data = [0,0,0] # 最後に受信したデータ(補間用)
 
+
+    # フィルタのパラメータ設定
+    fs = 1000  # サンプリングレート
+    fc_digital = 10.0  # カットオフ周波数（テスト用）
+    a = [1.0, -1.9714359701251216, 0.9751778761806491]  # フィルタの係数a
+    b = [0.9875889380903244, -1.9714359701251216, 0.9875889380903244] # フィルタの係数b
+    # 過去の値を保持する配列
+    y_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
+    x_prev = [[0.0, 0.0],[0.0, 0.0],[0.0, 0.0]]
+    # サンプリングレートを入力: 1000
+    # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BPF
+    # カットオフ周波数下限fc1を入力: 3
+    # カットオフ周波数下限fc2を入力: 20
+    # テスト用正弦波の周波数: 50
+    # a: [1.0, -1.8962594398557984, 0.8985096404962453]
+    # b: [0.05074517975187733, 0.0, -0.05074517975187733]
+
+
     while True:
     # for i in range(10000000):
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
@@ -184,7 +187,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 data_count_10 += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
                 try:
-                    int_list_data = [int(x) for x in result.decode().split(',')]
+                    # int_list_data = [int(x) for x in result.decode().split(',')]
+                    int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
