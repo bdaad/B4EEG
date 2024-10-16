@@ -955,7 +955,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
     time.sleep(3)
     print("分析")
     while True:
-        print("分析2")
+        # print("分析2")
         if len(adjust_chank_list) >= 20:
             while True:
                 if analysis_flag.value == True:
@@ -985,9 +985,9 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     print("分析終了")
                     print("分析終了")
                     time.sleep(1000)
-        else:
-            print("len : ", len(adjust_chank_list))
-            time.sleep(0.0011)
+        # else:
+        #     print("len : ", len(adjust_chank_list))
+        #     time.sleep(0.0011)
                     
                 
 import matplotlib.pyplot as plt
