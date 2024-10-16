@@ -564,7 +564,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_10hz")
 
     while True:
-        if po >= 500:
+        if po >= 200:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
@@ -647,7 +647,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_12hz")
 
     while True:
-        if po >= 500:
+        if po >= 200:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
