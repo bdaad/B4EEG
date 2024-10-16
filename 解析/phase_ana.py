@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import time
+import datetime
 
 # 1000hz用
 
@@ -18,6 +20,13 @@ def plot_phase_ana(y_values):
     plt.ylabel('Y axis')
     plt.legend(loc='upper right')
     plt.grid(True)
+
+
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name_path = f'./plt_img/phase_{current_time}.png'
+    
+    # グラフを保存 (ファイル名は現在の時刻)
+    plt.savefig(file_name_path)
 
     # グラフの表示
     plt.show()

@@ -991,6 +991,12 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     flag = True
                 
                 elif analysis_flag.value == False and flag == True:
+                    with lock:
+                        # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
+                        chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
+                        analysis_flag.value = True
+
+                    plot_phase_ana(chank_copy)
                     print("22222222222222222222")
                     flag = False
 
@@ -1019,10 +1025,14 @@ def plot_multiple_lines(y_values):
     plt.legend(loc='upper right')
     plt.grid(True)
 
+
+
     # グラフの表示
     plt.show()
 
 
+import datetime
+# import os
 
 def plot_phase_ana(y_values):
     x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
@@ -1040,8 +1050,16 @@ def plot_phase_ana(y_values):
     plt.legend(loc='upper right')
     plt.grid(True)
 
+
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name_path = f'./plt_img/phase_{current_time}.png'
+    # dir_path = './plt_img'
+    # path = os.path.join(dir_path, file_name)
+    # グラフを保存 (ファイル名は現在の時刻)
+    plt.savefig(file_name_path)
+
     # グラフの表示
-    plt.show()
+    # plt.show()
 
 
 
