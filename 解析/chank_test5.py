@@ -569,7 +569,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_10hz")
 
     while True:
-        if po >= 1000:
+        if po >= 10000:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
@@ -630,7 +630,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("len of chank_list 10Hz: ", len(chank_list))               
     # 各行の列数を出力
     for i, row in enumerate(chank_list):
-        if( i > 799): 
+        if( i > 9500): 
             print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
 
 
@@ -657,7 +657,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_12hz")
 
     while True:
-        if po >= 1000:
+        if po >= 10000:
             break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
@@ -710,7 +710,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("len of chank_list 12Hz: ", len(chank_list))               
     # 各行の列数を出力
     for i, row in enumerate(chank_list):
-        if( i > 799):
+        if( i > 9500):
             print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
                 
             # print("adjust_chank_list")
