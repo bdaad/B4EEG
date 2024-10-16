@@ -958,7 +958,7 @@ def func_chank_all(receive_value, flag_blink_A, flag_blink_B, chank_list_A, chan
 
 def func_analysis(adjust_chank_list, analysis_flag, lock):
     chank_copy = []
-    flag = False
+    # flag = False
     time.sleep(3)
     print("分析")
     
@@ -966,7 +966,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
         # print("分析2")
         if len(adjust_chank_list) >= 20:
             while True:
-                if analysis_flag.value == True and flag == False:
+                if analysis_flag.value == True:
                     print("分析開始")
                     print("分析開始")
                     print("分析開始")
@@ -988,17 +988,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     plot_phase_ana(chank_copy)
                     print("11111111111111111111")
                     print(time.time())
-                    flag = True
-                
-                elif analysis_flag.value == False and flag == True:
-                    with lock:
-                        # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                        chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
-                        analysis_flag.value = True
-
-                    plot_phase_ana(chank_copy)
-                    print("22222222222222222222")
-                    flag = False
+                    # flag = True
 
                 
 import matplotlib.pyplot as plt
