@@ -29,11 +29,12 @@ def append_data_to_file(file_name, list):
 
 
 
-def iir_real_time(x, a, b, y_prev, x_prev):
-    """1サンプルずつIIRフィルタをかける。y_prev: 直前のフィルタ出力、x_prev: 直前の入力"""
+def iir_real_time_3ch(x, a, b, y_prev, x_prev):
+    """3チャンネル用IIRフィルタをかける"""
     y1 = b[0] * x[0] + b[1] * x_prev[0,0] + b[2] * x_prev[0,1] - a[1] * y_prev[0,0] - a[2] * y_prev[0,1]
     y2 = b[0] * x[1] + b[1] * x_prev[1,0] + b[2] * x_prev[1,1] - a[1] * y_prev[1,0] - a[2] * y_prev[1,1]
     y3 = b[0] * x[2] + b[1] * x_prev[2,0] + b[2] * x_prev[2,1] - a[1] * y_prev[2,0] - a[2] * y_prev[2,1]
+
     # 直前のサンプルを更新
     x_prev[0,1], x_prev[0,0] = x_prev[0,0], x[0]
     x_prev[1,1], x_prev[1,0] = x_prev[1,0], x[1]
@@ -43,8 +44,7 @@ def iir_real_time(x, a, b, y_prev, x_prev):
     y_prev[1,1], y_prev[1,0] = y_prev[1,0], y2
     y_prev[2,1], y_prev[2,0] = y_prev[2,0], y3
 
-    y = [y1, y2, y3]
-    return y
+    return [y1, y2, y3]
 
 
 # /**************Serial関連**********************************************/
@@ -123,7 +123,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 # received_data.append(result.decode())  # グローバル配列に追加
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
-                    int_list_data = iir_real_time(int_list_data, a, b, y_prev, x_prev)
+                    int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
@@ -135,7 +135,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
                 with lock:
                     clock_signal_1.value = True
                     clock_signal_2.value = True
-                    receive_value[:] = int_list_data #フィルタ無し
+                    receive_value[:] = int_list_data
                     # receive_value[:] = iir_real_time(int_list_data, a, b, y_prev, x_prev)
                     # print("receive_value: ", receive_value)
                     # print(type(receive_value))
