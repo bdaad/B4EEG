@@ -969,8 +969,8 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     # for row in chank_copy:
                     #     print(row)
                     
-                    print(len(chank_copy))#行数
-                    print(len(chank_copy[0]))#列数
+                    print("行: ", len(chank_copy))#行数
+                    print("列: ", len(chank_copy[0]))#列数
                     
                 
 
