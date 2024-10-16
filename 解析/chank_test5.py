@@ -1041,14 +1041,14 @@ def main():
     # プロセスの開始
     process1.start()
     process2.start()
-    # process3.start()
+    process3.start()
     process4.start()
     # process5.start()
 
     # プロセスの終了を待つ
     process1.join()
     process2.join()
-    # process3.join()
+    process3.join()
     process4.join()
     # process5.join()
 # /***********************************************************/
