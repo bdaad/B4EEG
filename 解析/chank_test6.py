@@ -51,8 +51,8 @@ def iir_real_time_3ch(x, a, b, y_prev, x_prev):
     
     # 現在の入力値 x とフィルタ係数を NumPy配列として処理
     x = np.array(x)
-    b = np.array(b)
-    a = np.array(a)
+    # b = np.array(b)
+    # a = np.array(a)
     
     # 3チャンネルのフィルタ適用 (ベクトル化)
     y = (b[0] * x + b[1] * x_prev[:, 0] + b[2] * x_prev[:, 1]
@@ -168,8 +168,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
     # フィルタのパラメータ設定
     fs = 1000  # サンプリングレート
-    a = [1.0, -1.8962594398557984, 0.8985096404962453]
-    b = [0.05074517975187733, 0.0, -0.05074517975187733]
+    a = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
+    b = np.array([0.05074517975187733, 0.0, -0.05074517975187733])
     # 過去の値を保持する配列
     y_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値を保持する配列
     x_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値を保持する配列

@@ -153,26 +153,47 @@ def generate_test_tone(frequency, duration, fs):
     t = np.linspace(0, duration, int(fs * duration), endpoint=False)
     return 0.5 * np.sin(2 * np.pi * frequency * t), t
 
+# def iir_real_time_3ch(x, a, b, y_prev, x_prev):
+#     """3チャンネル用IIRフィルタをかける"""
+#     y1 = b[0] * x[0] + b[1] * x_prev[0,0] + b[2] * x_prev[0,1] - a[1] * y_prev[0,0] - a[2] * y_prev[0,1]
+#     y2 = b[0] * x[1] + b[1] * x_prev[1,0] + b[2] * x_prev[1,1] - a[1] * y_prev[1,0] - a[2] * y_prev[1,1]
+#     y3 = b[0] * x[2] + b[1] * x_prev[2,0] + b[2] * x_prev[2,1] - a[1] * y_prev[2,0] - a[2] * y_prev[2,1]
+
+#     # 直前のサンプルを更新
+#     x_prev[0,1], x_prev[0,0] = x_prev[0,0], x[0]
+#     x_prev[1,1], x_prev[1,0] = x_prev[1,0], x[1]
+#     x_prev[2,1], x_prev[2,0] = x_prev[2,0], x[2]
+
+#     y_prev[0,1], y_prev[0,0] = y_prev[0,0], y1
+#     y_prev[1,1], y_prev[1,0] = y_prev[1,0], y2
+#     y_prev[2,1], y_prev[2,0] = y_prev[2,0], y3
+
+#     return [y1, y2, y3]
+
+
+
+
 def iir_real_time_3ch(x, a, b, y_prev, x_prev):
-    """3チャンネル用IIRフィルタをかける"""
-    y1 = b[0] * x[0] + b[1] * x_prev[0,0] + b[2] * x_prev[0,1] - a[1] * y_prev[0,0] - a[2] * y_prev[0,1]
-    y2 = b[0] * x[1] + b[1] * x_prev[1,0] + b[2] * x_prev[1,1] - a[1] * y_prev[1,0] - a[2] * y_prev[1,1]
-    y3 = b[0] * x[2] + b[1] * x_prev[2,0] + b[2] * x_prev[2,1] - a[1] * y_prev[2,0] - a[2] * y_prev[2,1]
+    """3チャンネル用IIRフィルタをかける (NumPyによるベクトル化)"""
+    
+    # 現在の入力値 x とフィルタ係数を NumPy配列として処理
+    x = np.array(x)
+    # b = np.array(b)
+    # a = np.array(a)
+    
+    # 3チャンネルのフィルタ適用 (ベクトル化)
+    y = (b[0] * x + b[1] * x_prev[:, 0] + b[2] * x_prev[:, 1]
+         - a[1] * y_prev[:, 0] - a[2] * y_prev[:, 1])
+    
+    # 直前のサンプルを更新 (ベクトル化)
+    x_prev[:, 1], x_prev[:, 0] = x_prev[:, 0], x
+    y_prev[:, 1], y_prev[:, 0] = y_prev[:, 0], y
 
-    # 直前のサンプルを更新
-    x_prev[0,1], x_prev[0,0] = x_prev[0,0], x[0]
-    x_prev[1,1], x_prev[1,0] = x_prev[1,0], x[1]
-    x_prev[2,1], x_prev[2,0] = x_prev[2,0], x[2]
-
-    y_prev[0,1], y_prev[0,0] = y_prev[0,0], y1
-    y_prev[1,1], y_prev[1,0] = y_prev[1,0], y2
-    y_prev[2,1], y_prev[2,0] = y_prev[2,0], y3
-
-    return [y1, y2, y3]
+    return y.tolist()  # リスト形式で返す
 
 # フィルタのパラメータ設定
 fs = 1000  # サンプリングレート
-a, b = [1.0, -1.8, 0.81], [0.1, 0.2, 0.1]  # 仮のフィルタ係数
+a, b = np.array([1.0, -1.8, 0.81]), np.array([0.1, 0.2, 0.1])  # 仮のフィルタ係数
 
 # 過去の値を保持する配列
 y_prev = np.zeros((3, 2))  # 3チャンネル、2次フィルタ
