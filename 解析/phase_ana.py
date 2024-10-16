@@ -12,8 +12,12 @@ def plot_phase_ana(y_values):
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
     # 各行の最大値を取得
-    max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
-    plt.scatter(x, max_values_per_row, label='max_values_per_row')
+    # max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
+    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
+    # print(max_values_per_row)
+    # plt.scatter(x, max_values_per_row, label='max_values_per_row')
+    print(max_indices_per_row)
+    plt.scatter(x, max_indices_per_row, label='max_indices_per_row')
 
     plt.title('Multiple Lines on the Same Graph')
     plt.xlabel('X axis')
@@ -32,7 +36,7 @@ def plot_phase_ana(y_values):
     plt.show()
 
 # 関数をテスト
-x = np.linspace(0, 10, 100)  # 0から10までの100個の等間隔の点
-y_values = [np.sin(x + i) for i in range(10)]  # 10個の異なるsin波を生成
+x = np.linspace(0, 5, 100)  # 0から10までの100個の等間隔の点
+y_values = [np.sin(x) for i in range(10)]  # 10個の異なるsin波を生成
 
 plot_phase_ana(y_values)

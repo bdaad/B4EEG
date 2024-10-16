@@ -1036,8 +1036,12 @@ def plot_phase_ana(y_values, count):
 
     if count % 10 == 0:
         # 各行の最大値を取得
-        max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
-        plt.scatter(x, max_values_per_row, label='max_values_per_row')
+        # max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
+        max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
+        # print(max_values_per_row)
+        # plt.scatter(x, max_values_per_row, label='max_values_per_row')
+        print(max_indices_per_row)
+        plt.scatter(x, max_indices_per_row, label='max_indices_per_row')
 
         plt.title('Multiple Lines on the Same Graph')
         plt.xlabel('X axis')
