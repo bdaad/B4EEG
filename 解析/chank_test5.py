@@ -613,7 +613,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     # print("chank_list: ", chank_list)
     # テキストファイルにデータを追記
     # append_data_to_file(receive_data_txt, adjust_chank_list)
-        if po % 100 == 0 and po != 0:
+        if po % 500 == 0 and po != 0:
             print("len of chank_list 10Hz: ", len(chank_list))               
             # 各行の列数を出力
             for i, row in enumerate(chank_list):
@@ -690,7 +690,7 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     # print("chank_list: ", chank_list)
     # テキストファイルにデータを追記
     # append_data_to_file(receive_data_txt, adjust_chank_list)
-        if po % 100 == 0 and po != 0:
+        if po % 500 == 0 and po != 0:
             print("len of chank_list 12Hz: ", len(chank_list))               
             # 各行の列数を出力
             for i, row in enumerate(chank_list):
