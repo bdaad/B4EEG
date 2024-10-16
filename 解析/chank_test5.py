@@ -564,8 +564,8 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_10hz")
 
     while True:
-        if po >= 100:
-            break
+        # if po >= 100:
+        #     break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
             with lock:
@@ -613,14 +613,15 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     # print("chank_list: ", chank_list)
     # テキストファイルにデータを追記
     # append_data_to_file(receive_data_txt, adjust_chank_list)
-    print("len of chank_list 10Hz: ", len(chank_list))               
-    # 各行の列数を出力
-    for i, row in enumerate(chank_list):
-        print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
-    print("adjust_chank_list")
-    # 各行の列数を出力
-    for i, row in enumerate(adjust_chank_list):
-        print(f"Row {i+1} length: {len(row)}")
+        if po % 100 == 0:
+            print("len of chank_list 10Hz: ", len(chank_list))               
+            # 各行の列数を出力
+            for i, row in enumerate(chank_list):
+                print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
+            print("adjust_chank_list")
+            # 各行の列数を出力
+            for i, row in enumerate(adjust_chank_list):
+                print(f"Row {i+1} length: {len(row)}")
 
     
 
@@ -639,8 +640,8 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     print("func_chank_12hz")
 
     while True:
-        if po >= 100:
-            break
+        # if po >= 100:
+        #     break
         #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
             with lock:
@@ -688,14 +689,15 @@ def func_chank_12hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     # print("chank_list: ", chank_list)
     # テキストファイルにデータを追記
     # append_data_to_file(receive_data_txt, adjust_chank_list)
-    print("len of chank_list 12Hz: ", len(chank_list))               
-    # 各行の列数を出力
-    for i, row in enumerate(chank_list):
-        print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
-    print("adjust_chank_list")
-    # 各行の列数を出力
-    for i, row in enumerate(adjust_chank_list):
-        print(f"Row {i+1} length: {len(row)}")
+        if po % 100 == 0:
+            print("len of chank_list 12Hz: ", len(chank_list))               
+            # 各行の列数を出力
+            for i, row in enumerate(chank_list):
+                print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
+            print("adjust_chank_list")
+            # 各行の列数を出力
+            for i, row in enumerate(adjust_chank_list):
+                print(f"Row {i+1} length: {len(row)}")
 
 
 
