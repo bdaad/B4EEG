@@ -969,6 +969,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     for row in chank_copy:
                         print(row)
                     break
+        break
                 
 
 
