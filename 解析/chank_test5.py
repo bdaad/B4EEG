@@ -1008,7 +1008,7 @@ def plot_multiple_lines(y_values, count):
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    if count % 10 == 0:
+    if count % 50 == 0:
         for i, y in enumerate(y_values):
             plt.plot(x, y, label=f'Line {i+1}')
 
