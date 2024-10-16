@@ -117,7 +117,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     data_count_10 = 0  # データのカウント10秒.
     t = 1
     t2 = 1
-    last_data = None # 最後に受信したデータ(補間用)
+    last_data = 0 # 最後に受信したデータ(補間用)
 
     while True:
     # for i in range(10000000):
@@ -155,8 +155,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                     clock_signal_1.value = True
                     clock_signal_2.value = True
                     receive_value[:] = int_list_data
-        else:
-            print("No data")
+
 
 
 
