@@ -987,6 +987,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     time.sleep(1000)
                 else:
                     print("flag analysis is None: ", analysis_flag.value)
+                    time.sleep(1000)
                     
                 
 import matplotlib.pyplot as plt
