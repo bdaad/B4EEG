@@ -958,13 +958,15 @@ def func_chank_all(receive_value, flag_blink_A, flag_blink_B, chank_list_A, chan
 
 def func_analysis(adjust_chank_list, analysis_flag, lock):
     chank_copy = []
+    flag = False
     time.sleep(3)
     print("分析")
+    
     while True:
         # print("分析2")
         if len(adjust_chank_list) >= 20:
             while True:
-                if analysis_flag.value == True:
+                if analysis_flag.value == True and flag == False:
                     print("分析開始")
                     print("分析開始")
                     print("分析開始")
@@ -982,19 +984,12 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     # print("列: ", len(chank_copy[0]))#列数
 
                     plot_multiple_lines(chank_copy)
+                    flag = True
                 
-                    time.sleep(1000)
-                
-                elif analysis_flag.value == False:
+                elif analysis_flag.value == False and flag == True:
                     print("分析終了")
-                    print("分析終了")
-                    print("分析終了")
-                    print("分析終了")
-                    time.sleep(1000)
-        # else:
-        #     print("len : ", len(adjust_chank_list))
-        #     time.sleep(0.0011)
-                    
+                    flag = False
+
                 
 import matplotlib.pyplot as plt
 
