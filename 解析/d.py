@@ -6,7 +6,14 @@ if not glfw.init():
     raise Exception("GLFWの初期化に失敗しました")
 
 # ウィンドウを作成
-window = glfw.create_window(800, 600, "Frame Rate Measurement", None, None)
+# window = glfw.create_window(800, 600, "Frame Rate Measurement", None, None)
+# プライマリモニターの解像度を取得
+primary_monitor = glfw.get_primary_monitor()
+video_mode = glfw.get_video_mode(primary_monitor)
+monitor_width = video_mode.size.width
+monitor_height = video_mode.size.height
+
+window = glfw.create_window(monitor_width, monitor_height, 'Hello World', glfw.get_primary_monitor(), None)
 if not window:
     glfw.terminate()
     raise Exception("ウィンドウの作成に失敗しました")
