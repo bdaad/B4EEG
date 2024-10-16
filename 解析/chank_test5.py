@@ -1046,6 +1046,7 @@ def plot_phase_ana(y_values, count):
         plt.title('Multiple Lines on the Same Graph')
         plt.xlabel('X axis')
         plt.ylabel('Y axis')
+        plt.ylim(0, 100)
         plt.legend(loc='upper right')
         plt.grid(True)
 
