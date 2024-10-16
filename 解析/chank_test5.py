@@ -954,7 +954,11 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
     chank_copy = []
 
     while True:
+        print("af", analysis_flag.value)
         if analysis_flag.value == True:
+            print("分析開始")
+            print("分析開始")
+            print("分析開始")
             print("分析開始")
             with lock:
                 chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
