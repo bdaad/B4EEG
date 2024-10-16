@@ -968,10 +968,10 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
         if len(adjust_chank_list) >= 20:
             while True:
                 if analysis_flag.value == True:
-                    print("分析開始")
-                    print("分析開始")
-                    print("分析開始")
-                    print("分析開始")
+                    # print("分析開始")
+                    # print("分析開始")
+                    # print("分析開始")
+                    # print("分析開始")
                     with lock:
                         # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                         chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
@@ -987,7 +987,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
 
                     plot_multiple_lines(chank_copy, count)
                     # plot_phase_ana(chank_copy)
-                    print("11111111111111111111")
+                    # print("11111111111111111111")
                     print(time.time())
                     count = count + 1
                     # flag = True
