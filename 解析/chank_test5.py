@@ -964,16 +964,45 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     with lock:
                         chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                         analysis_flag.value = False
+
                     # chank_copyの要素を出力する
                     # print("chank_copy")
                     # for row in chank_copy:
                     #     print(row)
                     
-                    print("行: ", len(chank_copy))#行数
-                    print("列: ", len(chank_copy[0]))#列数
+                    # print("行: ", len(chank_copy))#行数
+                    # print("列: ", len(chank_copy[0]))#列数
+
+                    plot_multiple_lines(chank_copy)
+                
+                    time.sleep(1000)
                     
                 
 
+
+def plot_multiple_lines(y_values):
+    """
+    引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
+    
+    Parameters:
+    y_values (list of arrays): 描画するデータのリスト。各要素はY軸の値を表します。
+    """
+    x = np.linspace(0, 0.1, 100)  # 0から10までの100個の等間隔の点
+
+    # グラフの描画
+    # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
+
+    for i, y in enumerate(y_values):
+        plt.plot(x, y, label=f'Line {i+1}')
+
+    plt.title('Multiple Lines on the Same Graph')
+    plt.xlabel('X axis')
+    plt.ylabel('Y axis')
+    plt.legend(loc='upper right')
+    plt.grid(True)
+
+    # グラフの表示
+    plt.show()
 
 
 
