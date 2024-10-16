@@ -986,7 +986,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     # print("列: ", len(chank_copy[0]))#列数
 
                     plot_multiple_lines(chank_copy, count)
-                    plot_phase_ana(chank_copy)
+                    plot_phase_ana(chank_copy, count)
                     # print("11111111111111111111")
                     # print(time.time())
                     count = count + 1
@@ -1008,7 +1008,7 @@ def plot_multiple_lines(y_values, count):
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    if count % 50 == 0:
+    if count % 10 == 0:
         for i, y in enumerate(y_values):
             plt.plot(x, y, label=f'Line {i+1}')
 
@@ -1028,33 +1028,34 @@ def plot_multiple_lines(y_values, count):
 import datetime
 # import os
 
-def plot_phase_ana(y_values):
+def plot_phase_ana(y_values, count):
     x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    # 各行の最大値を取得
-    max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
-    plt.scatter(x, max_values_per_row, label='max_values_per_row')
+    if count % 10 == 0:
+        # 各行の最大値を取得
+        max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
+        plt.scatter(x, max_values_per_row, label='max_values_per_row')
 
-    plt.title('Multiple Lines on the Same Graph')
-    plt.xlabel('X axis')
-    plt.ylabel('Y axis')
-    plt.legend(loc='upper right')
-    plt.grid(True)
+        plt.title('Multiple Lines on the Same Graph')
+        plt.xlabel('X axis')
+        plt.ylabel('Y axis')
+        plt.legend(loc='upper right')
+        plt.grid(True)
 
 
-    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-    file_name_path = f'./plt_img/phase/phase_{current_time}.png'
-    # dir_path = './plt_img'
-    # path = os.path.join(dir_path, file_name)
-    # グラフを保存 (ファイル名は現在の時刻)
-    plt.savefig(file_name_path)
+        current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        file_name_path = f'./plt_img/phase/phase_{current_time}.png'
+        # dir_path = './plt_img'
+        # path = os.path.join(dir_path, file_name)
+        # グラフを保存 (ファイル名は現在の時刻)
+        plt.savefig(file_name_path)
 
-    # グラフの表示
-    # plt.show()
-    plt.close()
+        # グラフの表示
+        # plt.show()
+        plt.close()
 
 
 
