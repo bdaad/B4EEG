@@ -985,6 +985,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
 
                     # plot_multiple_lines(chank_copy)
                     print("11111111111111111111")
+                    print(time.time())
                     flag = True
                 
                 elif analysis_flag.value == False and flag == True:
