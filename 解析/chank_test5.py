@@ -125,15 +125,15 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
         # 10秒経過したらループを終了
         if current_time - start_time >= 1* t:
-            # print(f"1秒間で受信したデータの数: {data_count}")
+            print(f"1秒間で受信したデータの数: {data_count}")
             data_count = 0
             t = t + 1
 
-        if current_time - start_time >= 10 * t2:
-            print(f"10秒間で受信したデータの数: {data_count_10}")
-            print("DDDDDDDDtime: ", time.time())
-            data_count_10 = 0
-            t2 = t2 + 1
+        # if current_time - start_time >= 10 * t2:
+        #     print(f"10秒間で受信したデータの数: {data_count_10}")
+        #     print("DDDDDDDDtime: ", time.time())
+        #     data_count_10 = 0
+        #     t2 = t2 + 1
 
         # データを受信しカウント
         if ser.in_waiting > 0:  # 受信データがあるか確認
