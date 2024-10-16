@@ -987,6 +987,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     time.sleep(1000)
         else:
             print("len : ", len(adjust_chank_list))
+            time.sleep(0.0011)
                     
                 
 import matplotlib.pyplot as plt
