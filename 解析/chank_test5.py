@@ -985,7 +985,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     # print("列: ", len(chank_copy[0]))#列数
 
                     plot_multiple_lines(chank_copy)
-                    plot_phase_ana(chank_copy)
+                    # plot_phase_ana(chank_copy)
                     print("11111111111111111111")
                     print(time.time())
                     # flag = True
