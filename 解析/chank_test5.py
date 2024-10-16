@@ -615,7 +615,7 @@ def func_chank_10hz(receive_value, flag_blink, chank_list, clock_signal, adjust_
     # append_data_to_file(receive_data_txt, adjust_chank_list)
 
 
-
+            print("po: ", po)
             if po % 100 == 0 and po != 0:
                 print("len of chank_list 10Hz: ", len(chank_list))               
                 # 各行の列数を出力
