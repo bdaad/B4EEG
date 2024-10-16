@@ -396,8 +396,8 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
     monitor_height = video_mode.size.height
 
     #テスト用
-    monitor_width = 800
-    monitor_height = 300
+    # monitor_width = 800
+    # monitor_height = 300
 
     print(f"Monitor Resolution: {monitor_width}x{monitor_height}")
 
