@@ -978,6 +978,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     time.sleep(1000)
                     
                 
+import matplotlib.pyplot as plt
 
 
 def plot_multiple_lines(y_values):
