@@ -1024,6 +1024,7 @@ def plot_multiple_lines(y_values):
 
     # グラフの表示
     # plt.show()
+    plt.close()
 
 
 import datetime
@@ -1055,6 +1056,7 @@ def plot_phase_ana(y_values):
 
     # グラフの表示
     # plt.show()
+    plt.close()
 
 
 
