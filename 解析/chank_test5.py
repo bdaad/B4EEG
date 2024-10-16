@@ -988,7 +988,7 @@ def func_analysis(adjust_chank_list, analysis_flag, lock):
                     plot_multiple_lines(chank_copy, count)
                     # plot_phase_ana(chank_copy)
                     # print("11111111111111111111")
-                    print(time.time())
+                    # print(time.time())
                     count = count + 1
                     # flag = True
 
