@@ -35,7 +35,7 @@ while True:
     result = ser.readline()  # 改行コードまで読み込む
     if result:
         result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
-        print(result.decode())  # バイト列を文字列に変換
+        # print(result.decode())  # バイト列を文字列に変換
         # result.decode()
         count += 1  # カウントを増やす
 
