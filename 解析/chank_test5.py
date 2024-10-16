@@ -1079,7 +1079,8 @@ def adjust_data_to_size(data, target_size):
             # データが不足している場合、0で埋める
             data = [0] * needed_length + data
         elif len(data) > target_size: #行数がtarget_sizeより大きい場合
-            data = data[:target_size]  # 最初のtarget_size個に切り捨て
+            # data = data[:target_size]  # 最初のtarget_size個に切り捨て
+            data = data[-target_size:]  # 後ろのtarget_size個を取得
         return data
     # else:
     #     # 最後の行の要素数がtarget_size未満の場合
