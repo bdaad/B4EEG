@@ -158,7 +158,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
-    data_count_10 = 0  # データのカウント10秒.
+    # data_count_10 = 0  # データのカウント10秒.
     t = 1
     # t2 = 1
     last_data = [0,0,0] # 最後に受信したデータ(補間用)
@@ -204,7 +204,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             result = ser.readline()  # 改行コードまで読み込む
             if result:
                 data_count += 1  # データをカウント
-                data_count_10 += 1  # データをカウント
+                # data_count_10 += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
@@ -232,8 +232,7 @@ from OpenGL.GLU import *
 import time
 import math
 
-
-
+# V-Syncの有効化/無効化
 def enable_vsync(enable=True):
     if enable:
         glfw.swap_interval(1)  # V-Syncを有効にする
@@ -304,46 +303,92 @@ class BlinkingImage:
             self.frames_per_blink = None  # 点滅なし（常時表示）
         self.frame_count = 0  # フレームカウンタ
         self.frame_count_not_reset = 0  # リセット無しフレームカウンタ
+        self.projection = projection # 投影行列
+        self.texture_id = self.load_texture(image_path) # 画像のロードとテクスチャの設定
+        self.shader_program = create_shader_program() # シェーダープログラムを作成        
+        self.vao, self.vbo, self.ebo = self.create_quad() # 頂点データを設定
 
 
-        self.projection = projection
-
-        # 画像のロードとテクスチャの設定
-        self.texture_id = self.load_texture(image_path)
-
-        # シェーダープログラムを作成
-        self.shader_program = create_shader_program()
-
-        # 頂点データを設定
-        self.vao, self.vbo, self.ebo = self.create_quad()
-
-
-
+    # 画像をロードしてテクスチャを設定
     def load_texture(self, image_path):
         image = Image.open(image_path)
         image = image.transpose(Image.FLIP_TOP_BOTTOM)  # 画像を上下反転する
         image_data = np.array(image, np.uint8)
 
-        texture_id = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, texture_id)
-
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data)
-        glGenerateMipmap(GL_TEXTURE_2D)
+        texture_id = glGenTextures(1) # テクスチャIDを生成
+        glBindTexture(GL_TEXTURE_2D, texture_id) # テクスチャIDをバインド
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image.width, image.height, 0, GL_RGB, GL_UNSIGNED_BYTE, image_data) # テクスチャを設定
+        glGenerateMipmap(GL_TEXTURE_2D) # ミップマップを生成
         print(f"Texture ID for {image_path}: {texture_id}")  # テクスチャIDを出力
-        return texture_id
+        return texture_id 
 
+    # 四角形の頂点データを設定
+    # def create_quad(self):
+    #     # 四角形の頂点データ (位置とテクスチャ座標)
+    #     x, y = self.position  # 画像の中心位置
+    #     w, h = self.size      # 画像の幅と高さ
+
+    #     vertices = np.array([
+    #         # 位置            テクスチャ座標
+    #         x - w/2, y - h/2, 0.0,  0.0, 0.0,  # 左下
+    #         x + w/2, y - h/2, 0.0,  1.0, 0.0,  # 右下
+    #         x + w/2, y + h/2, 0.0,  1.0, 1.0,  # 右上
+    #         x - w/2, y + h/2, 0.0,  0.0, 1.0   # 左上
+    #     ], dtype=np.float32)
+
+    #     indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
+
+    #     vao = glGenVertexArrays(1)
+    #     vbo = glGenBuffers(1)
+    #     ebo = glGenBuffers(1)
+
+    #     glBindVertexArray(vao)
+
+    #     glBindBuffer(GL_ARRAY_BUFFER, vbo)
+    #     glBufferData(GL_ARRAY_BUFFER, vertices.nbytes, vertices, GL_STATIC_DRAW)
+
+    #     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo)
+    #     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.nbytes, indices, GL_STATIC_DRAW)
+
+    #     # 頂点の位置属性
+    #     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(0))
+    #     glEnableVertexAttribArray(0)
+
+    #     # テクスチャ座標属性
+    #     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * vertices.itemsize, ctypes.c_void_p(3 * vertices.itemsize))
+    #     glEnableVertexAttribArray(1)
+
+    #     glBindBuffer(GL_ARRAY_BUFFER, 0)
+    #     glBindVertexArray(0)
+
+    #     return vao, vbo, ebo
+
+
+
+    # 四角形の頂点データを設定 numpyを使って書き換え..
     def create_quad(self):
         # 四角形の頂点データ (位置とテクスチャ座標)
         x, y = self.position  # 画像の中心位置
         w, h = self.size      # 画像の幅と高さ
 
-        vertices = np.array([
-            # 位置            テクスチャ座標
-            x - w/2, y - h/2, 0.0,  0.0, 0.0,  # 左下
-            x + w/2, y - h/2, 0.0,  1.0, 0.0,  # 右下
-            x + w/2, y + h/2, 0.0,  1.0, 1.0,  # 右上
-            x - w/2, y + h/2, 0.0,  0.0, 1.0   # 左上
+        # 頂点座標 (左下、右下、右上、左上)
+        positions = np.array([
+            [x - w/2, y - h/2, 0.0],  # 左下
+            [x + w/2, y - h/2, 0.0],  # 右下
+            [x + w/2, y + h/2, 0.0],  # 右上
+            [x - w/2, y + h/2, 0.0],  # 左上
         ], dtype=np.float32)
+
+        # テクスチャ座標 (左下、右下、右上、左上)
+        tex_coords = np.array([
+            [0.0, 0.0],  # 左下
+            [1.0, 0.0],  # 右下
+            [1.0, 1.0],  # 右上
+            [0.0, 1.0],  # 左上
+        ], dtype=np.float32)
+
+        # 頂点データを結合 (位置とテクスチャ座標)
+        vertices = np.hstack([positions, tex_coords]).flatten()
 
         indices = np.array([0, 1, 2, 2, 3, 0], dtype=np.uint32)
 
@@ -373,6 +418,7 @@ class BlinkingImage:
         return vao, vbo, ebo
 
 
+    # 画像を描画
     def draw_image(self):
         glUseProgram(self.shader_program)
 
@@ -385,11 +431,9 @@ class BlinkingImage:
         model_location = glGetUniformLocation(self.shader_program, "model")
         glUniformMatrix4fv(model_location, 1, GL_FALSE, glm.value_ptr(model))
 
+        # 投影行列をシェーダーに渡す
         projection_location = glGetUniformLocation(self.shader_program, "projection")
         glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm.value_ptr(self.projection))
-
-
-
 
         # テクスチャのバインド
         glActiveTexture(GL_TEXTURE0)
@@ -403,22 +447,23 @@ class BlinkingImage:
     def update(self):
         # 点滅のロジック
 
-        #表示時間に関する重要なコード↓...
+        #表示時間に関する重要なコード↓(今回は常時表示だしいいか)...
         # current_time = time.time()
         # elapsed_time = current_time - self.start_time  # 経過時間を秒に変換
         # if self.display_time is not None and elapsed_time >= self.display_time:
         #     return False  # 表示秒数が経過したらFalseを返す
 
-        if self.frames_per_blink is not None:
+        if self.frames_per_blink is not None: # 点滅の周波数が設定されている場合
             # フレームカウンタを更新
             self.frame_count += 1
             self.frame_count_not_reset += 1
-            if self.frame_count >= self.frames_per_blink:
+
+            if self.frame_count >= self.frames_per_blink: # 1回の点滅が終了したら
                 self.toggle = not self.toggle  # フラグを反転させて点滅を切り替える
                 self.frame_count = 0  # カウンタをリセット
 
         # 点滅がオンのときだけ画像を描画
-        if self.toggle or self.frames_per_blink is None:
+        if self.toggle or self.frames_per_blink is None: # 点滅がオフのときは描画しない
             self.draw_image()
         # print(f"frame_count_not: {self.frame_count_not_reset}, toggle: {self.toggle}") 
         return True  # 表示継続中
@@ -431,29 +476,23 @@ def init_glfw(width, height, title):
     glfw.window_hint(glfw.CONTEXT_VERSION_MAJOR, 3)
     glfw.window_hint(glfw.CONTEXT_VERSION_MINOR, 3)
     glfw.window_hint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
-    window = glfw.create_window(width, height, title, None, None)
+    window = glfw.create_window(width, height, title, None, None) # ウィンドウを作成
     if not window:
-        glfw.terminate()
+        glfw.terminate() # ウィンドウが作成できなかった場合はGLFWを終了
         return None
-    glfw.make_context_current(window)
+    glfw.make_context_current(window) # 描画対象のウィンドウを設定
     return window
 
 # /**************並列処理関連**********************************************/
 
 from concurrent.futures import ProcessPoolExecutor
 import time
-
-
-def func_1():
-
-    while True:
-        time.sleep(2)
-        print('func_1')
-
-    
 import glm  # OpenGL Mathematicsライブラリを使用
+
+
 def func_visual(flag_blink_1, flag_blink_2, lock):
-    if not glfw.init():
+
+    if not glfw.init(): # GLFWを初期化
         return
 
     # プライマリモニターの解像度を取得
@@ -468,32 +507,26 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
 
     print(f"Monitor Resolution: {monitor_width}x{monitor_height}")
 
-    window = init_glfw(monitor_width, monitor_height, "Blinking Image")
+    window = init_glfw(monitor_width, monitor_height, "Blinking Image") # ウィンドウを作成
 
     # glfw.make_context_current(window)
-
     # refresh_rate = video_mode.refresh_rate  # 垂直同期のリフレッシュレート
-    refresh_rate = 60
+
+    refresh_rate = 60 # 垂直同期のリフレッシュレート
     enable_vsync(True)  # V-Syncを有効にする
-
- # --- ここから修正 ---
-    # 画面サイズを取得し、アスペクト比を維持する
-    width, height = glfw.get_framebuffer_size(window)
     
-
-    # ビューポートをウィンドウ全体に設定
-    glViewport(0, 0, width, height)
+    width, height = glfw.get_framebuffer_size(window) # 画面サイズを取得し、アスペクト比を維持する
+    glViewport(0, 0, width, height) # ビューポートをウィンドウ全体に設定
 
     # # 1:1の正射影行列を設定
     # projection = glm.ortho(-1.0, 1.0, -1.0, 1.0)
-    # 投影行列を設定（1:1比率を維持）
-    projection = setup_projection_for_circle(width, height)
+    projection = setup_projection_for_circle(width, height)  # 投影行列を設定
 
     # シェーダープログラムを使用して投影行列を渡す
-    shader_program = create_shader_program()
-    glUseProgram(shader_program)
-    projection_location = glGetUniformLocation(shader_program, "projection")
-    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm.value_ptr(projection))
+    shader_program = create_shader_program() # シェーダープログラムを作成
+    glUseProgram(shader_program) # シェーダープログラムを使用
+    projection_location = glGetUniformLocation(shader_program, "projection") # uniform変数の場所を取得
+    glUniformMatrix4fv(projection_location, 1, GL_FALSE, glm.value_ptr(projection)) # 投影行列をシェーダーに渡す
     print("shader done!!!!")
 
 
@@ -509,8 +542,8 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
     character_image4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-    # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
-    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
+    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
+    # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
     # images = [blinking_image]
 
 
@@ -519,16 +552,16 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
     fullscreen = True  # 現在の状態を管理
 
 
-    while not glfw.window_should_close(window):
-        glClear(GL_COLOR_BUFFER_BIT)
+    while not glfw.window_should_close(window): # ウィンドウが閉じられるまでループ
+        glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
 
-        for image in images:
-            if not image.update():
-                images.remove(image)  # 表示時間が経過したらリストから削除
+        for image in images: # 画像を描画
+            if not image.update(): # 表示時間が経過したら
+                images.remove(image)  # リストから削除
 
         # 10Hzの1周期分.. 60/10 = 6
-        if blinking_image.frame_count_not_reset % 6 == 0:
-            with lock:
+        with lock:
+            if blinking_image.frame_count_not_reset % 6 == 0:            
                 if flag_blink_1.value == True:
                     flag_blink_1.value = False
                 else:
@@ -537,8 +570,8 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
             # print("frame_count_a", circle1.frame_count)
         
         # 12Hzの1周期分.. 60/12 = 5
-        if blinking_image.frame_count_not_reset % 5 == 0:
-            with lock:
+        with lock:
+            if blinking_image.frame_count_not_reset % 5 == 0:
                 if flag_blink_2.value == True:
                     flag_blink_2.value = False
                 else:
@@ -550,16 +583,15 @@ def func_visual(flag_blink_1, flag_blink_2, lock):
         current_time = time.time()
 
         # 1秒ごとにFPSを計算して出力
-        if current_time - previous_time >= 1.0:
-            fps = frame_count / (current_time - previous_time)
-            # print(f"FPS: {fps:.2f}")
-            # print(f"frame_count: {frame_count}")
+        interval = current_time - previous_time
+        if interval >= 1.0:
+            fps = frame_count / (interval)
             print(f"FPS: {fps:.2f}, frame_count: {frame_count}")
             previous_time = current_time
             frame_count = 0
 
         if blinking_image.frame_count_not_reset % 600 == 0:
-            # print("frame_count: ", blinking_image.frame_count_not_reset)
+    
             print("Ftime :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
