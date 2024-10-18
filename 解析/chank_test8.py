@@ -1067,7 +1067,7 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
 #         print(f"Row {i+1} length: {len(row)}")
 
 
-import win_precise_time
+# import win_precise_time
 
 
 def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
@@ -1106,8 +1106,8 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
             # print(time.time())
             count = count + 1
                     # flag = True
-        else:
-            win_precise_time.sleep(0.001)
+        # else:
+            # win_precise_time.sleep(0.001)
 
                 
 import matplotlib.pyplot as plt
@@ -1136,7 +1136,7 @@ def plot_multiple_lines(y_values, count):
         plt.legend(loc='upper right')
         plt.grid(True)
 
-        current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+        current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
         file_name_path = f'./plt_img/add_ave/add_ave_{current_time}.png'
         plt.savefig(file_name_path)
         # plt.show() # グラフの表示
