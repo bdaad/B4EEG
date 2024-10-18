@@ -1302,7 +1302,7 @@ def main():
     # プロセスの開始
     process1.start()
     process2.start()
-    process3.start()
+    # process3.start()
     process4.start()
     process5.start()
 
@@ -1311,7 +1311,7 @@ def main():
     print(f"main_process PID: {main_process.pid}")
     print(f"process1 PID: {process1.pid}")
     print(f"process2 PID: {process2.pid}")
-    print(f"process3 PID: {process3.pid}")
+    # print(f"process3 PID: {process3.pid}")
     print(f"process4 PID: {process4.pid}")
     print(f"process5 PID: {process5.pid}")
 
@@ -1319,7 +1319,7 @@ def main():
     # プロセスの終了を待つ
     process1.join()
     process2.join()
-    process3.join()
+    # process3.join()
     process4.join()
     process5.join()
 # /***********************************************************/
