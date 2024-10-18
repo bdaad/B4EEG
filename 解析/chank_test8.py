@@ -1067,7 +1067,7 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
 #         print(f"Row {i+1} length: {len(row)}")
 
 
-
+import win_precise_time
 
 
 def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
@@ -1080,37 +1080,38 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
     time.sleep(3)
     print("分析")
     
-    while True:
-        # print("分析2")
+    while True: # 20個のデータが溜まったら..分析を行う
         if len(adjust_chank_list) >= 20:
-            while True:
-                if analysis_flag.value == True:
-                    # print("分析開始")
-                    # print("分析開始")
-                    # print("分析開始")
-                    # print("分析開始")
-                    with lock:
-                        # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                        chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
-                        analysis_flag.value = False
+            break
+        
+    # 分析を行う.
+    while True:
+        if analysis_flag.value == True:
+            with lock:
+                # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
+                chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
+                analysis_flag.value = False
 
-                    # chank_copyの要素を出力する
-                    # print("chank_copy")
-                    # for row in chank_copy:
-                    #     print(row)
+            # chank_copyの要素を出力する
+            # print("chank_copy")
+            # for row in chank_copy:
+            #     print(row)
                     
-                    # print("行: ", len(chank_copy))#行数
-                    # print("列: ", len(chank_copy[0]))#列数
+            # print("行: ", len(chank_copy))#行数
+            # print("列: ", len(chank_copy[0]))#列数
 
-                    # plot_multiple_lines(chank_copy, count)
-                    plot_phase_ana(chank_copy, count)
-                    # print("11111111111111111111")
-                    # print(time.time())
-                    count = count + 1
+            # plot_multiple_lines(chank_copy, count)
+            plot_phase_ana(chank_copy, count)
+            # print("11111111111111111111")
+            # print(time.time())
+            count = count + 1
                     # flag = True
+        else:
+            win_precise_time.sleep(0.001)
 
                 
 import matplotlib.pyplot as plt
+
 
 
 def plot_multiple_lines(y_values, count):
