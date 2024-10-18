@@ -1102,7 +1102,7 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
                     # print("行: ", len(chank_copy))#行数
                     # print("列: ", len(chank_copy[0]))#列数
 
-                    plot_multiple_lines(chank_copy, count)
+                    # plot_multiple_lines(chank_copy, count)
                     plot_phase_ana(chank_copy, count)
                     # print("11111111111111111111")
                     # print(time.time())
@@ -1306,14 +1306,15 @@ def main():
     process5.start()
 
 
-
+    main_process = psutil.Process()  # 自身のプロセスを取得
+    print(f"main_process PID: {main_process.pid}")
     print(f"process1 PID: {process1.pid}")
     print(f"process2 PID: {process2.pid}")
     print(f"process3 PID: {process3.pid}")
     print(f"process4 PID: {process4.pid}")
     print(f"process5 PID: {process5.pid}")
 
-    
+
     # プロセスの終了を待つ
     process1.join()
     process2.join()
