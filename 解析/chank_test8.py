@@ -494,7 +494,8 @@ import glm  # OpenGL Mathematicsライブラリを使用
 
 
 def func_visual(priority, flag_blink_1, flag_blink_2, lock):
-    os.nice(priority)
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_visual) started with priority {priority}")
 
 
@@ -641,6 +642,10 @@ def setup_projection_for_circle(width, height):
 
 
 def func_serial(priority, com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock):
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
+    print(f"Process (func_serial) started with priority {priority}")
+
     # global received_data  # グローバル変数を参照
     while True:
         try:
@@ -666,7 +671,8 @@ import copy
 
 def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, lock):
     # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
-    os.nice(priority)
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_chank_10hz) started with priority {priority}")
     flag_state = None
     chank_chank_list_1 = [] #buffer1
@@ -754,7 +760,8 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
 
 def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, lock):
     # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
-    os.nice(priority)
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_chank_12hz) started with priority {priority}")
     flag_state = None
     chank_chank_list_1 = [] #buffer1
@@ -1064,7 +1071,8 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
 
 
 def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
-    os.nice(priority)
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_analysis) started with priority {priority}")
     chank_copy = []
     # flag = False
@@ -1241,13 +1249,20 @@ def main():
     analysis_flag_2 = manager.Value('b', False)
     lock = multiprocessing.Lock()
 
-    # プロセスの優先度を設定
-    priority1 = -20
-    priority2 = -20
-    priority3 = -20
-    priority4 = -20
-    priority5 = -19
 
+
+    # psutil.IDLE_PRIORITY_CLASS (64): 最低優先度
+    # psutil.BELOW_NORMAL_PRIORITY_CLASS (16384): 通常より低い優先度
+    # psutil.NORMAL_PRIORITY_CLASS (32): 通常の優先度
+    # psutil.ABOVE_NORMAL_PRIORITY_CLASS (32768): 通常より高い優先度
+    # psutil.HIGH_PRIORITY_CLASS (128): 高い優先度
+    # psutil.REALTIME_PRIORITY_CLASS (256): 最高優先度
+    # プロセスの優先度を設定
+    priority1 = psutil.REALTIME_PRIORITY_CLASS
+    priority2 = psutil.REALTIME_PRIORITY_CLASS
+    priority3 = psutil.REALTIME_PRIORITY_CLASS
+    priority4 = psutil.REALTIME_PRIORITY_CLASS
+    priority5 = psutil.REALTIME_PRIORITY_CLASS
 
         
     list_com()# COMポート一覧を表示
