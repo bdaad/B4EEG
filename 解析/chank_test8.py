@@ -10,7 +10,8 @@ import time
 from datetime import datetime
 from multiprocessing.managers import ListProxy
 import sys
-import os
+import psutil
+
 
 
 # 現在の日時をファイル名に追加
