@@ -1296,12 +1296,7 @@ def main():
     # process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
 
 
-    print(f"process1 PID: {process1.pid}")
-    print(f"process2 PID: {process2.pid}")
-    print(f"process3 PID: {process3.pid}")
-    print(f"process4 PID: {process4.pid}")
-    print(f"process5 PID: {process5.pid}")
-    
+
 
     # プロセスの開始
     process1.start()
@@ -1310,6 +1305,15 @@ def main():
     process4.start()
     process5.start()
 
+
+
+    print(f"process1 PID: {process1.pid}")
+    print(f"process2 PID: {process2.pid}")
+    print(f"process3 PID: {process3.pid}")
+    print(f"process4 PID: {process4.pid}")
+    print(f"process5 PID: {process5.pid}")
+
+    
     # プロセスの終了を待つ
     process1.join()
     process2.join()
