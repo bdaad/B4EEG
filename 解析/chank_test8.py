@@ -714,7 +714,7 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
                         analysis_flag.value = True
                     chank_chank_list_2 = []
-                    print("chank_list_copy: ", chank_list_copy, "interval_time: ", interval_time)
+                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
                     pretime = current_time
                     # po = po + 1
                     
@@ -743,7 +743,7 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
                         analysis_flag.value = True
                     chank_chank_list_1 = []
-                    print("chank_list_copy: ", chank_list_copy, "interval_time: ", interval_time)
+                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
                     pretime = current_time
                     # po = po + 1
                     # if(po % 100 == 0):
