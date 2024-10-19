@@ -1070,7 +1070,7 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
 # import win_precise_time
 
 
-def func_analysis_1(priority, adjust_chank_list, analysis_flag, lock):
+def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_analysis) started with priority {priority}")
