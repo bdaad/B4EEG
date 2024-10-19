@@ -739,7 +739,6 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
                     with lock:
                         chank_list.append(chank_chank_list_1)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
-                        print("chank_list_copy: ", chank_list_copy)
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
                         analysis_flag.value = True
                     chank_chank_list_1 = []
