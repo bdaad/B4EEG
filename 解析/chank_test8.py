@@ -1126,7 +1126,7 @@ def plot_multiple_lines(y_values, count):
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    if count % 10 == 0:
+    if count % 40 == 0:
         for i, y in enumerate(y_values):
             plt.plot(x, y, label=f'Line {i+1}')
 
@@ -1288,7 +1288,7 @@ def main():
     process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
     
     
-    # process2 = multiprocessing.Process(target=func_chank_all, args=(receive_value, flag_blink_1, flag_blink_2, chank_list_1, chank_list_2, clock_signal_1, clock_signal_2, adjust_chank_list_1, adjust_chank_list_2, lock))
+    
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock))
     
     
@@ -1305,6 +1305,7 @@ def main():
     # process3.start()
     process4.start()
     process5.start()
+
 
 
     main_process = psutil.Process()  # 自身のプロセスを取得
