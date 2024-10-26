@@ -1009,7 +1009,7 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
             # print("行: ", len(chank_copy))#行数
             # print("列: ", len(chank_copy[0]))#列数
 
-            plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
+            # plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
             plot_phase_ana(chank_copy, count, gaze_flag, margin_counter_1)
             # print("11111111111111111111")
             # print(time.time())
