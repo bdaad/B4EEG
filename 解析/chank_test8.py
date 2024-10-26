@@ -622,7 +622,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
         # 遅延探しテスト用コード本番では使用しない
-        if blinking_image1.frame_count_not_reset >= 300:
+        if blinking_image1.frame_count_not_reset == 300:
             images.remove(images[0])
 
 
