@@ -990,6 +990,8 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
     while True: # 20個のデータが溜まったら..分析を行う
         if len(adjust_chank_list) >= 20:
             break
+
+    print("分析開始")
         
     # 分析を行う.
     while True:
