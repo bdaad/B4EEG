@@ -1077,7 +1077,7 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
         print("gaze_flag: false")
 
 
-    if count % 10 == 0:
+    if count % 20 == 0:
         # max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
 
 
