@@ -1009,12 +1009,12 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
             # print("行: ", len(chank_copy))#行数
             # print("列: ", len(chank_copy[0]))#列数
 
-            # plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
+            plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
             plot_phase_ana(chank_copy, count, gaze_flag, margin_counter_1)
             # print("11111111111111111111")
             # print(time.time())
             count = count + 1
-            print("count: ", count)
+            # print("count: ", count)
                     # flag = True
         # else:
             # win_precise_time.sleep(0.001)
@@ -1050,7 +1050,7 @@ def plot_multiple_lines(y_values, count, gaze_flag, margin): #平均値の追加
         plt.grid(True)
 
         current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/add_ave/add_ave_{current_time}.png'
+        file_name_path = f'./plt_img/add_ave/{current_time}.png'
         plt.savefig(file_name_path)
         # plt.show() # グラフの表示
         plt.close()
@@ -1095,7 +1095,7 @@ def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
 
 
         current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/phase/phase_{current_time}.png'
+        file_name_path = f'./plt_img/phase/{current_time}.png'
         # dir_path = './plt_img'
         # path = os.path.join(dir_path, file_name)
         # グラフを保存 (ファイル名は現在の時刻)
