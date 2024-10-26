@@ -1053,7 +1053,7 @@ def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
 
         current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
         file_name_path = f'./plt_img/add_ave/{current_time}.png'
-        plt.savefig(file_name_path)
+        plt.savefig(file_name_path, dpi=30)
         # plt.show() # グラフの表示
         plt.close()
 
@@ -1100,7 +1100,7 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
         # dir_path = './plt_img'
         # path = os.path.join(dir_path, file_name)
         # グラフを保存 (ファイル名は現在の時刻)
-        plt.savefig(file_name_path, dpi=80)
+        plt.savefig(file_name_path, dpi=30)
 
         # グラフの表示
         # plt.show()
