@@ -1010,8 +1010,8 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
             # print("行: ", len(chank_copy))#行数
             # print("列: ", len(chank_copy[0]))#列数
 
-            plot_multiple_lines(chank_copy, count, gaze_flag)
-            plot_phase_ana(chank_copy, count, gaze_flag)
+            plot_multiple_lines(chank_copy, count, gaze_flag, "10Hz")
+            plot_phase_ana(chank_copy, count, gaze_flag, "10Hz")
             # print("11111111111111111111")
             # print(time.time())
             count = count + 1
@@ -1022,6 +1022,47 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
 
 
 
+def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, adjust_chank_list_2, analysis_flag_2, gaze_flag_2, lock):
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
+    print(f"Process (func_analysis) started with priority {priority}")
+    chank_copy = []
+    chank_copy2 = []
+    # flag = False
+    count = 0
+    count2 = 0
+    time.sleep(3)
+    print("分析")
+    
+    while True: # 20個のデータが溜まったら..分析を行う
+        if len(adjust_chank_list_1) >= 20:
+            break
+
+    print("分析開始")
+        
+    # 分析を行う.
+    while True:
+        if analysis_flag_1.value == True:
+            with lock:
+                # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
+                chank_copy = adjust_chank_list_1[-20:] #最後の20個のデータをコピー
+                analysis_flag_1.value = False
+            plot_multiple_lines(chank_copy, count, gaze_flag_1, "10Hz")
+            plot_phase_ana(chank_copy, count, gaze_flag_1, "10Hz")
+            count = count + 1
+
+
+        if analysis_flag_2.value == True:
+            with lock:
+                # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
+                chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
+                analysis_flag_2.value = False
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, "12Hz")
+            plot_phase_ana(chank_copy2, count2, gaze_flag_2, "12Hz")
+            count2 = count2 + 1
+
+
+
 
                 
 import matplotlib.pyplot as plt
@@ -1029,7 +1070,7 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
+def plot_multiple_lines(y_values, count, gaze_flag, folder): #平均値の追加
     """
     引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
     
@@ -1041,7 +1082,7 @@ def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    if count % 40 == 0:
+    if count % 20 == 0:
         for i, y in enumerate(y_values):
             plt.plot(x, y, label=f'Line {i+1}')
 
@@ -1052,7 +1093,7 @@ def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
         plt.grid(True)
 
         current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/add_ave/{current_time}.png'
+        file_name_path = f'./plt_img/add_ave/{folder}/{current_time}.png'
         plt.savefig(file_name_path, dpi=70)
         # plt.show() # グラフの表示
         plt.close()
@@ -1060,7 +1101,7 @@ def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
 
 
 
-def plot_phase_ana(y_values, count, gaze_flag): #位相分析
+def plot_phase_ana(y_values, count, gaze_flag, folder): #位相分析
     x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
@@ -1096,7 +1137,7 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
 
 
         current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/phase/{current_time}.png'
+        file_name_path = f'./plt_img/phase/{folder}/{current_time}.png'
         # dir_path = './plt_img'
         # path = os.path.join(dir_path, file_name)
         # グラフを保存 (ファイル名は現在の時刻)
@@ -1221,16 +1262,15 @@ def main():
     
     
     
-    process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
-    # process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
-
+    # process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
+    process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, adjust_chank_list_2 ,analysis_flag_2, gaze_flag_2,lock))
 
 
 
     # プロセスの開始
     process1.start()
     process2.start()
-    # process3.start()
+    process3.start()
     process4.start()
     process5.start()
 
