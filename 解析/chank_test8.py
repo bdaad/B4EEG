@@ -16,7 +16,7 @@ import datetime
 
 
 # 現在の日時をファイル名に追加
-current_time = datetime.now().strftime("%Y%m%d_%H%M%S")
+current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 receive_data_txt = f"receive_data_{current_time}.txt"
 
 
