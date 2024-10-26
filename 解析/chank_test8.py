@@ -1069,13 +1069,14 @@ def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする
-    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 8: #10~50の範囲に8個以上ある場合
+    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 16: #10~50の範囲に8個以上ある場合
         gaze_flag.value = True
-        print("gaze_flag: ", gaze_flag.value)
+        
     else:
         margin_counter = margin_counter + 1 
         if margin_counter >= 4: # 4回以上連続で8個以上ない場合止める
             gaze_flag.value = False
+            print("gaze_flag: false", margin_counter)
             margin_counter = 0
 
 
