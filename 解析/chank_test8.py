@@ -800,6 +800,80 @@ def func_serial(priority, com, shared_receive_list, receive_value, clock_signal_
 
 import copy
 
+
+
+
+
+def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, chank_size, lock):
+    """
+    1000data / 10Hz = 100data
+    1000data / 12Hz = 83.3333data = 83data
+    1000data / 15Hz = 66.6666data = 67data
+    """
+    # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
+    p = psutil.Process()
+    p.nice(priority)  # psutilで優先順位を設定
+    print(f"Process (func_chank) started with priority {priority}")
+    flag_state = None
+    chank_chank_list_1 = [] #buffer1
+    chank_chank_list_2 = [] #buffer2
+    pretime = time.time()
+    current_time = 0;
+    # po = 0
+
+    print("chank_size: {chank_size}")
+    print("chank_size: {chank_size}")
+    print("chank_size: {chank_size}")
+
+
+
+    while True:
+        if flag_state is None:
+            with lock:
+                print("first flag_blink: ", flag_blink.value)
+                if flag_blink.value == True:
+                    flag_state = True
+        else:
+            if flag_blink.value == True:
+                if len(chank_chank_list_2) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+                    
+                    with lock:
+                        chank_list.append(chank_chank_list_2)
+
+                        chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
+                        
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size)) 
+                        analysis_flag.value = True
+                    chank_chank_list_2 = []
+                    pretime = current_time
+                with lock:
+                    if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
+                        chank_chank_list_1.append(receive_value[0])
+                        clock_signal.value = False
+
+            elif flag_blink.value == False:
+                if len(chank_chank_list_1) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+
+                    with lock:
+                        chank_list.append(chank_chank_list_1)
+                        chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
+                        analysis_flag.value = True
+                    chank_chank_list_1 = []
+                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
+                    pretime = current_time
+
+                with lock:
+                    if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
+                        chank_chank_list_2.append(receive_value[0])
+                        clock_signal.value = False
+
+
+
 def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, lock):
     # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
     p = psutil.Process()
@@ -819,9 +893,6 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
     print("func_chank_10hz")
 
     while True:
-        # if po >= 10000:
-        #     break
-        #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
             with lock:
                 print("first flag_blink: ", flag_blink.value)
@@ -838,27 +909,10 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
 
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
                         
-
-                        
-                        
-
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
                         analysis_flag.value = True
                     chank_chank_list_2 = []
-                    # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time) #重要.
-
-
                     pretime = current_time
-                    # po = po + 1
-                    
-                    # if(po % 100 == 0):
-                    #     print("po: ", po)
-                    # print("po: ", po)
-                    # with lock:
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-3:])) #最後の3つのデータをコピー
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:])) #最後の1つのデータをコピー
-                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
-                    # print("po: ", po)      
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_1.append(receive_value[0])
@@ -877,35 +931,11 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
                     chank_chank_list_1 = []
                     print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
                     pretime = current_time
-                    # po = po + 1
-                    # if(po % 100 == 0):
-                    #     print("po: ", po)
-                    # with lock:
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:]))
-                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
-                    # print("po: ", po)
 
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_2.append(receive_value[0])
                         clock_signal.value = False
-
-
-
-    # print("len of chank_list 10Hz: ", len(chank_list))               
-    # # 各行の列数を出力
-    # for i, row in enumerate(chank_list):
-    #     if( i > 9500): 
-    #         print(f"Row {i+1} length: {len(row)}")  # 各行の列数を出力
-
-
-            
-            # print("adjust_chank_list")
-            # # 各行の列数を出力
-            # for i, row in enumerate(adjust_chank_list):
-            #     print(f"Row {i+1} length: {len(row)}")
-
     
 
 
@@ -917,7 +947,9 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
     flag_state = None
     chank_chank_list_1 = [] #buffer1
     chank_chank_list_2 = [] #buffer2
-    po = 0
+    pretime = time.time()
+    current_time = 0;
+    # po = 0
 
     print("func_chank_12hz")
     print("func_chank_12hz")
@@ -926,9 +958,6 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
     print("func_chank_12hz")
 
     while True:
-        # if po >= 10000:
-        #     break
-        #計測の最初は、必ずflag_blink_1=Trueのときにデータを受け取る.
         if flag_state is None:
             with lock:
                 print("first flag_blink: ", flag_blink.value)
@@ -936,42 +965,44 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
                     flag_state = True
         else:
             if flag_blink.value == True:
-                if len(chank_chank_list_2) != 0:    
+                if len(chank_chank_list_2) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+                    
                     with lock:
                         chank_list.append(chank_chank_list_2)
+
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=83)) #1000data / 12Hz = 83.33333data
+                        
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=83)) #1000data / 12Hz = 83data
+                        analysis_flag.value = True
                     chank_chank_list_2 = []
-                    po = po + 1
-                    # print("po: ", po)
-                    # with lock:
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-3:])) #最後の3つのデータをコピー
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:])) #最後の1つのデータをコピー
-                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 83.33333data
-                    # print("po: ", po)      
+                    pretime = current_time
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
-                        chank_chank_list_1.append(receive_value[0]) #chank_chank_list_1にデータを追加
+                        chank_chank_list_1.append(receive_value[0])
                         clock_signal.value = False
 
             elif flag_blink.value == False:
-                if len(chank_chank_list_1) != 0:    
+                if len(chank_chank_list_1) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+
                     with lock:
                         chank_list.append(chank_chank_list_1)
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=83))
+                        analysis_flag.value = True
                     chank_chank_list_1 = []
-                    po = po + 1
-                    # with lock:
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-3:]))
-                        # chank_list_copy = copy.deepcopy(list(chank_list[-1:]))
-                        # adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100))
-                    # print("po: ", po)
+                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
+                    pretime = current_time
 
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_2.append(receive_value[0])
                         clock_signal.value = False
+    
+
 
 
 
@@ -1047,8 +1078,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy = adjust_chank_list_1[-20:] #最後の20個のデータをコピー
                 analysis_flag_1.value = False
-            plot_multiple_lines(chank_copy, count, gaze_flag_1, "10Hz")
-            plot_phase_ana(chank_copy, count, gaze_flag_1, "10Hz")
+            plot_multiple_lines(chank_copy, count, gaze_flag_1, "10Hz", 0, 0.1, 100)
+            plot_phase_ana(chank_copy, count, gaze_flag_1, "10Hz", 1, 20, 20)
             count = count + 1
 
 
@@ -1057,8 +1088,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, "12Hz")
-            plot_phase_ana(chank_copy2, count2, gaze_flag_2, "12Hz")
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, "12Hz", 0, 0.83, 83)
+            plot_phase_ana(chank_copy2, count2, gaze_flag_2, "12Hz", 1, 20, 20)
             count2 = count2 + 1
 
 
@@ -1070,14 +1101,13 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_multiple_lines(y_values, count, gaze_flag, folder): #平均値の追加
+def plot_multiple_lines(y_values, count, gaze_flag, folder, start, end, num_points): #平均値の追加
     """
-    引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
-    
-    Parameters:
-    y_values (list of arrays): 描画するデータのリスト。各要素はY軸の値を表します。
+    start, # 開始値
+    end, # 終了値
+    num_points # 生成する数値の数
     """
-    x = np.linspace(0, 0.1, 100)  # 0から10までの100個の等間隔の点
+    x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
@@ -1101,8 +1131,8 @@ def plot_multiple_lines(y_values, count, gaze_flag, folder): #平均値の追加
 
 
 
-def plot_phase_ana(y_values, count, gaze_flag, folder): #位相分析
-    x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
+def plot_phase_ana(y_values, count, gaze_flag, folder, start, end, num_points): #位相分析
+    x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
@@ -1252,9 +1282,11 @@ def main():
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock))
     
     
-    # process2 = multiprocessing.Process(target=func_chank_1, args=(receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, lock))
-    process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
-    process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
+
+    # process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
+    # process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
+    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 83, lock)) #12Hz: 100data / 12Hz = 83
     
     
     
