@@ -38,7 +38,7 @@ def append_data_to_file(file_name, list):
 
 def save_2d_array_to_file(data, list_name):
     # 現在の日時を取得してファイル名に使用
-    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    current_datetime = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     file_name = f"./save_data/{list_name}_{current_datetime}.txt"
     
     # ファイルを作成して二次元配列データを保存
