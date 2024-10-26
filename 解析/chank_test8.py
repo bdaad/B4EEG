@@ -3,7 +3,8 @@
 # chank_test2.pyとの違いは、点滅に同期してデータを処理するかどうか。
 # 多分うまく動いている..
 
-
+import matplotlib
+matplotlib.use('Agg')  # import matplotlib.pyplot as plt の前に設定
 # グローバル変数として受信データを格納するリスト
 # 現在の日時をファイル名に追加
 import time
@@ -1027,6 +1028,7 @@ import matplotlib.pyplot as plt
 
 
 
+
 def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
     """
     引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
@@ -1082,7 +1084,8 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
 
 
         # print(max_indices_per_row)
-        plt.scatter(x, max_indices_per_row, label='max_indices_per_row')
+        # plt.scatter(x, max_indices_per_row, label='max_indices_per_row')
+        plt.plot(x, max_indices_per_row, 'o', label='max_indices_per_row')  # `scatter`の代わりに`plot`を使用
 
         plt.title('Multiple Lines on the Same Graph')
         plt.xlabel('X axis')
@@ -1097,7 +1100,7 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
         # dir_path = './plt_img'
         # path = os.path.join(dir_path, file_name)
         # グラフを保存 (ファイル名は現在の時刻)
-        plt.savefig(file_name_path)
+        plt.savefig(file_name_path, dpi=80)
 
         # グラフの表示
         # plt.show()
