@@ -581,21 +581,25 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 images.remove(image)  # リストから削除
 
         # 10Hzの1周期分.. 60/10 = 6
-        with lock:
-            if blinking_image1.frame_count_not_reset % 6 == 0:            
-                if flag_blink_1.value == True:
+        
+        if blinking_image1.frame_count_not_reset % 6 == 0:            
+            if flag_blink_1.value == True:
+                with lock:
                     flag_blink_1.value = False
-                else:
+            else:
+                with lock:
                     flag_blink_1.value = True
             # print("toggle flag_blink_1", circle1.toggle)
             # print("frame_count_a", circle1.frame_count)
         
         # 12Hzの1周期分.. 60/12 = 5
-        with lock:
-            if blinking_image1.frame_count_not_reset % 5 == 0:
-                if flag_blink_2.value == True:
+        
+        if blinking_image1.frame_count_not_reset % 5 == 0:
+            if flag_blink_2.value == True:
+                with lock:
                     flag_blink_2.value = False
-                else:
+            else:
+                with lock:
                     flag_blink_2.value = True
 
 
