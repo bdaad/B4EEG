@@ -984,8 +984,6 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
     chank_copy = []
     # flag = False
     count = 0
-    margin_counter_1 = 0
-    margin_counter_2 = 0
     time.sleep(3)
     print("分析")
     
@@ -1011,8 +1009,8 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
             # print("行: ", len(chank_copy))#行数
             # print("列: ", len(chank_copy[0]))#列数
 
-            plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
-            plot_phase_ana(chank_copy, count, gaze_flag, margin_counter_1)
+            plot_multiple_lines(chank_copy, count, gaze_flag)
+            plot_phase_ana(chank_copy, count, gaze_flag)
             # print("11111111111111111111")
             # print(time.time())
             count = count + 1
@@ -1060,7 +1058,7 @@ def plot_multiple_lines(y_values, count, gaze_flag, margin): #平均値の追加
 
 
 
-def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
+def plot_phase_ana(y_values, count, gaze_flag): #位相分析
     x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
@@ -1075,12 +1073,8 @@ def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
         gaze_flag.value = True
         
     else:
-        margin_counter = margin_counter + 1 
-        print("margin_counter: ", margin_counter)
-        if margin_counter >= 4: # 4回以上連続で8個以上ない場合止める
-            gaze_flag.value = False
-            print("gaze_flag: false", margin_counter)
-            margin_counter = 0
+        gaze_flag.value = False
+        print("gaze_flag: false")
 
 
     if count % 10 == 0:
