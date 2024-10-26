@@ -659,7 +659,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
         
-        if flag_blink_1.value == True:
+        if gaze_flag_1.value == True:
             
             if character_count == 0:
                 images[4] = character_image1_on #offあをonあに変更
@@ -678,7 +678,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
     
-        if flag_blink_2.value == False and flag_a == True:
+        if gaze_flag_1.value == False and flag_a == True:
             if character_count >= 0 and character_count < 60:
                 print("あ")
             elif character_count >= 60 and character_count < 120:
@@ -1068,7 +1068,7 @@ def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
     else:
         margin_counter = margin_counter + 1 
         if margin_counter >= 4: # 4回以上連続で8個以上ない場合止める
-            # gaze_flag.value = False
+            gaze_flag.value = False
             margin_counter = 0
 
 
