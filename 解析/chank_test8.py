@@ -1027,7 +1027,7 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_multiple_lines(y_values, count, gaze_flag, margin): #平均値の追加
+def plot_multiple_lines(y_values, count, gaze_flag): #平均値の追加
     """
     引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
     
