@@ -1065,11 +1065,11 @@ def plot_phase_ana(y_values, count, gaze_flag): #位相分析
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
 
-    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
+    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする
-    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 16: #10~50の範囲に8個以上ある場合
+    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に16個以上ある場合
         gaze_flag.value = True
         
     else:
