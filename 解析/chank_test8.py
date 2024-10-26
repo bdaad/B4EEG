@@ -1,36 +1,30 @@
-
-
-# chank_test2.pyとの違いは、点滅に同期してデータを処理するかどうか。
-# 多分うまく動いている..
-
 import matplotlib
 matplotlib.use('Agg')  # import matplotlib.pyplot as plt の前に設定
-# グローバル変数として受信データを格納するリスト
-# 現在の日時をファイル名に追加
 import time
 from datetime import datetime
 from multiprocessing.managers import ListProxy
 import sys
 import psutil
 import datetime
-# import os
-
-
-# 現在の日時をファイル名に追加
-current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-receive_data_txt = f"receive_data_{current_time}.txt"
-
-
-def append_data_to_file(file_name, list):
-
-    with open(file_name, 'a') as file:
-        # 配列1
-        for data in list:
-            file.write(f"{data}, ")
-            # print(f"{data} をファイルに書き込みました")
-            # time.sleep(0.1)
-        file.write("\n")  # 改行
-
+import re
+import serial
+import serial.tools.list_ports
+import time
+import multiprocessing
+import numpy as np
+import glfw
+from OpenGL.GL import *
+from OpenGL.GLU import *
+import time
+import math
+from PIL import Image
+import numpy as np
+from OpenGL.GL.shaders import compileProgram, compileShader
+from concurrent.futures import ProcessPoolExecutor
+import time
+import glm  # OpenGL Mathematicsライブラリを使用
+import copy
+import matplotlib.pyplot as plt
 
 
 
@@ -90,11 +84,7 @@ def iir_real_time_3ch(x, a, b, y_prev, x_prev):
 
 
 # /**************Serial関連**********************************************/
-import re
-import serial
-import serial.tools.list_ports
-import time
-import multiprocessing
+
 
 # シリアル通信のボーレート
 bitRate = 115200
@@ -173,23 +163,16 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
             time.sleep(sleep_time)  # 必要な場合のみスリープ
     
 
-import numpy as np
+
 
 # 1000Hzでデータ要求を送信しないで、受信も行い、データの数をカウントする関数
 def communicate_and_count_test(ser , received_list, receive_value, clock_signal_1, clock_signal_2, lock):
-
-    # interval = 1.0 / 1000  # 1000Hz
-    # next_time = time.perf_counter()  # 高精度タイマーの現在時刻を取得
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
-    # data_count_10 = 0  # データのカウント10秒.
     t = 1
-    # t2 = 1
     last_data = [0,0,0] # 最後に受信したデータ(補間用)
     int_list_data = [0,0,0] # 最後に受信したデータ(補間用)
     
-
-
     # フィルタのパラメータ設定
     # fs = 1000  # サンプリングレート
     a = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
@@ -209,7 +192,6 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     while True:
     # for i in range(10000000):
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
-
         # 1秒経過したらループを終了
         interval_time = current_time - start_time
         if interval_time >= 1* t:
@@ -217,18 +199,11 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             data_count = 0
             t = t + 1
 
-        # if current_time - start_time >= 10 * t2:
-        #     print(f"10秒間で受信したデータの数: {data_count_10}")
-        #     print("DDDDDDDDtime: ", time.time())
-        #     data_count_10 = 0
-        #     t2 = t2 + 1
-
         # データを受信しカウント
         if ser.in_waiting > 0:  # 受信データがあるか確認
             result = ser.readline()  # 改行コードまで読み込む
             if result:
                 data_count += 1  # データをカウント
-                # data_count_10 += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
@@ -245,32 +220,15 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                     clock_signal_2.value = True
                     receive_value[:] = int_list_data
 
-
-
-
  
 # /**************グラフィック関連**********************************************/
-import glfw
-from OpenGL.GL import *
-from OpenGL.GLU import *
-import time
-import math
-
 # V-Syncの有効化/無効化
 def enable_vsync(enable=True):
     if enable:
         glfw.swap_interval(1)  # V-Syncを有効にする
     else:
         glfw.swap_interval(0)  # V-Syncを無効にする
-
-
-
-
 # /***********************************************************/
-
-from PIL import Image
-import numpy as np
-from OpenGL.GL.shaders import compileProgram, compileShader
 
 
 # シンプルな頂点シェーダー
@@ -509,16 +467,13 @@ def init_glfw(width, height, title):
 
 # /**************並列処理関連**********************************************/
 
-from concurrent.futures import ProcessPoolExecutor
-import time
-import glm  # OpenGL Mathematicsライブラリを使用
+
 
 
 def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_visual) started with priority {priority}")
-
 
     if not glfw.init(): # GLFWを初期化
         return
@@ -529,25 +484,13 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     monitor_width = video_mode.size.width
     monitor_height = video_mode.size.height
 
-    #テスト用
-    # monitor_width = 800
-    # monitor_height = 300
-
     print(f"Monitor Resolution: {monitor_width}x{monitor_height}")
-
     window = init_glfw(monitor_width, monitor_height, "Blinking Image") # ウィンドウを作成
-
-    # glfw.make_context_current(window)
-    # refresh_rate = video_mode.refresh_rate  # 垂直同期のリフレッシュレート
-
     refresh_rate = 60 # 垂直同期のリフレッシュレート
     enable_vsync(True)  # V-Syncを有効にする
     
     width, height = glfw.get_framebuffer_size(window) # 画面サイズを取得し、アスペクト比を維持する
     glViewport(0, 0, width, height) # ビューポートをウィンドウ全体に設定
-
-    # # 1:1の正射影行列を設定
-    # projection = glm.ortho(-1.0, 1.0, -1.0, 1.0)
     projection = setup_projection_for_circle(width, height)  # 投影行列を設定
 
     # シェーダープログラムを使用して投影行列を渡す
@@ -562,9 +505,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
     blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
-
-
-    
 
 
     character_image1 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -622,13 +562,9 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     character_image4_5_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-
-
-
     images = [blinking_image1, blinking_image2, blinking_image3, blinking_image4, character_image1, character_image2, character_image3, character_image4]
     # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
     # images = [blinking_image]
-
 
     previous_time = time.time()
     frame_count = 0
@@ -665,7 +601,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         
         if gaze_flag_1.value == True:
-            
             if character_count == 0:
                 images[4] = character_image1_on #offあをonあに変更
                 flag_a = True
@@ -679,7 +614,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 images[4] = character_image1_5_on #onえをonおに変更
             elif character_count == 300:
                 character_count = -1
-
             character_count += 1
 
     
@@ -694,21 +628,9 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 print("え")
             elif character_count >= 240 and character_count < 300:
                 print("お")
-
             character_count = 0
             flag_a = False
             images[4] = character_image1 #on???をoffあに変更
-            
-
-
-            
-
-            
-
-
-
-        
-
 
         # フレームカウンタを更新
         frame_count += 1
@@ -721,10 +643,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             print(f"FPS: {fps:.2f}, frame_count: {frame_count}")
             previous_time = current_time
             frame_count = 0
-
-        # if blinking_image.frame_count_not_reset % 600 == 0:
-    
-            # print("Ftime :", time.time())
 
         # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
         if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
@@ -756,17 +674,13 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
 def setup_projection_for_circle(width, height):
-    # ウィンドウのアスペクト比を取得
-    aspect_ratio = width / height
-
-    # アスペクト比に基づいてオルソグラフィック投影の範囲を調整
-    if aspect_ratio >= 1.0:
+    aspect_ratio = width / height # ウィンドウのアスペクト比を取得
+    if aspect_ratio >= 1.0: # アスペクト比に基づいてオルソグラフィック投影の範囲を調整
         # 横長の場合、X軸を拡張
         projection = glm.ortho(-aspect_ratio, aspect_ratio, -1.0, 1.0)
     else:
         # 縦長の場合、Y軸を拡張
         projection = glm.ortho(-1.0, 1.0, -1.0/aspect_ratio, 1.0/aspect_ratio)
-
     return projection
 
 
@@ -777,28 +691,20 @@ def func_serial(priority, com, shared_receive_list, receive_value, clock_signal_
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_serial) started with priority {priority}")
 
-    # global received_data  # グローバル変数を参照
     while True:
         try:
-            # com = input_com()
-            # com = "COM3"
             ser = serial.Serial(com, bitRate, timeout=None)
             break
         except serial.SerialException:
             print("COMポートが開けませんでした。再度入力してください。")
-
-    # communicate_and_count(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
-    print("communicate_and_count_test")
+    
     print("communicate_and_count_test")
     print("communicate_and_count_test")
     print("communicate_and_count_test")
     print("communicate_and_count_test")
     communicate_and_count_test(ser, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock)
-    # print("shared_receive_list: ", shared_receive_list)
-    # print("len of shared_receive_list: ", len(shared_receive_list))
 
 
-import copy
 
 
 
@@ -1095,12 +1001,6 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
 
 
 
-                
-import matplotlib.pyplot as plt
-
-
-
-
 def plot_multiple_lines(y_values, count, gaze_flag, folder, start, end, num_points): #平均値の追加
     """
     start, # 開始値
@@ -1281,18 +1181,12 @@ def main():
     
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock))
     
-    
-
     # process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
     # process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
     process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 83, lock)) #12Hz: 100data / 12Hz = 83
     
-    
-    
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1))
-    
-    
     
     # process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
     process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, adjust_chank_list_2 ,analysis_flag_2, gaze_flag_2,lock))
@@ -1312,7 +1206,7 @@ def main():
     print(f"main_process PID: {main_process.pid}")
     print(f"process1 PID: {process1.pid}")
     print(f"process2 PID: {process2.pid}")
-    # print(f"process3 PID: {process3.pid}")
+    print(f"process3 PID: {process3.pid}")
     print(f"process4 PID: {process4.pid}")
     print(f"process5 PID: {process5.pid}")
 
@@ -1320,7 +1214,7 @@ def main():
     # プロセスの終了を待つ
     process1.join()
     process2.join()
-    # process3.join()
+    process3.join()
     process4.join()
     process5.join()
 # /***********************************************************/
