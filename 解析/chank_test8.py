@@ -844,7 +844,9 @@ def func_chank_10hz(priority, receive_value, flag_blink, chank_list, clock_signa
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=100)) #1000data / 10Hz = 100data
                         analysis_flag.value = True
                     chank_chank_list_2 = []
-                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
+                    # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time) #重要.
+
+
                     pretime = current_time
                     # po = po + 1
                     
@@ -1074,6 +1076,7 @@ def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
         
     else:
         margin_counter = margin_counter + 1 
+        print("margin_counter: ", margin_counter)
         if margin_counter >= 4: # 4回以上連続で8個以上ない場合止める
             gaze_flag.value = False
             print("gaze_flag: false", margin_counter)
