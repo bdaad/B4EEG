@@ -33,6 +33,9 @@ def append_data_to_file(file_name, list):
 
 
 
+
+
+
 def save_2d_array_to_file(data, list_name):
     # 現在の日時を取得してファイル名に使用
     current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -41,7 +44,8 @@ def save_2d_array_to_file(data, list_name):
     # ファイルを作成して二次元配列データを保存
     with open(file_name, "w") as file:
         for row in data:
-            file.write(",".join(row) + "\n")
+            # 各要素を文字列に変換してから結合
+            file.write(",".join(map(str, row)) + "\n")
     
     print(f"{file_name} に二次元配列データを保存しました。")
     return file_name  # 保存したファイル名を返す
@@ -1008,6 +1012,7 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
             # print("11111111111111111111")
             # print(time.time())
             count = count + 1
+            print("count: ", count)
                     # flag = True
         # else:
             # win_precise_time.sleep(0.001)
