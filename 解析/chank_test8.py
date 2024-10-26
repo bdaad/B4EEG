@@ -11,7 +11,8 @@ from datetime import datetime
 from multiprocessing.managers import ListProxy
 import sys
 import psutil
-
+import datetime
+# import os
 
 
 # 現在の日時をファイル名に追加
@@ -29,6 +30,21 @@ def append_data_to_file(file_name, list):
             # time.sleep(0.1)
         file.write("\n")  # 改行
 
+
+
+
+def save_2d_array_to_file(data, list_name):
+    # 現在の日時を取得してファイル名に使用
+    current_datetime = datetime.now().strftime("%Y%m%d_%H%M%S")
+    file_name = f"./save_data/{list_name}_{current_datetime}.txt"
+    
+    # ファイルを作成して二次元配列データを保存
+    with open(file_name, "w") as file:
+        for row in data:
+            file.write(",".join(row) + "\n")
+    
+    print(f"{file_name} に二次元配列データを保存しました。")
+    return file_name  # 保存したファイル名を返す
 
 
 
@@ -493,7 +509,7 @@ import time
 import glm  # OpenGL Mathematicsライブラリを使用
 
 
-def func_visual(priority, flag_blink_1, flag_blink_2, lock):
+def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_visual) started with priority {priority}")
@@ -537,19 +553,74 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock):
     print("shader done!!!!")
 
 
-    blinking_image = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
     blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-    character_image = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    
+
+
+    character_image1 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image1_2 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/i_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image1_3 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/u_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image1_4 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/e_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image1_5 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/o_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    
+    character_image1_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_2_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_3_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_4_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_5_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+
+
+
     character_image2 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image2_2 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ki_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image2_3 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ku_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image2_4 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ke_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image2_5 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ko_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    
+    character_image2_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_2_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_3_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_4_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ke_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_5_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+
+
+
     character_image3 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/sa_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image3_2 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/si_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image3_3 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/su_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image3_4 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/se_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # character_image3_5 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/so_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    
+    character_image3_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_2_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_3_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_4_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/se_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_5_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+
+
+
     character_image4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image4_2 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ti_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image4_3 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/tu_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image4_4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/te_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # character_image4_5 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/to_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+
+    character_image4_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_2_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_3_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_4_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_5_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
-    images = [blinking_image, blinking_image2, blinking_image3, blinking_image4, character_image, character_image2, character_image3, character_image4]
+
+
+
+    images = [blinking_image1, blinking_image2, blinking_image3, blinking_image4, character_image1, character_image2, character_image3, character_image4]
     # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
     # images = [blinking_image]
 
@@ -557,6 +628,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock):
     previous_time = time.time()
     frame_count = 0
     fullscreen = True  # 現在の状態を管理
+    character_count = 0 # 文字の表示を管理
+    flag_a = False
 
 
     while not glfw.window_should_close(window): # ウィンドウが閉じられるまでループ
@@ -568,7 +641,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock):
 
         # 10Hzの1周期分.. 60/10 = 6
         with lock:
-            if blinking_image.frame_count_not_reset % 6 == 0:            
+            if blinking_image1.frame_count_not_reset % 6 == 0:            
                 if flag_blink_1.value == True:
                     flag_blink_1.value = False
                 else:
@@ -578,11 +651,58 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock):
         
         # 12Hzの1周期分.. 60/12 = 5
         with lock:
-            if blinking_image.frame_count_not_reset % 5 == 0:
+            if blinking_image1.frame_count_not_reset % 5 == 0:
                 if flag_blink_2.value == True:
                     flag_blink_2.value = False
                 else:
                     flag_blink_2.value = True
+
+
+        
+        if flag_blink_1.value == True:
+            
+            if character_count == 0:
+                images[4] = character_image1_on #offあをonあに変更
+                flag_a = True
+            elif character_count == 60:
+                images[4] = character_image1_2_on #onあをonいに変更
+            elif character_count == 120:
+                images[4] = character_image1_3_on  #onいをonうに変更
+            elif character_count == 180:
+                images[4] = character_image1_4_on #onうをonえに変更
+            elif character_count == 240:
+                images[4] = character_image1_5_on #onえをonおに変更
+            elif character_count == 300:
+                character_count = -1
+
+            character_count += 1
+
+    
+        if flag_blink_2.value == False and flag_a == True:
+            if character_count >= 0 and character_count < 60:
+                print("あ")
+            elif character_count >= 60 and character_count < 120:
+                print("い")
+            elif character_count >= 120 and character_count < 180:
+                print("う")
+            elif character_count >= 180 and character_count < 240:
+                print("え")
+            elif character_count >= 240 and character_count < 300:
+                print("お")
+
+            character_count = 0
+            flag_a = False
+            images[4] = character_image1 #on???をoffあに変更
+            
+
+
+            
+
+            
+
+
+
+        
 
 
         # フレームカウンタを更新
@@ -614,6 +734,12 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock):
 
         # TABキーでプログラムを終了
         if glfw.get_key(window, glfw.KEY_TAB) == glfw.PRESS:
+            # ./save_dataにデータを保存する. セーブするデータは、chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2
+            with lock:
+                save_2d_array_to_file(chank_list_1, "chank_list_1")
+                save_2d_array_to_file(adjust_chank_list_1, "adjust_chank_list_1")
+                save_2d_array_to_file(chank_list_2, "chank_list_2")
+                save_2d_array_to_file(adjust_chank_list_2, "adjust_chank_list_2")
             sys.exit()
 
         glfw.swap_buffers(window)
@@ -818,7 +944,7 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
                     # print("po: ", po)      
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
-                        chank_chank_list_1.append(receive_value[0])
+                        chank_chank_list_1.append(receive_value[0]) #chank_chank_list_1にデータを追加
                         clock_signal.value = False
 
             elif flag_blink.value == False:
@@ -845,13 +971,15 @@ def func_chank_12hz(priority, receive_value, flag_blink, chank_list, clock_signa
 # import win_precise_time
 
 
-def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
+def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_analysis) started with priority {priority}")
     chank_copy = []
     # flag = False
     count = 0
+    margin_counter_1 = 0
+    margin_counter_2 = 0
     time.sleep(3)
     print("分析")
     
@@ -875,8 +1003,8 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, lock):
             # print("行: ", len(chank_copy))#行数
             # print("列: ", len(chank_copy[0]))#列数
 
-            plot_multiple_lines(chank_copy, count)
-            plot_phase_ana(chank_copy, count)
+            plot_multiple_lines(chank_copy, count, gaze_flag, margin_counter_2)
+            plot_phase_ana(chank_copy, count, gaze_flag, margin_counter_1)
             # print("11111111111111111111")
             # print(time.time())
             count = count + 1
@@ -892,7 +1020,7 @@ import matplotlib.pyplot as plt
 
 
 
-def plot_multiple_lines(y_values, count):
+def plot_multiple_lines(y_values, count, gaze_flag, margin): #平均値の追加
     """
     引数として与えられたデータを基に、同じ線グラフ上に複数の線を描画します。
     
@@ -921,21 +1049,30 @@ def plot_multiple_lines(y_values, count):
         plt.close()
 
 
-import datetime
-# import os
 
-def plot_phase_ana(y_values, count):
+
+def plot_phase_ana(y_values, count, gaze_flag, margin_counter): #位相分析
     x = np.linspace(1, 20, 20)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
 
-    if count % 40 == 0:
-        # 各行の最大値を取得
-        # max_values_per_row = np.max(y_values, axis=1) # 各行の最大値を取得
-        max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
-        # print(max_values_per_row)
-        # plt.scatter(x, max_values_per_row, label='max_values_per_row')
+
+    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
+    # ここに位相分析の処理を書く
+        # None.
+    # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする
+    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 8: #10~50の範囲に8個以上ある場合
+        gaze_flag.value = True
+    else:
+        margin_counter = margin_counter + 1 
+        if margin_counter >= 4: # 4回以上連続で8個以上ない場合止める
+            gaze_flag.value = False
+            margin_counter = 0
+
+
+    if count % 10 == 0:
+        # max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得
 
 
         # print(max_indices_per_row)
@@ -1026,6 +1163,10 @@ def main():
 
     analysis_flag_1 = manager.Value('b', False)
     analysis_flag_2 = manager.Value('b', False)
+
+    gaze_flag_1 = manager.Value('b', False)
+    gaze_flag_2 = manager.Value('b', False)
+
     lock = multiprocessing.Lock()
 
 
@@ -1067,11 +1208,11 @@ def main():
     
     
     
-    process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock))
+    process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1))
     
     
     
-    process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, lock))
+    process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
     # process5 = multiprocessing.Process(target=func_chank_2, args=(receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, lock))
 
 
