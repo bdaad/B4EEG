@@ -508,6 +508,9 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
+    blinking_image1_off = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=0.000000000001, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    
+
 
     character_image1 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     # character_image1_2 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/i_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -623,7 +626,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         # 遅延探しテスト用コード本番では使用しない
         if blinking_image1.frame_count_not_reset == 300:
-            images.remove(images[0])
+            images[0] = blinking_image1_off
 
 
 
