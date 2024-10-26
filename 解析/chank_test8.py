@@ -449,6 +449,8 @@ class BlinkingImage:
             self.draw_image()
         # print(f"frame_count_not: {self.frame_count_not_reset}, toggle: {self.toggle}") 
         return True  # 表示継続中
+    
+
 
 
 # GLFW初期化とウィンドウ作成
@@ -578,29 +580,52 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
-                images.remove(image)  # リストから削除
+                images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
 
         # 10Hzの1周期分.. 60/10 = 6
-        
-        if blinking_image1.frame_count_not_reset % 6 == 0:            
-            if flag_blink_1.value == True:
-                with lock:
+        with lock:
+            if blinking_image1.frame_count_not_reset % 6 == 0:            
+                if flag_blink_1.value == True:
                     flag_blink_1.value = False
-            else:
-                with lock:
+                else:
                     flag_blink_1.value = True
-            # print("toggle flag_blink_1", circle1.toggle)
-            # print("frame_count_a", circle1.frame_count)
+
         
-        # 12Hzの1周期分.. 60/12 = 5
-        
-        if blinking_image1.frame_count_not_reset % 5 == 0:
-            if flag_blink_2.value == True:
-                with lock:
-                    flag_blink_2.value = False
-            else:
-                with lock:
-                    flag_blink_2.value = True
+        # # 12Hzの1周期分.. 60/12 = 5
+        # with lock:
+        #     if blinking_image1.frame_count_not_reset % 5 == 0:
+        #         if flag_blink_2.value == True:
+        #             flag_blink_2.value = False
+        #         else:
+        #             flag_blink_2.value = True
+
+        #         if blinking_image1.frame_count_not_reset % 6 == 0:            
+        #     if flag_blink_1.value == True:
+        #         with lock:
+        #             flag_blink_1.value = False
+        #     else:
+        #         with lock:
+        #             flag_blink_1.value = True
+
+        # # 12Hzの1周期分.. 60/12 = 5        
+        # if blinking_image1.frame_count_not_reset % 5 == 0:
+        #     if flag_blink_2.value == True:
+        #         with lock:
+        #             flag_blink_2.value = False
+        #     else:
+        #         with lock:
+        #             flag_blink_2.value = True
+
+
+
+
+
+
+        # 遅延探しテスト用コード本番では使用しない
+        if blinking_image1.frame_count_not_reset >= 300:
+            images.remove(images[0])
+
+
 
 
         
