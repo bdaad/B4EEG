@@ -205,6 +205,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             if result:
                 data_count += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
+                print(result)
                 # result = result + b',0,0,'
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
