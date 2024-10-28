@@ -205,9 +205,11 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             if result:
                 data_count += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
-                result += b',0,0,'  # ',0,0,'を追加
+                # result += b',0,0,'  # ',0,0,'を追加
                 try:
-                    int_list_data = [int(x) for x in result.decode().split(',')]
+                    # int_list_data = [int(x) for x in result.decode().split(',')]
+                    int_list_data = [int(x) for x in result.decode().split(',') if x != '']
+                    int_list_data += [0] * (3 - len(int_list_data))
                     int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
