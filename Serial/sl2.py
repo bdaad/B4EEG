@@ -4,8 +4,8 @@ from threading import Thread
 import serial.tools.list_ports
 # 通信速度
 # 
-# bitRate = 115200
-bitRate = 230400
+bitRate = 115200
+# bitRate = 230400
 
 def list_com():
     ports = serial.tools.list_ports.comports()

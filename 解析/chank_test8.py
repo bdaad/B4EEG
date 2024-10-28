@@ -205,6 +205,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             if result:
                 data_count += 1  # データをカウント
                 result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
+                result + b',0,0,'
                 try:
                     int_list_data = [int(x) for x in result.decode().split(',')]
                     int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
@@ -624,7 +625,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
 
-        # 遅延探しテスト用コード本番では使用しない
+        # 遅延探しテスト用コード本番では使用しない これは6秒後に点滅をオフにする.
         if blinking_image1.frame_count_not_reset == 300:
             images[0] = blinking_image1_off
 
