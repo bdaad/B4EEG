@@ -80,7 +80,7 @@ def iir_real_time_3ch(x, a, b, y_prev, x_prev):
     x_prev[:, 1], x_prev[:, 0] = x_prev[:, 0], x
     y_prev[:, 1], y_prev[:, 0] = y_prev[:, 0], y
 
-    return y.tolist()  # リスト形式で返す
+    return y.tolist(),  y_prev, x_prev  # 状態を返す# リスト形式で返す
 
 
 # /**************Serial関連**********************************************/
@@ -175,15 +175,22 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     
     # フィルタのパラメータ設定
     # fs = 1000  # サンプリングレート
-    a = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
-    b = np.array([0.05074517975187733, 0.0, -0.05074517975187733])
+    a_bp = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
+    b_bp = np.array([0.05074517975187733, 0.0, -0.05074517975187733])
 
-    a2 = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
-    b2 = np.array([0.9707150444099012, -1.8464940847417775, 0.9707150444099012])
+    # バンドストップフィルタの係数
+    a_bs = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
+    b_bs = np.array([0.9707150444099012, -1.8464940847417775, 0.9707150444099012])
+
 
     # 過去の値を保持する配列
-    y_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値を保持する配列
-    x_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値を保持する配列
+    # バンドパスフィルタ用
+    y_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値
+    x_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値
+
+    # バンドストップフィルタ用
+    y_prev_bs = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値
+    x_prev_bs = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値
     # サンプリングレートを入力: 1000
     # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BPF
     # カットオフ周波数下限fc1を入力: 3
@@ -227,23 +234,27 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 # print(type(result.decode()))
                 try:
                     # int_list_data = [int(x) for x in result.decode().split(',')]
-                    int_list_data = [int(result.decode()), int(1), int(1)]
+                    int_list_data = [int(result.decode()), int(0), int(0)]
                     # print(int_list_data)
                     # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
-                    int_list_data = iir_real_time_3ch(int_list_data, a2, b2, y_prev, x_prev) # フィルタ処理BPF.
 
-
-
+                    # **バンドパスフィルタの適用**
+                    int_list_data_bp, y_prev_bp, x_prev_bp = iir_real_time_3ch(int_list_data, a_bp, b_bp, y_prev_bp, x_prev_bp) #バンドパスフィルタの適用.
+                    int_list_data_bs, y_prev_bs, x_prev_bs = iir_real_time_3ch(int_list_data_bp, a_bs, b_bs, y_prev_bs, x_prev_bs) #バンドストップフィルタの適用.
+                    int_list_data = int_list_data_bs
                     last_data = int_list_data
+                    # last_data = int_list_data_bs
                 except ValueError:
                     print("ValueError")
-                    int_list_data = last_data
+                    # int_list_data = last_data
+                    int_list_data_bs = last_data
 
                 with lock:  # ロックを使って排他制御
                     received_list.append(receive_value)
                 # with lock:
                     clock_signal_1.value = True
                     clock_signal_2.value = True
+                    # receive_value[:] = int_list_data
                     receive_value[:] = int_list_data
 
  
