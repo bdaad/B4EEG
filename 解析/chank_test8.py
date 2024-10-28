@@ -204,7 +204,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
             result = ser.readline()  # 改行コードまで読み込む
             if result:
                 data_count += 1  # データをカウント
-                result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除
+                result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除\r\n
+                result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n
                 print(result)
                 # result = result + b',0,0,'
                 try:
