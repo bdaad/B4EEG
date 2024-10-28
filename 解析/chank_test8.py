@@ -206,10 +206,12 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 data_count += 1  # データをカウント
                 # result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除\r\n
                 result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n
-                result = result + b',0,0'
+                # result = result + b',0,0'
                 print(result)
                 try:
-                    int_list_data = [int(x) for x in result.decode().split(',')]
+                    # int_list_data = [int(x) for x in result.decode().split(',')]
+                    int_list_data = [result.decode(), 1, 1]
+                    print(int_list_data)
                     int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
                 except ValueError:
@@ -1202,7 +1204,7 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM3"
+    com = "COM8"
     # com = input_com()
     # print(com)
 
