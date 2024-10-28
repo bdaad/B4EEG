@@ -210,7 +210,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 print(result)
                 try:
                     # int_list_data = [int(x) for x in result.decode().split(',')]
-                    int_list_data = [result.decode(), 1, 1]
+                    int_list_data = [result.decode(), float(1), float(1)]
                     print(int_list_data)
                     int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
                     last_data = int_list_data
