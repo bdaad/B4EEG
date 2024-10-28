@@ -177,6 +177,10 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # fs = 1000  # サンプリングレート
     a = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
     b = np.array([0.05074517975187733, 0.0, -0.05074517975187733])
+
+    a2 = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
+    b2 = np.array([0.9707150444099012, -1.8464940847417775, 0.9707150444099012])
+
     # 過去の値を保持する配列
     y_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値を保持する配列
     x_prev = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値を保持する配列
@@ -187,6 +191,17 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # テスト用正弦波の周波数: 50
     # a: [1.0, -1.8962594398557984, 0.8985096404962453]
     # b: [0.05074517975187733, 0.0, -0.05074517975187733]
+
+
+
+
+    # サンプリングレートを入力: 1000
+    # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BSF 
+    # カットオフ周波数下限fc1を入力: 45.4
+    # カットオフ周波数下限fc2を入力: 55
+    # テスト用正弦波の周波数: 50
+    # a: [1.0, -1.8464940847417775, 0.9414300888198024]
+    # b: [0.9707150444099012, -1.8464940847417775, 0.9707150444099012]
 
 
     while True:
@@ -207,14 +222,18 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 # result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除\r\n
                 result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n
                 # result = result + b',0,0'
-                print(result)
+                # print(result)
                 #result.decode()の型を出力する.
                 # print(type(result.decode()))
                 try:
                     # int_list_data = [int(x) for x in result.decode().split(',')]
                     int_list_data = [int(result.decode()), int(1), int(1)]
-                    print(int_list_data)
-                    int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev)
+                    # print(int_list_data)
+                    # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
+                    int_list_data = iir_real_time_3ch(int_list_data, a2, b2, y_prev, x_prev) # フィルタ処理BPF.
+
+
+
                     last_data = int_list_data
                 except ValueError:
                     print("ValueError")
