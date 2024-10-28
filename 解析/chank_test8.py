@@ -208,6 +208,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                 result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n
                 # result = result + b',0,0'
                 print(result)
+                #result.decode()の型を出力する.
+                print(type(result.decode()))
                 try:
                     # int_list_data = [int(x) for x in result.decode().split(',')]
                     int_list_data = [result.decode(), float(1), float(1)]
