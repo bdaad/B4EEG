@@ -175,8 +175,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     
     # フィルタのパラメータ設定
     # fs = 1000  # サンプリングレート
-    a_bp = np.array([1.0, -1.8962594398557984, 0.8985096404962453])
-    b_bp = np.array([0.05074517975187733, 0.0, -0.05074517975187733])
+    a_bp = np.array([1.0, -1.9361916025752066, 0.9390625058174924])
+    b_bp = np.array([0.030468747091253825, 0.0, -0.030468747091253825])
 
     # バンドストップフィルタの係数
     a_bs = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
@@ -209,6 +209,17 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # テスト用正弦波の周波数: 50
     # a: [1.0, -1.8464940847417775, 0.9414300888198024]
     # b: [0.9707150444099012, -1.8464940847417775, 0.9707150444099012]
+
+
+
+
+    # サンプリングレートを入力: 1000
+    # フィルタの種類(LPF, HPF, BPF, BSF)を入力: BPF
+    # カットオフ周波数下限fc1を入力: 5
+    # カットオフ周波数下限fc2を入力: 15
+    # テスト用正弦波の周波数: 30
+    # a: [1.0, -1.9361916025752066, 0.9390625058174924]
+    # b: [0.030468747091253825, 0.0, -0.030468747091253825]
 
 
     while True:
@@ -245,8 +256,8 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
 
 
 
-                    # int_list_data = int_list_data_bs
-                    int_list_data = int_list_data
+                    int_list_data = int_list_data_bs
+                    # int_list_data = int_list_data
 
 
                     last_data = int_list_data
