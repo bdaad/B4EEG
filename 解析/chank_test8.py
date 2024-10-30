@@ -95,19 +95,19 @@ def iir_real_time_3ch(x, a, b, y_prev, x_prev):
     Q = len(a) - 1  # 分母の次数
 
     if x_prev.shape != (3, P):
-        x_prev = np.zeros((3, P))
+        x_prev = np.zeros((3, P), dtype=float)
     if y_prev.shape != (3, Q):
-        y_prev = np.zeros((3, Q))
+        y_prev = np.zeros((3, Q), dtype=float)
 
     # 分子項の計算（フィードフォワード部分）
     x_terms = b[0] * x  # 現在の入力に対する係数適用
     if P > 0:
-        x_terms += np.dot(x_prev, b[1:].reshape(-1, 1)).flatten()
+        x_terms += np.dot(x_prev.astype(float), b[1:].reshape(-1, 1)).flatten()
 
     # 分母項の計算（フィードバック部分）
     y_terms = np.zeros_like(x)
     if Q > 0:
-        y_terms += np.dot(y_prev, a[1:].reshape(-1, 1)).flatten()
+        y_terms += np.dot(y_prev.astype(float), a[1:].reshape(-1, 1)).flatten()
 
     # 現在の出力を計算
     y = x_terms - y_terms
