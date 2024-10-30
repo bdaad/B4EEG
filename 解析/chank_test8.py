@@ -90,7 +90,7 @@ def save_2d_array_to_file(data, list_name):
 
 # 実装したフィルタ関数
 def iir_real_time_3ch(x, a, b, y_prev, x_prev):
-    x = np.array(x)  # 入力信号（3チャンネル）
+    x = np.array(x, dtype=float)  # 入力信号（3チャンネル）
     P = len(b) - 1  # 分子の次数
     Q = len(a) - 1  # 分母の次数
 
