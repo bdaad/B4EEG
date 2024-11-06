@@ -307,7 +307,7 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                     # **バンドパスフィルタの適用**
                     int_list_data_bp, y_prev_bp, x_prev_bp = iir_real_time_3ch(int_list_data, a_bp, b_bp, y_prev_bp, x_prev_bp) #バンドパスフィルタの適用.
                     # int_list_data_bs, y_prev_bs, x_prev_bs = iir_real_time_3ch(int_list_data_bp, a_bs, b_bs, y_prev_bs, x_prev_bs) #バンドストップフィルタの適用.
-                    int_list_data_bp = int_list_data
+                    # int_list_data_bp = int_list_data
 
 
 
