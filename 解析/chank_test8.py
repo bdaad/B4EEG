@@ -606,10 +606,15 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     print("shader done!!!!")
 
 
+    # blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    # blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    # blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    
     blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
     blinking_image1_off = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=0.000000000001, refresh_rate=refresh_rate, start_on=False, projection=projection)
     
