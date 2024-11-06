@@ -707,30 +707,23 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                     flag_blink_1.value = True
 
         
-        # # 12Hzの1周期分.. 60/12 = 5
+        # # 15Hzの1周期分.. 60/15 = 4
         # with lock:
-        #     if blinking_image1.frame_count_not_reset % 5 == 0:
+        #     if blinking_image3.frame_count_not_reset % 4 == 0:
         #         if flag_blink_2.value == True:
         #             flag_blink_2.value = False
         #         else:
         #             flag_blink_2.value = True
 
-        #         if blinking_image1.frame_count_not_reset % 6 == 0:            
-        #     if flag_blink_1.value == True:
-        #         with lock:
-        #             flag_blink_1.value = False
-        #     else:
-        #         with lock:
-        #             flag_blink_1.value = True
 
-        # # 12Hzの1周期分.. 60/12 = 5        
-        # if blinking_image1.frame_count_not_reset % 5 == 0:
-        #     if flag_blink_2.value == True:
-        #         with lock:
+        # # 6Hzの1周期分.. 60/6 = 10
+        # with lock:
+        #     if blinking_image3.frame_count_not_reset % 10 == 0:
+        #         if flag_blink_2.value == True:
         #             flag_blink_2.value = False
-        #     else:
-        #         with lock:
+        #         else:
         #             flag_blink_2.value = True
+
 
 
 
@@ -857,9 +850,15 @@ def func_serial(priority, com, shared_receive_list, receive_value, clock_signal_
 
 def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, chank_size, lock):
     """
-    1000data / 10Hz = 100data
-    1000data / 12Hz = 83.3333data = 83data
-    1000data / 15Hz = 66.6666data = 67data
+    1000data / 3Hz = 333.333data = 334data : 60/3 = 20
+    1000data / 5Hz = 200data : 60/5 = 12                       採用(未実験)
+    1000data / 6Hz = 166.666data = 167data : 60/6 = 10         採用(未実験)
+    1000data / 10Hz = 100data : 60/10 = 6                      採用
+    1000data / 12Hz = 83.3333data = 83data : 60/12 = 5         採用(未実験)
+    1000data / 15Hz = 66.6666data = 67data : 60/15 = 4         採用(うまくいかなかった感じがする)
+    1000data / 20Hz = 50data : 60/20 = 3
+    1000data / 30Hz = 33.3333data = 34data : 60/30 = 2
+
     """
     # とりあえず０ｃｈのデータのみを処理する。受け取るデータはch0, 1,2である..
     p = psutil.Process()
@@ -1130,7 +1129,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 chank_copy = adjust_chank_list_1[-20:] #最後の20個のデータをコピー
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy, count, gaze_flag_1, "10Hz", 0, 0.1, 100)
-            plot_phase_ana(chank_copy, count, gaze_flag_1, "10Hz", 1, 20, 20)
+            plot_phase_ana(chank_copy, count, gaze_flag_1, "10Hz", 1, 20, 20, 100)
             count = count + 1
 
 
@@ -1139,8 +1138,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, "12Hz", 0, 0.83, 83)
-            plot_phase_ana(chank_copy2, count2, gaze_flag_2, "12Hz", 1, 20, 20)
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, "15Hz", 0, 0.67, 67)
+            plot_phase_ana(chank_copy2, count2, gaze_flag_2, "15Hz", 1, 20, 20, 67)
             count2 = count2 + 1
 
 
@@ -1176,7 +1175,7 @@ def plot_multiple_lines(y_values, count, gaze_flag, folder, start, end, num_poin
 
 
 
-def plot_phase_ana(y_values, count, gaze_flag, folder, start, end, num_points): #位相分析
+def plot_phase_ana(y_values, count, gaze_flag, folder, start, end, num_points, range_ms): #位相分析
     x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
@@ -1187,12 +1186,19 @@ def plot_phase_ana(y_values, count, gaze_flag, folder, start, end, num_points): 
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする
-    if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に16個以上ある場合
-        gaze_flag.value = True
-        
-    else:
-        gaze_flag.value = False
-        print("gaze_flag: false")
+    if range_ms == 100: #10Hzの場合
+        if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に11個以上ある場合
+            gaze_flag.value = True 
+        else:
+            gaze_flag.value = False
+            print("gaze_flag: false")
+
+    elif range_ms == 67: #15Hzの場合
+        if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 10: #10~50の範囲に11個以上ある場合
+            gaze_flag.value = True
+        else:
+            gaze_flag.value = False
+            print("gaze_flag: false")
 
 
     if count % 20 == 0:
@@ -1206,9 +1212,10 @@ def plot_phase_ana(y_values, count, gaze_flag, folder, start, end, num_points): 
         plt.title('Multiple Lines on the Same Graph')
         plt.xlabel('X axis')
         plt.ylabel('Y axis')
-        plt.ylim(0, 100)
+        plt.ylim(0, range_ms)
         plt.legend(loc='upper right')
         plt.grid(True)
+        
 
 
         current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
@@ -1329,7 +1336,9 @@ def main():
     # process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
     # process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 83, lock)) #12Hz: 100data / 12Hz = 83
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67
+    # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 167, lock)) #15Hz: 1000data / 6Hz = 166.666data = 167data : 60/6 = 10
+    
     
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1))
     
