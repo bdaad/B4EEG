@@ -864,37 +864,37 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             if character_count >= 15 and character_count < 120:
                 print("あ")
                 if input_character_onece == 0:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 1
                 images.append(input_character)
             elif  images[4] == character_image1_2_on:
                 # print("い")
                 print("あ")
                 if input_character_onece == 1:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 2
             elif images[4] == character_image1_3_on:
                 # print("う")
                 print("い")
                 if input_character_onece == 2:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 3
             elif images[4] == character_image1_4_on:
                 # print("え")
                 print("う")
                 if input_character_onece == 3:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 4
             elif images[4] == character_image1_5_on:
                 # print("お")
                 print("え")
                 if input_character_onece == 4:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 5
             elif images[4] == character_image1_on:
                 print("お")
                 if input_character_onece == 5:
-                    input_character = BlinkingImage(position=(0, 0), size=(0.7, 0.7), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                     input_character_onece = 6
             character_count = 0
             input_character_onece = 0
@@ -968,6 +968,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 images.remove(input_character)
                 input_character = "None"
                 character_change_curennt_frame = 0
+                print("input_characterを削除しました。")
     
                 
 
@@ -1111,7 +1112,7 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
                         analysis_flag.value = True
                     chank_chank_list_1 = []
-                    print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)
+                    # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)  
                     pretime = current_time
 
                 with lock:
