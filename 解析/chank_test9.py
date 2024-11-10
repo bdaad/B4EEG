@@ -147,6 +147,8 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
     t = 1
+    last_data_10hz = [0,0,0] # 最後に受信したデータ(補間用)
+    last_data_15hz = [0,0,0] # 最後に受信したデータ(補間用)
     # last_data = [0,0,0] # 最後に受信したデータ(補間用)
     # int_list_data = [0,0,0] # 最後に受信したデータ(補間用)
     
