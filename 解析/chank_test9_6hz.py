@@ -115,9 +115,11 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
     a_bp_10hz = np.array([1.000000000000000000000000000000, -3.974428294786210180689067783533, 5.931305335419762236881524586352, -3.939226621802428329743861468160, 0.982364711720531635918973734078])
     b_bp_10hz = np.array([0.000039222815344601606540007877,  0.000000000000000000000000000000,  -0.000078445630689203213080015753,  0.000000000000000000000000000000, 0.000039222815344601606540007877])
 
-    
-    a_bp_15hz = np.array([1.000000000000000000000000000000, -3.964612899258443956540531871724,5.911823746000675505740673543187, -3.929498161631889363576419782476,0.982364711720532413075090971688])
-    b_bp_15hz = np.array([0.000039222815344601653973852923,  0.000000000000000000000000000000,-0.000078445630689203307947705845,  0.000000000000000000000000000000,0.000039222815344601653973852923])
+    # 15Hzって書いてあるけど係数は6Hzのものです.
+    # 6Hz用.
+    a_bp_15hz = np.array([1.000000000000000000000000000000, -3.979456903924181165876916566049,5.941304776471029391871070401976, -3.944210692344831681310779458727,0.982364711720532302052788509172])
+    b_bp_15hz = np.array([0.000039222815344601667526380079,  0.000000000000000000000000000000,-0.000078445630689203335052760158,  0.000000000000000000000000000000,0.000039222815344601667526380079])
+
 
 
     # 過去の値を保持する配列
@@ -557,13 +559,13 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
         
 
    
-        # # 15Hzの1周期分.. 60/15 = 4
-        with lock:
-            if blinking_image1.frame_count_not_reset % 4 == 0:
-                if flag_blink_2.value == True:
-                    flag_blink_2.value = False
-                else:
-                    flag_blink_2.value = True
+        # # # 15Hzの1周期分.. 60/15 = 4
+        # with lock:
+        #     if blinking_image1.frame_count_not_reset % 4 == 0:
+        #         if flag_blink_2.value == True:
+        #             flag_blink_2.value = False
+        #         else:
+        #             flag_blink_2.value = True
 
 
         # 12Hzの1周期分.. 60/12 = 5
@@ -575,13 +577,13 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
         #             flag_blink_2.value = True
 
 
-        # # 6Hzの1周期分.. 60/6 = 10
-        # with lock:
-        #     if blinking_image3.frame_count_not_reset % 10 == 0:
-        #         if flag_blink_2.value == True:
-        #             flag_blink_2.value = False
-        #         else:
-        #             flag_blink_2.value = True
+        # 6Hzの1周期分.. 60/6 = 10
+        with lock:
+            if blinking_image3.frame_count_not_reset % 10 == 0:
+                if flag_blink_2.value == True:
+                    flag_blink_2.value = False
+                else:
+                    flag_blink_2.value = True
 
 
 
@@ -1067,8 +1069,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 0, 0.67, 67) # fre_change_word.
-            plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 1, 20, 20, 67)    # fre_change_word.
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 0, 0.167, 167) # fre_change_word.
+            plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1243,8 +1245,9 @@ def main():
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock))
     
 
-    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67         # fre_change_word.
+    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 1000data / 10Hz = 100
+    # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 1000data / 15Hz = 66.666666 = 67         # fre_change_word.
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 167, lock)) #15Hz: 1000data / 6Hz = 166.666666 = 167         # fre_change_word.
 
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
