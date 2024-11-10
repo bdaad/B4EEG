@@ -793,65 +793,65 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 images[4] = character_image1_2_on             
             character_count += 1
 
-        # か.
-        if gaze_flag_1_2.value == True:
-            if character_count == 0:
-                images[5] = character_image2_on #offかをonかに変更
-                flag_b = True
-            elif character_count == 120: #onかをonきに変更
-                images[5] = character_image2_2_on
-            elif images[5] == character_image2_2_on and character_count % 60 == 0 and character_count > 120: #onきをonくに変更
-                images[5] = character_image2_3_on
-            elif images[5] == character_image2_3_on and character_count % 60 == 0 and character_count > 120: #onくをonけに変更
-                images[5] = character_image2_4_on
-            elif images[5] == character_image2_4_on and character_count % 60 == 0 and character_count > 120: #onけをonこに変更
-                images[5] = character_image2_5_on
-            elif images[5] == character_image2_5_on and character_count % 60 == 0 and character_count > 120: #onこをonかに変更
-                images[5] = character_image2_on
-            elif images[5] == character_image2_on and character_count % 60 == 0 and character_count > 120: #onかをonきに変更
-                images[5] = character_image2_2_on
-            character_count += 1
+        # # か.
+        # if gaze_flag_1_2.value == True:
+        #     if character_count == 0:
+        #         images[5] = character_image2_on #offかをonかに変更
+        #         flag_b = True
+        #     elif character_count == 120: #onかをonきに変更
+        #         images[5] = character_image2_2_on
+        #     elif images[5] == character_image2_2_on and character_count % 60 == 0 and character_count > 120: #onきをonくに変更
+        #         images[5] = character_image2_3_on
+        #     elif images[5] == character_image2_3_on and character_count % 60 == 0 and character_count > 120: #onくをonけに変更
+        #         images[5] = character_image2_4_on
+        #     elif images[5] == character_image2_4_on and character_count % 60 == 0 and character_count > 120: #onけをonこに変更
+        #         images[5] = character_image2_5_on
+        #     elif images[5] == character_image2_5_on and character_count % 60 == 0 and character_count > 120: #onこをonかに変更
+        #         images[5] = character_image2_on
+        #     elif images[5] == character_image2_on and character_count % 60 == 0 and character_count > 120: #onかをonきに変更
+        #         images[5] = character_image2_2_on
+        #     character_count += 1
 
 
 
-        # さ.
-        if gaze_flag_2.value == True:
-            if character_count == 0:
-                images[6] = character_image3_on
-                flag_c = True
-            elif character_count == 120:  #onさをonしに変更
-                images[6] = character_image3_2_on
-            elif images[6] == character_image3_2_on and character_count % 60 == 0 and character_count > 120: #onしをonすに変更
-                images[6] = character_image3_3_on
-            elif images[6] == character_image3_3_on and character_count % 60 == 0 and character_count > 120: #onすをonせに変更
-                images[6] = character_image3_4_on
-            elif images[6] == character_image3_4_on and character_count % 60 == 0 and character_count > 120: #onせをonそに変更
-                images[6] = character_image3_5_on
-            elif images[6] == character_image3_5_on and character_count % 60 == 0 and character_count > 120: #onそをonさに変更
-                images[6] = character_image3_on
-            elif images[6] == character_image3_on and character_count % 60 == 0 and character_count > 120: #onさをonしに変更
-                images[6] = character_image3_2_on
-            character_count += 1
+        # # さ.
+        # if gaze_flag_2.value == True:
+        #     if character_count == 0:
+        #         images[6] = character_image3_on
+        #         flag_c = True
+        #     elif character_count == 120:  #onさをonしに変更
+        #         images[6] = character_image3_2_on
+        #     elif images[6] == character_image3_2_on and character_count % 60 == 0 and character_count > 120: #onしをonすに変更
+        #         images[6] = character_image3_3_on
+        #     elif images[6] == character_image3_3_on and character_count % 60 == 0 and character_count > 120: #onすをonせに変更
+        #         images[6] = character_image3_4_on
+        #     elif images[6] == character_image3_4_on and character_count % 60 == 0 and character_count > 120: #onせをonそに変更
+        #         images[6] = character_image3_5_on
+        #     elif images[6] == character_image3_5_on and character_count % 60 == 0 and character_count > 120: #onそをonさに変更
+        #         images[6] = character_image3_on
+        #     elif images[6] == character_image3_on and character_count % 60 == 0 and character_count > 120: #onさをonしに変更
+        #         images[6] = character_image3_2_on
+        #     character_count += 1
 
         
-        # た.
-        if gaze_flag_2_2.value == True:
-            if character_count == 0:
-                images[7] = character_image4_on
-                flag_d = True
-            elif character_count == 120:   #onたをonちに変更
-                images[7] = character_image4_2_on
-            elif images[7] == character_image4_2_on and character_count % 60 == 0 and character_count > 120: #onちをonつに変更
-                images[7] = character_image4_3_on
-            elif images[7] == character_image4_3_on and character_count % 60 == 0 and character_count > 120: #onつをonてに変更
-                images[7] = character_image4_4_on
-            elif images[7] == character_image4_4_on and character_count % 60 == 0 and character_count > 120: #onてをonとに変更
-                images[7] = character_image4_5_on
-            elif images[7] == character_image4_5_on and character_count % 60 == 0 and character_count > 120: #onとをonたに変更
-                images[7] = character_image4_on
-            elif images[7] == character_image4_on and character_count % 60 == 0 and character_count > 120: #onたをonちに変更
-                images[7] = character_image4_2_on
-            character_count += 1
+        # # た.
+        # if gaze_flag_2_2.value == True:
+        #     if character_count == 0:
+        #         images[7] = character_image4_on
+        #         flag_d = True
+        #     elif character_count == 120:   #onたをonちに変更
+        #         images[7] = character_image4_2_on
+        #     elif images[7] == character_image4_2_on and character_count % 60 == 0 and character_count > 120: #onちをonつに変更
+        #         images[7] = character_image4_3_on
+        #     elif images[7] == character_image4_3_on and character_count % 60 == 0 and character_count > 120: #onつをonてに変更
+        #         images[7] = character_image4_4_on
+        #     elif images[7] == character_image4_4_on and character_count % 60 == 0 and character_count > 120: #onてをonとに変更
+        #         images[7] = character_image4_5_on
+        #     elif images[7] == character_image4_5_on and character_count % 60 == 0 and character_count > 120: #onとをonたに変更
+        #         images[7] = character_image4_on
+        #     elif images[7] == character_image4_on and character_count % 60 == 0 and character_count > 120: #onたをonちに変更
+        #         images[7] = character_image4_2_on
+        #     character_count += 1
 
 
 
