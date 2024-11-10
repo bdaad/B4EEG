@@ -206,7 +206,7 @@ def communicate_and_count(ser , received_list, receive_value, clock_signal_1, cl
 
 
 # 1000Hzでデータ要求を送信しないで、受信も行い、データの数をカウントする関数
-def communicate_and_count_test(ser , received_list, receive_value, clock_signal_1, clock_signal_2, lock):
+def communicate_and_count_test(ser , received_list_1, receive_value_1, received_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock):
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
     t = 1
@@ -219,8 +219,12 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # b_bp = np.array([0.000000274471095589420208285894,  0.000000000000000000000000000000,-0.000001372355477947100935550350,  0.000000000000000000000000000000,0.000002744710955894201871100701,  0.000000000000000000000000000000,-0.000002744710955894201871100701,  0.000000000000000000000000000000,0.000001372355477947100935550350,  0.000000000000000000000000000000,-0.000000274471095589420208285894])
 
 
-    a_bp = np.array([1.000000000000000000000000000000, -3.974428294786210180689067783533, 5.931305335419762236881524586352, -3.939226621802428329743861468160, 0.982364711720531635918973734078])
-    b_bp = np.array([0.000039222815344601606540007877,  0.000000000000000000000000000000,  -0.000078445630689203213080015753,  0.000000000000000000000000000000, 0.000039222815344601606540007877])
+    a_bp_10hz = np.array([1.000000000000000000000000000000, -3.974428294786210180689067783533, 5.931305335419762236881524586352, -3.939226621802428329743861468160, 0.982364711720531635918973734078])
+    b_bp_10hz = np.array([0.000039222815344601606540007877,  0.000000000000000000000000000000,  -0.000078445630689203213080015753,  0.000000000000000000000000000000, 0.000039222815344601606540007877])
+
+    a_bp_15hz = np.array([1.000000000000000000000000000000, -3.974428294786210180689067783533, 5.931305335419762236881524586352, -3.939226621802428329743861468160, 0.982364711720531635918973734078])
+    b_bp_15hz = np.array([0.000039222815344601606540007877,  0.000000000000000000000000000000,  -0.000078445630689203213080015753,  0.000000000000000000000000000000, 0.000039222815344601606540007877])
+
 
     # # バンドストップフィルタの係数
     # a_bs = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
@@ -231,10 +235,19 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
     # バンドパスフィルタ用
     # y_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値
     # x_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値
-    Q = len(a_bp) - 1
-    P = len(b_bp) - 1
-    y_prev_bp = np.zeros((3, Q))
-    x_prev_bp = np.zeros((3, P))
+    Q_10hz = len(a_bp_10hz) - 1
+    P_10hz = len(b_bp_10hz) - 1
+
+    Q_15hz = len(a_bp_15hz) - 1
+    P_15hz = len(b_bp_15hz) - 1
+
+
+    y_prev_bp_10Hz = np.zeros((3, Q_10hz))
+    x_prev_bp_10hz = np.zeros((3, P_10hz))
+
+    y_prev_bp_15Hz = np.zeros((3, Q_15hz))
+    x_prev_bp_15hz = np.zeros((3, P_15hz))
+
 
 
 
@@ -305,28 +318,32 @@ def communicate_and_count_test(ser , received_list, receive_value, clock_signal_
                     # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
 
                     # **バンドパスフィルタの適用**
-                    int_list_data_bp, y_prev_bp, x_prev_bp = iir_real_time_3ch(int_list_data, a_bp, b_bp, y_prev_bp, x_prev_bp) #バンドパスフィルタの適用.
+                    int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
+                    int_list_data_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz = iir_real_time_3ch(int_list_data, a_bp_15hz, b_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz) #バンドパスフィルタの適用.
                     # int_list_data_bs, y_prev_bs, x_prev_bs = iir_real_time_3ch(int_list_data_bp, a_bs, b_bs, y_prev_bs, x_prev_bs) #バンドストップフィルタの適用.
                     # int_list_data_bp = int_list_data
 
 
 
-                    int_list_data = int_list_data_bp
-                    last_data = int_list_data_bp
+                    # int_list_data = int_list_data_bp_10hz
+                    last_data_10hz = int_list_data_bp_10hz
+                    last_data_15hz = int_list_data_bp_15hz
 
 
-                except ValueError:
+                except ValueError: #エラー処理
                     print("ValueError")
                     # int_list_data = last_data
-                    int_list_data_bp = last_data
+                    int_list_data_bp_10hz = last_data_10hz 
+                    int_list_data_bp_15hz = last_data_15hz
 
                 with lock:  # ロックを使って排他制御
-                    received_list.append(receive_value)
-                # with lock:
+                    received_list_1.append(receive_value_1)
+                    received_list_2.append(receive_value_2)
                     clock_signal_1.value = True
                     clock_signal_2.value = True
                     # receive_value[:] = int_list_data
-                    receive_value[:] = int_list_data
+                    receive_value_1[:] = last_data_10hz
+                    receive_value_2[:] = last_data_15hz
 
  
 # /**************グラフィック関連**********************************************/
@@ -719,12 +736,12 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
         # # 15Hzの1周期分.. 60/15 = 4
-        # with lock:
-        #     if blinking_image3.frame_count_not_reset % 4 == 0:
-        #         if flag_blink_2.value == True:
-        #             flag_blink_2.value = False
-        #         else:
-        #             flag_blink_2.value = True
+        with lock:
+            if blinking_image3.frame_count_not_reset % 4 == 0:
+                if flag_blink_2.value == True:
+                    flag_blink_2.value = False
+                else:
+                    flag_blink_2.value = True
 
 
         # 12Hzの1周期分.. 60/12 = 5
@@ -1194,7 +1211,7 @@ def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
 
 
 
-def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, gaze_flag_1_2, adjust_chank_list_2, analysis_flag_2, gaze_flag_2, gaze_flag_2_2, lock):
+def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2, analysis_flag_2, gaze_flag_2, gaze_flag_2_2, lock):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_analysis) started with priority {priority}")
@@ -1283,16 +1300,27 @@ def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, n
         else:
             gaze_flag.value = False
             gaze_flag2.value = False
-            print("gaze_flag: false")
         
     elif range_ms == 167: #6Hzの場合
-        None
+        if len(max_indices_per_row[(max_indices_per_row >= 16) & (max_indices_per_row <= 83)]) >= 15: #16~83の範囲に15個以上ある場合  : 位相非反転
+            gaze_flag.value = True 
+        elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 151)]) >= 15: #84~151の範囲に15個以上ある場合  : 位相反転
+            gaze_flag2.value = True
+        else:
+            gaze_flag.value = False
+            gaze_flag2.value = False
+
     elif range_ms == 83: #12Hzの場合
         None
+    
     elif range_ms == 67: #15Hzの場合
-        None
-    
-    
+        if len(max_indices_per_row[(max_indices_per_row >= 7) & (max_indices_per_row <= 33)]) >= 15: #7~33の範囲に15個以上ある場合  : 位相非反転
+            gaze_flag.value = True 
+        elif len(max_indices_per_row[(max_indices_per_row >= 34) & (max_indices_per_row <= 60)]) >= 15: #34~60の範囲に15個以上ある場合  : 位相反転
+            gaze_flag2.value = True
+        else:
+            gaze_flag.value = False
+            gaze_flag2.value = False
     
 
     if count % 20 == 0:
@@ -1338,7 +1366,13 @@ def adjust_data_to_size(data, target_size):
 def main():
         # 共有リストとロックを作成
     manager = multiprocessing.Manager()
-    shared_receive_list = manager.list()  # 共有リスト
+
+
+    shared_receive_list_1 = manager.list()  # 共有リスト10Hz
+    shared_receive_list_2 = manager.list()  # 共有リスト15Hz
+
+
+
     # lock_receive_list = multiprocessing.Lock()  # ロック
     flag_blink_1 = manager.Value('b', True)
     flag_blink_2 = manager.Value('b', True)
@@ -1347,7 +1381,10 @@ def main():
     chank_list_2 = manager.list()
 
     # lock_chank_list = multiprocessing.Lock()
-    receive_value = manager.list()  # 共有リスト
+    receive_value_1 = manager.list()  # 共有リスト10Hz
+    receive_value_2 = manager.list()  # 共有リスト15Hz
+
+
     # lock_receive_value = multiprocessing.Lock()
     clock_signal_1 = manager.Value('b', False)
     clock_signal_2 = manager.Value('b', False)
@@ -1395,19 +1432,19 @@ def main():
     # 並列処理で実行するプロセスを定義
 
     
-    process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list, receive_value, clock_signal_1, clock_signal_2, lock))
+    process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock))
     
     # process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
     # process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
-    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67
+    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67
     # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 167, lock)) #15Hz: 1000data / 6Hz = 166.666data = 167data : 60/6 = 10
     
     
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
     # process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
-    process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, adjust_chank_list_2 ,analysis_flag_2, gaze_flag_2,gaze_flag_2_2, lock))
+    process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2 ,analysis_flag_2, gaze_flag_2,gaze_flag_2_2, lock))
 
 
 
