@@ -794,7 +794,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # か.
-        elif gaze_flag_1_2.value == True:
+        if gaze_flag_1_2.value == True:
             if character_count == 0:
                 images[5] = character_image2_on #offかをonかに変更
                 flag_b = True
@@ -813,7 +813,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # さ.
-        elif gaze_flag_2.value == True:
+        if gaze_flag_2.value == True:
             if character_count == 0: #offさをonさに変更
                 images[6] = character_image3_on
                 flag_c = True
@@ -832,7 +832,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # た.
-        elif gaze_flag_2_2.value == True:
+        if gaze_flag_2_2.value == True:
             if character_count == 0:
                 images[7] = character_image4_on
                 flag_d = True
