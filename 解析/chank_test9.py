@@ -963,7 +963,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
         # input_characterを60フレーム分表示して削除する.
-        if input_character is not "None":
+        if input_character != "None":
             if character_change_curennt_frame + 60 == blinking_image1.frame_count_not_reset: #60フレーム表示したら
                 images.remove(input_character)
                 input_character = "None"
