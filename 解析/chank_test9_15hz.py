@@ -474,8 +474,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
     blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
+    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=15, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
     
     # blinking_image1 = BlinkingImage(position=(0.0, 0.0), size=(0.6, 0.6), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     # blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
