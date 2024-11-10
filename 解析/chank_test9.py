@@ -47,46 +47,6 @@ def save_2d_array_to_file(data, list_name):
 
 
 
-# def iir_real_time_3ch(x, a, b, y_prev, x_prev):
-#     """3チャンネル用IIRフィルタをかける"""
-#     y1 = b[0] * x[0] + b[1] * x_prev[0,0] + b[2] * x_prev[0,1] - a[1] * y_prev[0,0] - a[2] * y_prev[0,1]
-#     y2 = b[0] * x[1] + b[1] * x_prev[1,0] + b[2] * x_prev[1,1] - a[1] * y_prev[1,0] - a[2] * y_prev[1,1]
-#     y3 = b[0] * x[2] + b[1] * x_prev[2,0] + b[2] * x_prev[2,1] - a[1] * y_prev[2,0] - a[2] * y_prev[2,1]
-
-#     # 直前のサンプルを更新
-#     x_prev[0,1], x_prev[0,0] = x_prev[0,0], x[0]
-#     x_prev[1,1], x_prev[1,0] = x_prev[1,0], x[1]
-#     x_prev[2,1], x_prev[2,0] = x_prev[2,0], x[2]
-
-#     y_prev[0,1], y_prev[0,0] = y_prev[0,0], y1
-#     y_prev[1,1], y_prev[1,0] = y_prev[1,0], y2
-#     y_prev[2,1], y_prev[2,0] = y_prev[2,0], y3
-
-#     return [y1, y2, y3]
-
-# def iir_real_time_3ch(x, a, b, y_prev, x_prev):
-#     """3チャンネル用IIRフィルタをかける (NumPyによるベクトル化)"""
-    
-#     # 現在の入力値 x とフィルタ係数を NumPy配列として処理
-#     x = np.array(x)
-#     # b = np.array(b)
-#     # a = np.array(a)
-    
-#     # 3チャンネルのフィルタ適用 (ベクトル化)
-#     y = (b[0] * x + b[1] * x_prev[:, 0] + b[2] * x_prev[:, 1]
-#          - a[1] * y_prev[:, 0] - a[2] * y_prev[:, 1])
-    
-#     # 直前のサンプルを更新 (ベクトル化)
-#     x_prev[:, 1], x_prev[:, 0] = x_prev[:, 0], x
-#     y_prev[:, 1], y_prev[:, 0] = y_prev[:, 0], y
-
-#     return y.tolist(),  y_prev, x_prev  # 状態を返す# リスト形式で返す
-
-
-
-
-
-
 
 # 実装したフィルタ関数
 def iir_real_time_3ch(x, a, b, y_prev, x_prev):
@@ -147,32 +107,20 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
     t = 1
+    
+    # fre_change_word.
     last_data_10hz = [0,0,0] # 最後に受信したデータ(補間用)
     last_data_15hz = [0,0,0] # 最後に受信したデータ(補間用)
-    # last_data = [0,0,0] # 最後に受信したデータ(補間用)
-    # int_list_data = [0,0,0] # 最後に受信したデータ(補間用)
-    
-    # フィルタのパラメータ設定
-    # fs = 1000  # サンプリングレート
-    # a_bp = np.array([1.000000000000000000000000000000,   -9.631588364109775923793677065987,41.791433287055802736631449079141, -107.575108377109458501763583626598,181.921819391459621328976936638355, -211.193487264920719326255493797362,170.448765914121622699894942343235,  -94.434625746604908158587932121009,34.373188588382440400437189964578,   -7.422455995324011013281051418744,0.722058567096400594209626433440])
-    # b_bp = np.array([0.000000274471095589420208285894,  0.000000000000000000000000000000,-0.000001372355477947100935550350,  0.000000000000000000000000000000,0.000002744710955894201871100701,  0.000000000000000000000000000000,-0.000002744710955894201871100701,  0.000000000000000000000000000000,0.000001372355477947100935550350,  0.000000000000000000000000000000,-0.000000274471095589420208285894])
-
 
     a_bp_10hz = np.array([1.000000000000000000000000000000, -3.974428294786210180689067783533, 5.931305335419762236881524586352, -3.939226621802428329743861468160, 0.982364711720531635918973734078])
     b_bp_10hz = np.array([0.000039222815344601606540007877,  0.000000000000000000000000000000,  -0.000078445630689203213080015753,  0.000000000000000000000000000000, 0.000039222815344601606540007877])
 
+    
     a_bp_15hz = np.array([1.000000000000000000000000000000, -3.964612899258443956540531871724,5.911823746000675505740673543187, -3.929498161631889363576419782476,0.982364711720532413075090971688])
     b_bp_15hz = np.array([0.000039222815344601653973852923,  0.000000000000000000000000000000,-0.000078445630689203307947705845,  0.000000000000000000000000000000,0.000039222815344601653973852923])
 
-    # # バンドストップフィルタの係数
-    # a_bs = np.array([1.0, -1.8464940847417775, 0.9414300888198024])
-    # b_bs = np.array([0.9707150444099012, -1.8464940847417775, 0.9707150444099012])
-
 
     # 過去の値を保持する配列
-    # バンドパスフィルタ用
-    # y_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の出力値
-    # x_prev_bp = np.zeros((3, 2))  # 3チャンネル、2つの過去の入力値
     Q_10hz = len(a_bp_10hz) - 1
     P_10hz = len(b_bp_10hz) - 1
 
@@ -212,19 +160,12 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                 try:
                     # int_list_data = [int(x) for x in result.decode().split(',')]
                     int_list_data = [int(result.decode()), int(0), int(0)] #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-
                     # print(int_list_data)
                     # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
 
                     # **バンドパスフィルタの適用**
                     int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
                     int_list_data_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz = iir_real_time_3ch(int_list_data, a_bp_15hz, b_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz) #バンドパスフィルタの適用.
-                    # int_list_data_bs, y_prev_bs, x_prev_bs = iir_real_time_3ch(int_list_data_bp, a_bs, b_bs, y_prev_bs, x_prev_bs) #バンドストップフィルタの適用.
-                    # int_list_data_bp = int_list_data
-
-
-
-                    # int_list_data = int_list_data_bp_10hz
                     last_data_10hz = int_list_data_bp_10hz
                     last_data_15hz = int_list_data_bp_15hz
 
@@ -546,11 +487,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
     character_image1 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image1_2 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/i_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image1_3 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/u_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image1_4 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/e_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image1_5 = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/o_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    
     character_image1_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     character_image1_2_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     character_image1_3_on = BlinkingImage(position=(-1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -560,11 +496,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
     character_image2 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image2_2 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ki_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image2_3 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ku_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image2_4 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ke_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image2_5 = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ko_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    
     character_image2_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
     character_image2_2_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
     character_image2_3_on = BlinkingImage(position=(-0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -574,11 +505,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
     character_image3 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/sa_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image3_2 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/si_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image3_3 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/su_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image3_4 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/se_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    # character_image3_5 = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/so_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    
     character_image3_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     character_image3_2_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     character_image3_3_on = BlinkingImage(position=(0.5, 0.2), size=(0.45, 0.45), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -588,11 +514,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
     character_image4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image4_2 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ti_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image4_3 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/tu_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image4_4 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/te_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    # character_image4_5 = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/to_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-
     character_image4_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
     character_image4_2_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
     character_image4_3_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -623,6 +544,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
 
+
+        # fre_change_word.
         # 10Hzの1周期分.. 60/10 = 6
         with lock:
             if blinking_image1.frame_count_not_reset % 6 == 0:            
@@ -633,7 +556,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         
 
-
+   
         # # 15Hzの1周期分.. 60/15 = 4
         with lock:
             if blinking_image1.frame_count_not_reset % 4 == 0:
@@ -693,7 +616,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
         #     character_count += 1
 
 
-# 文字の表示を管理
+# 文字の表示を管理 # fre_change_word.
         # あ.
         if gaze_flag_1.value == True:
             if character_count == 0:
@@ -1144,8 +1067,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 0, 0.67, 67)
-            plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 1, 20, 20, 67)
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 0, 0.67, 67) # fre_change_word.
+            plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "15Hz", 1, 20, 20, 67)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1189,7 +1112,7 @@ def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, n
     max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個
     # ここに位相分析の処理を書く
         # None.
-    # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする
+    # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
         if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に11個以上ある場合  : 位相非反転
             gaze_flag.value = True 
@@ -1236,7 +1159,7 @@ def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, n
 
 
 
-
+# データ補完.
 def adjust_data_to_size(data, target_size):
     # 行数を取得
     row = len(data)
@@ -1265,28 +1188,21 @@ def main():
         # 共有リストとロックを作成
     manager = multiprocessing.Manager()
 
-
     shared_receive_list_1 = manager.list()  # 共有リスト10Hz
     shared_receive_list_2 = manager.list()  # 共有リスト15Hz
 
-
-
-    # lock_receive_list = multiprocessing.Lock()  # ロック
     flag_blink_1 = manager.Value('b', True)
     flag_blink_2 = manager.Value('b', True)
-    # lock_flag_blink_1 = multiprocessing.Lock()
+
     chank_list_1 = manager.list()
     chank_list_2 = manager.list()
 
-    # lock_chank_list = multiprocessing.Lock()
     receive_value_1 = manager.list()  # 共有リスト10Hz
     receive_value_2 = manager.list()  # 共有リスト15Hz
 
-
-    # lock_receive_value = multiprocessing.Lock()
     clock_signal_1 = manager.Value('b', False)
     clock_signal_2 = manager.Value('b', False)
-    # lock_clock_signal = multiprocessing.Lock()
+
     adjust_chank_list_1 = manager.list()
     adjust_chank_list_2 = manager.list()
 
@@ -1322,26 +1238,16 @@ def main():
     # com = input_com()
     # print(com)
 
-    
-    # with ProcessPoolExecutor(max_workers=2) as e:
-    #     # e.submit(func_1)
-    #     e.submit(func_serial, com)
-    #     # e.submit(func_visual)
-    # 並列処理で実行するプロセスを定義
 
     
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock))
     
-    # process2 = multiprocessing.Process(target=func_chank_10hz, args=(priority2, receive_value, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, lock))
-    # process3 = multiprocessing.Process(target=func_chank_12hz, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, lock))
+
     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 100data / 10Hz = 100
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67
-    # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 167, lock)) #15Hz: 1000data / 6Hz = 166.666data = 167data : 60/6 = 10
-    
-    
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 100data / 15Hz = 66.666666 = 67         # fre_change_word.
+
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
-    # process5 = multiprocessing.Process(target=func_analysis, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, lock))
     process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2 ,analysis_flag_2, lock))
 
 
@@ -1395,4 +1301,7 @@ if __name__ == '__main__':
 # func_visual
 
 # gaze_flag_1は4つ必要なはず.
+
+# 周波数変更による変更箇所のコメントアウトコード↓
+# fre_change_word.
 # /*******************************************************************************************/
