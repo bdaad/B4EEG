@@ -1236,7 +1236,7 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM3"
+    com = "COM8"
     # com = input_com()
     # print(com)
 
