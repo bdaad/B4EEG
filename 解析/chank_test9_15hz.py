@@ -535,6 +535,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     flag_d = False # 『た』用. 
     input_character = "None"
     input_character_onece = 0
+    not_enable_input_flag = False
 
 
     while not glfw.window_should_close(window): # ウィンドウが閉じられるまでループ
@@ -617,220 +618,218 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
 # 文字の表示を管理 # fre_change_word.
-        # あ.
-        if gaze_flag_1.value == True:
-            if character_count == 0:
-                images[4] = character_image1_on #offあをonあに変更
-                flag_a = True
-            elif character_count == 120:
-                images[4] = character_image1_2_on #onあをonいに変更
-            elif images[4] == character_image1_2_on and character_count % 60 == 0 and character_count > 120: #onいをonうに変更
-                images[4] = character_image1_3_on  #onいをonうに変更
-            elif images[4] == character_image1_3_on and character_count % 60 == 0 and character_count > 120: #onうをonえに変更
-                images[4] = character_image1_4_on #onうをonえに変更
-            elif images[4] == character_image1_4_on and character_count % 60 == 0 and character_count > 120: #onえをonおに変更
-                images[4] = character_image1_5_on #onえをonおに変更
-            elif images[4] == character_image1_5_on and character_count % 60 == 0 and character_count > 120: #onおをonあに変更
-                images[4] = character_image1_on
-            elif images[4] == character_image1_on and character_count % 60 == 0 and character_count > 120: #onあをonいに変更
-                images[4] = character_image1_2_on             
-            character_count += 1
+        if not_enable_input_flag == False:
+            # あ.
+            if gaze_flag_1.value == True:
+                if character_count == 0:
+                    images[4] = character_image1_on #offあをonあに変更
+                    flag_a = True
+                elif character_count == 120:
+                    images[4] = character_image1_2_on #onあをonいに変更
+                elif images[4] == character_image1_2_on and character_count % 60 == 0 and character_count > 120: #onいをonうに変更
+                    images[4] = character_image1_3_on  #onいをonうに変更
+                elif images[4] == character_image1_3_on and character_count % 60 == 0 and character_count > 120: #onうをonえに変更
+                    images[4] = character_image1_4_on #onうをonえに変更
+                elif images[4] == character_image1_4_on and character_count % 60 == 0 and character_count > 120: #onえをonおに変更
+                    images[4] = character_image1_5_on #onえをonおに変更
+                elif images[4] == character_image1_5_on and character_count % 60 == 0 and character_count > 120: #onおをonあに変更
+                    images[4] = character_image1_on
+                elif images[4] == character_image1_on and character_count % 60 == 0 and character_count > 120: #onあをonいに変更
+                    images[4] = character_image1_2_on             
+                character_count += 1
 
-        # か.
-        if gaze_flag_1_2.value == True:
-            if character_count == 0:
-                images[5] = character_image2_on #offかをonかに変更
-                flag_b = True
-            elif character_count == 120: #onかをonきに変更
-                images[5] = character_image2_2_on
-            elif images[5] == character_image2_2_on and character_count % 60 == 0 and character_count > 120: #onきをonくに変更
-                images[5] = character_image2_3_on
-            elif images[5] == character_image2_3_on and character_count % 60 == 0 and character_count > 120: #onくをonけに変更
-                images[5] = character_image2_4_on
-            elif images[5] == character_image2_4_on and character_count % 60 == 0 and character_count > 120: #onけをonこに変更
-                images[5] = character_image2_5_on
-            elif images[5] == character_image2_5_on and character_count % 60 == 0 and character_count > 120: #onこをonかに変更
-                images[5] = character_image2_on
-            elif images[5] == character_image2_on and character_count % 60 == 0 and character_count > 120: #onかをonきに変更
-                images[5] = character_image2_2_on
-            character_count += 1
+            # か.
+            elif gaze_flag_1_2.value == True:
+                if character_count == 0:
+                    images[5] = character_image2_on #offかをonかに変更
+                    flag_b = True
+                elif character_count == 120: #onかをonきに変更
+                    images[5] = character_image2_2_on
+                elif images[5] == character_image2_2_on and character_count % 60 == 0 and character_count > 120: #onきをonくに変更
+                    images[5] = character_image2_3_on
+                elif images[5] == character_image2_3_on and character_count % 60 == 0 and character_count > 120: #onくをonけに変更
+                    images[5] = character_image2_4_on
+                elif images[5] == character_image2_4_on and character_count % 60 == 0 and character_count > 120: #onけをonこに変更
+                    images[5] = character_image2_5_on
+                elif images[5] == character_image2_5_on and character_count % 60 == 0 and character_count > 120: #onこをonかに変更
+                    images[5] = character_image2_on
+                elif images[5] == character_image2_on and character_count % 60 == 0 and character_count > 120: #onかをonきに変更
+                    images[5] = character_image2_2_on
+                character_count += 1
 
-        # さ.
-        if gaze_flag_2.value == True:
-            if character_count == 0: #offさをonさに変更
-                images[6] = character_image3_on
-                flag_c = True
-            elif character_count == 120: #onさをonしに変更
-                images[6] = character_image3_2_on
-            elif images[6] == character_image3_2_on and character_count % 60 == 0 and character_count > 120: #onしをonすに変更
-                images[6] = character_image3_3_on
-            elif images[6] == character_image3_3_on and character_count % 60 == 0 and character_count > 120: #onすをonせに変更
-                images[6] = character_image3_4_on
-            elif images[6] == character_image3_4_on and character_count % 60 == 0 and character_count > 120: #onせをonそに変更
-                images[6] = character_image3_5_on
-            elif images[6] == character_image3_5_on and character_count % 60 == 0 and character_count > 120: #onそをonさに変更
-                images[6] = character_image3_on
-            elif images[6] == character_image3_on and character_count % 60 == 0 and character_count > 120: #onさをonしに変更
-                images[6] = character_image3_2_on
-            character_count += 1
+            # さ.
+            elif gaze_flag_2.value == True:
+                if character_count == 0: #offさをonさに変更
+                    images[6] = character_image3_on
+                    flag_c = True
+                elif character_count == 120: #onさをonしに変更
+                    images[6] = character_image3_2_on
+                elif images[6] == character_image3_2_on and character_count % 60 == 0 and character_count > 120: #onしをonすに変更
+                    images[6] = character_image3_3_on
+                elif images[6] == character_image3_3_on and character_count % 60 == 0 and character_count > 120: #onすをonせに変更
+                    images[6] = character_image3_4_on
+                elif images[6] == character_image3_4_on and character_count % 60 == 0 and character_count > 120: #onせをonそに変更
+                    images[6] = character_image3_5_on
+                elif images[6] == character_image3_5_on and character_count % 60 == 0 and character_count > 120: #onそをonさに変更
+                    images[6] = character_image3_on
+                elif images[6] == character_image3_on and character_count % 60 == 0 and character_count > 120: #onさをonしに変更
+                    images[6] = character_image3_2_on
+                character_count += 1
 
-        # た.
-        if gaze_flag_2_2.value == True:
-            if character_count == 0:
-                images[7] = character_image4_on
-                flag_d = True
-            elif character_count == 120: #onたをonちに変更
-                images[7] = character_image4_2_on
-            elif images[7] == character_image4_2_on and character_count % 60 == 0 and character_count > 120: #onちをonつに変更
-                images[7] = character_image4_3_on
-            elif images[7] == character_image4_3_on and character_count % 60 == 0 and character_count > 120: #onつをonてに変更
-                images[7] = character_image4_4_on
-            elif images[7] == character_image4_4_on and character_count % 60 == 0 and character_count > 120: #onてをonとに変更
-                images[7] = character_image4_5_on
-            elif images[7] == character_image4_5_on and character_count % 60 == 0 and character_count > 120: #onとをonたに変更
-                images[7] = character_image4_on
-            elif images[7] == character_image4_on and character_count % 60 == 0 and character_count > 120: #onたをonちに変更
-                images[7] = character_image4_2_on
-            character_count += 1
-
-
-
-
-     # あ.
-        if gaze_flag_1.value == False and flag_a == True:
-            if character_count >= 15 and character_count < 120:
-                print("あ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif  images[4] == character_image1_2_on:
-                # print("い")
-                print("あ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[4] == character_image1_3_on:
-                # print("う")
-                print("い")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[4] == character_image1_4_on:
-                # print("え")
-                print("う")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[4] == character_image1_5_on:
-                # print("お")
-                print("え")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[4] == character_image1_on:
-                print("お")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
-            character_count = 0
-            flag_a = False
-            images[4] = character_image1 #on???をoffあに変更
-            character_change_curennt_frame = blinking_image1.frame_count_not_reset #表示秒数用のために取得.
-        
-    # か.
-        if gaze_flag_1_2.value == False and flag_b == True:
-            if character_count >= 15 and character_count < 120:
-                print("か")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[5] == character_image2_2_on:
-                # print("き")
-                print("か")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[5] == character_image2_3_on:
-                # print("く")
-                print("き")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[5] == character_image2_4_on:
-                # print("け")
-                print("く")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[5] == character_image2_5_on:
-                # print("こ")
-                print("け")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ke_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[5] == character_image2_on:
-                print("こ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
-            character_count = 0
-            flag_b = False
-            images[5] = character_image2
-            character_change_curennt_frame = blinking_image1.frame_count_not_reset
-
-
-        
-    # さ.
-        if gaze_flag_2.value == False and flag_c == True:
-            if character_count >= 15 and character_count < 120:
-                print("さ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[6] == character_image3_2_on:
-                # print("し")
-                print("さ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[6] == character_image3_3_on:
-                # print("す")
-                print("し")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[6] == character_image3_4_on:
-                # print("せ")
-                print("す")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[6] == character_image3_5_on:
-                # print("そ")
-                print("せ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/se_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[6] == character_image3_on:
-                print("そ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
-            character_count = 0
-            flag_c = False
-            images[6] = character_image3
-            character_change_curennt_frame = blinking_image1.frame_count_not_reset
-
-    # た.
-        if gaze_flag_2_2.value == False and flag_d == True:
-            if character_count >= 15 and character_count < 120:
-                print("た")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[7] == character_image4_2_on:
-                # print("ち")
-                print("た")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[7] == character_image4_3_on:
-                # print("つ")
-                print("ち")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[7] == character_image4_4_on:
-                # print("て")
-                print("つ")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[7] == character_image4_5_on:
-                # print("と")
-                print("て")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            elif images[7] == character_image4_on:
-                print("と")
-                input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
-            character_count = 0
-            flag_d = False
-            images[7] = character_image4
-            character_change_curennt_frame = blinking_image1.frame_count_not_reset
+            # た.
+            elif gaze_flag_2_2.value == True:
+                if character_count == 0:
+                    images[7] = character_image4_on
+                    flag_d = True
+                elif character_count == 120: #onたをonちに変更
+                    images[7] = character_image4_2_on
+                elif images[7] == character_image4_2_on and character_count % 60 == 0 and character_count > 120: #onちをonつに変更
+                    images[7] = character_image4_3_on
+                elif images[7] == character_image4_3_on and character_count % 60 == 0 and character_count > 120: #onつをonてに変更
+                    images[7] = character_image4_4_on
+                elif images[7] == character_image4_4_on and character_count % 60 == 0 and character_count > 120: #onてをonとに変更
+                    images[7] = character_image4_5_on
+                elif images[7] == character_image4_5_on and character_count % 60 == 0 and character_count > 120: #onとをonたに変更
+                    images[7] = character_image4_on
+                elif images[7] == character_image4_on and character_count % 60 == 0 and character_count > 120: #onたをonちに変更
+                    images[7] = character_image4_2_on
+                character_count += 1
 
 
 
 
+            # あ.
+            if gaze_flag_1.value == False and flag_a == True:
+                if character_count >= 15 and character_count < 120:
+                    print("あ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif  images[4] == character_image1_2_on:
+                    # print("い")
+                    print("あ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[4] == character_image1_3_on:
+                    # print("う")
+                    print("い")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[4] == character_image1_4_on:
+                    # print("え")
+                    print("う")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[4] == character_image1_5_on:
+                    # print("お")
+                    print("え")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[4] == character_image1_on:
+                    print("お")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                images.append(input_character)
+                character_count = 0
+                flag_a = False
+                images[4] = character_image1 #on???をoffあに変更
+                character_change_curennt_frame = blinking_image1.frame_count_not_reset #表示秒数用のために取得.
+            
+            # か.
+            elif gaze_flag_1_2.value == False and flag_b == True:
+                if character_count >= 15 and character_count < 120:
+                    print("か")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[5] == character_image2_2_on:
+                    # print("き")
+                    print("か")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[5] == character_image2_3_on:
+                    # print("く")
+                    print("き")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[5] == character_image2_4_on:
+                    # print("け")
+                    print("く")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[5] == character_image2_5_on:
+                    # print("こ")
+                    print("け")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ke_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[5] == character_image2_on:
+                    print("こ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                images.append(input_character)
+                character_count = 0
+                flag_b = False
+                images[5] = character_image2
+                character_change_curennt_frame = blinking_image1.frame_count_not_reset
 
 
+            
+            # さ.
+            elif gaze_flag_2.value == False and flag_c == True:
+                if character_count >= 15 and character_count < 120:
+                    print("さ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[6] == character_image3_2_on:
+                    # print("し")
+                    print("さ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[6] == character_image3_3_on:
+                    # print("す")
+                    print("し")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[6] == character_image3_4_on:
+                    # print("せ")
+                    print("す")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[6] == character_image3_5_on:
+                    # print("そ")
+                    print("せ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/se_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[6] == character_image3_on:
+                    print("そ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                images.append(input_character)
+                character_count = 0
+                flag_c = False
+                images[6] = character_image3
+                character_change_curennt_frame = blinking_image1.frame_count_not_reset
 
-        # input_characterを60フレーム分表示して削除する.
+            # た.
+            elif gaze_flag_2_2.value == False and flag_d == True:
+                if character_count >= 15 and character_count < 120:
+                    print("た")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[7] == character_image4_2_on:
+                    # print("ち")
+                    print("た")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[7] == character_image4_3_on:
+                    # print("つ")
+                    print("ち")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[7] == character_image4_4_on:
+                    # print("て")
+                    print("つ")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[7] == character_image4_5_on:
+                    # print("と")
+                    print("て")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                elif images[7] == character_image4_on:
+                    print("と")
+                    input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+                images.append(input_character)
+                character_count = 0
+                flag_d = False
+                images[7] = character_image4
+                character_change_curennt_frame = blinking_image1.frame_count_not_reset
+                not_enable_input_flag = True
+
+        # input_characterを120フレーム分表示して削除する.
         if input_character != "None":
-            if character_change_curennt_frame + 60 == blinking_image1.frame_count_not_reset: #60フレーム表示したら
+            if character_change_curennt_frame + 120 == blinking_image1.frame_count_not_reset: #120フレーム表示したら
                 images.remove(input_character)
                 input_character = "None"
                 character_change_curennt_frame = 0
+                not_enable_input_flag = False
                 print("input_characterを削除しました。")
+
     
                 
 
@@ -1114,18 +1113,18 @@ def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, n
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に11個以上ある場合  : 位相非反転
+        if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 14: #10~50の範囲に11個以上ある場合  : 位相非反転
             gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 90)]) >= 15: #51~90の範囲に11個以上ある場合  : 位相反転
+        elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 90)]) >= 14: #51~90の範囲に11個以上ある場合  : 位相反転
             gaze_flag2.value = True
         else:
             gaze_flag.value = False
             gaze_flag2.value = False
         
     elif range_ms == 167: #6Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 16) & (max_indices_per_row <= 83)]) >= 15: #16~83の範囲に15個以上ある場合  : 位相非反転
+        if len(max_indices_per_row[(max_indices_per_row >= 16) & (max_indices_per_row <= 83)]) >= 14: #16~83の範囲に15個以上ある場合  : 位相非反転
             gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 151)]) >= 15: #84~151の範囲に15個以上ある場合  : 位相反転
+        elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 151)]) >= 14: #84~151の範囲に15個以上ある場合  : 位相反転
             gaze_flag2.value = True
         else:
             gaze_flag.value = False
@@ -1135,9 +1134,9 @@ def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, n
         None
     
     elif range_ms == 67: #15Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 7) & (max_indices_per_row <= 33)]) >= 15: #7~33の範囲に15個以上ある場合  : 位相非反転
+        if len(max_indices_per_row[(max_indices_per_row >= 7) & (max_indices_per_row <= 33)]) >= 14: #7~33の範囲に15個以上ある場合  : 位相非反転
             gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 34) & (max_indices_per_row <= 60)]) >= 15: #34~60の範囲に15個以上ある場合  : 位相反転
+        elif len(max_indices_per_row[(max_indices_per_row >= 34) & (max_indices_per_row <= 60)]) >= 14: #34~60の範囲に15個以上ある場合  : 位相反転
             gaze_flag2.value = True
         else:
             gaze_flag.value = False
