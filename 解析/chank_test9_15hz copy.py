@@ -164,8 +164,10 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                     # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
 
                     # **バンドパスフィルタの適用**
-                    int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
-                    int_list_data_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz = iir_real_time_3ch(int_list_data, a_bp_15hz, b_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz) #バンドパスフィルタの適用.
+                    # int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
+                    # int_list_data_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz = iir_real_time_3ch(int_list_data, a_bp_15hz, b_bp_15hz, y_prev_bp_15hz, x_prev_bp_15hz) #バンドパスフィルタの適用.
+                    int_list_data_bp_10hz = int_list_data
+                    int_list_data_bp_15hz = int_list_data
                     last_data_10hz = int_list_data_bp_10hz
                     last_data_15hz = int_list_data_bp_15hz
 
