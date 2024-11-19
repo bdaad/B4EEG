@@ -103,11 +103,15 @@ def save_2d_array_to_file(data, list_name):
     
     # ファイルを作成して二次元配列データを保存
     with open(file_name, "w") as file:
-        for row in data:
-            # 各要素を文字列に変換してから結合
-            file.write(",".join(map(str, row)) + "\n")
+        # 一次元の場合の特別処理
+        if isinstance(data[0], (int, float)):  
+            file.write(",".join(map(str, data)) + "\n")
+        else:  # 二次元データの場合
+            for row in data:
+                # 各要素を文字列に変換してから結合
+                file.write(",".join(map(str, row)) + "\n")
     
-    print(f"{file_name} に二次元配列データを保存しました。")
+    print(f"{file_name} に配列データを保存しました。")
     return file_name  # 保存したファイル名を返す
 
 
