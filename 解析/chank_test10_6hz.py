@@ -740,6 +740,7 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
+    print("interval done!!!!")
 
 
     previous_time = time.time()
