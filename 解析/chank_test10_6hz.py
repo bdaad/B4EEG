@@ -1,4 +1,4 @@
-
+#  2024/11/20 新アルゴリズムの実装コードです.
 
 
 
@@ -1826,27 +1826,44 @@ def main():
     # com = input_com()
     # print(com)
 
+    #標本データを作成するかどうか. trueの場合、標本データを作成する.
+    setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
-    process0_1 = multiprocessing.Process(target=func_serial_preparation, args=(priority1, com, lock, measurement_command, threshold_look_10hz_max, threshold_look_6hz_max, threshold_non_look_10hz_max, threshold_non_look_6hz_max, threshold_look_10hz_min, threshold_look_6hz_min, threshold_non_look_10hz_min, threshold_non_look_6hz_min))
-    process0_2 = multiprocessing.Process(target=func_visual_preparation, args=(priority1, measurement_command,lock))
-    # プロセスの開始
-    process0_1.start()
-    process0_2.start()
-    # プロセスの終了を待つ
-    process0_1.join()
-    process0_2.join()
+    if setup_specimen == True:
+        process0_1 = multiprocessing.Process(target=func_serial_preparation, args=(priority1, com, lock, measurement_command, threshold_look_10hz_max, threshold_look_6hz_max, threshold_non_look_10hz_max, threshold_non_look_6hz_max, threshold_look_10hz_min, threshold_look_6hz_min, threshold_non_look_10hz_min, threshold_non_look_6hz_min))
+        process0_2 = multiprocessing.Process(target=func_visual_preparation, args=(priority1, measurement_command,lock))
+        # プロセスの開始
+        process0_1.start()
+        process0_2.start()
+        # プロセスの終了を待つ
+        process0_1.join()
+        process0_2.join()
 
-    print("threshold_look_10hz_max: ", threshold_look_10hz_max.value)
-    print("threshold_look_6hz_max: ", threshold_look_6hz_max.value)
-    print("threshold_look_10hz_min: ", threshold_look_10hz_min.value)
-    print("threshold_look_6hz_min: ", threshold_look_6hz_min.value)
-    print("threshold_non_look_10hz_max: ", threshold_non_look_10hz_max.value)
-    print("threshold_non_look_6hz_max: ", threshold_non_look_6hz_max.value)
-    print("threshold_non_look_10hz_min: ", threshold_non_look_10hz_min.value)
-    print("threshold_non_look_6hz_min: ", threshold_non_look_6hz_min.value)
-    time.sleep(3)
+        print("threshold_look_10hz_max: ", threshold_look_10hz_max.value)
+        print("threshold_look_6hz_max: ", threshold_look_6hz_max.value)
+        print("threshold_look_10hz_min: ", threshold_look_10hz_min.value)
+        print("threshold_look_6hz_min: ", threshold_look_6hz_min.value)
+        print("threshold_non_look_10hz_max: ", threshold_non_look_10hz_max.value)
+        print("threshold_non_look_6hz_max: ", threshold_non_look_6hz_max.value)
+        print("threshold_non_look_10hz_min: ", threshold_non_look_10hz_min.value)
+        print("threshold_non_look_6hz_min: ", threshold_non_look_6hz_min.value)
+        # 配列に値を格納する.
+        thresholds = np.array([threshold_look_10hz_max.value, threshold_look_10hz_min.value, threshold_look_6hz_max.value, threshold_look_6hz_min.value, threshold_non_look_10hz_max.value, threshold_non_look_10hz_min.value, threshold_non_look_6hz_max.value, threshold_non_look_6hz_min.value])
+        # ファイルに保存する.
+        save_2d_array_to_file(thresholds, "thresholds")
+        time.sleep(3)
+    elif setup_specimen == False:
+        threshold_look_10hz_max.value = 0
+        threshold_look_6hz_max.value = 0
+        threshold_look_10hz_min.value = 0
+        threshold_look_6hz_min.value = 0
+        threshold_non_look_10hz_max.value = 0
+        threshold_non_look_6hz_max.value = 0
+        threshold_non_look_10hz_min.value = 0
+        threshold_non_look_6hz_min.value = 0
+
 
     
     
