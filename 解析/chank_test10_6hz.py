@@ -228,7 +228,7 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
         interval_time = current_time - start_time
         if interval_time >= 1* t:
-            print(f"1秒間{interval_time}で受信したデータの数: {data_count}")
+            print(f"1秒間{interval_time}で受信したデータの数: {data_count}, {measurement_command}")
             data_count = 0
             t = t + 1
 
@@ -658,7 +658,7 @@ def init_glfw(width, height, title):
 
 
 
-def func_visual_preparation(priority, measurement_command):
+def func_visual_preparation(priority, measurement_command, lock):
     '''
     measurement_command = 0 : 初期状態(計測なし)
     measurement_command = 1 : インターバル命令(計測なし)
@@ -732,7 +732,8 @@ def func_visual_preparation(priority, measurement_command):
     images = [look_point_image]
     
     #10秒間注視点のみ表示.(インターバル要員)
-    measurement_command.value = 1 # インターバル命令(計測なし).
+    with lock:
+        measurement_command.value = 1 # インターバル命令(計測なし).
     while previous_time + 10 > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -746,7 +747,8 @@ def func_visual_preparation(priority, measurement_command):
     previous_time = time.time()
     images = [blinking_image1]
     # 60秒間10Hz表示.
-    measurement_command.value = 2 # 10Hz計測開始命令.
+    with lock:
+        measurement_command.value = 2 # 10Hz計測開始命令.
     while previous_time + 60 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -754,13 +756,15 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
-    measurement_command.value = 3 # 10Hz計測終了命令.
+    with lock:
+        measurement_command.value = 3 # 10Hz計測終了命令.
     print("10Hz done!!!!")
 
     previous_time = time.time()
     images = [look_point_image]
     #10秒間注視点のみ表示.(インターバル要員)
-    measurement_command.value = 1 # インターバル命令(計測なし).
+    with lock:
+        measurement_command.value = 1 # インターバル命令(計測なし).
     while previous_time + 10 > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -773,7 +777,8 @@ def func_visual_preparation(priority, measurement_command):
     # 60秒間6Hz表示.
     previous_time = time.time()
     images = [blinking_image3]
-    measurement_command.value = 4 # 6Hz計測開始命令.
+    with lock:
+        measurement_command.value = 4 # 6Hz計測開始命令.
     while previous_time + 60 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -781,13 +786,15 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
-    measurement_command.value = 5 # 6Hz計測終了命令.
+    with lock:
+        measurement_command.value = 5 # 6Hz計測終了命令.
     print("6Hz done!!!!")
     
     previous_time = time.time()
     images = [look_point_image]
     #10秒間注視点のみ表示.(インターバル要員)
-    measurement_command.value = 1 # インターバル命令(計測なし).
+    with lock:
+        measurement_command.value = 1 # インターバル命令(計測なし).
     while previous_time + 10 > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -800,7 +807,8 @@ def func_visual_preparation(priority, measurement_command):
     previous_time = time.time()
     images = [look_point_image]
     #60秒間注視点のみ表示.(中視点非注視時のデータ計測)
-    measurement_command.value = 6 # 非注視計測開始命令.
+    with lock:
+        measurement_command.value = 6 # 非注視計測開始命令.
     while previous_time + 60 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -808,14 +816,16 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
-    measurement_command.value = 7 # 非注視計測終了命令.
+    with lock:
+        measurement_command.value = 7 # 非注視計測終了命令.
     print("Non-gaze done!!!!")
 
 
         # # 遅延探しテスト用コード本番では使用しない これは6秒後に点滅をオフにする.
         # if blinking_image1.frame_count_not_reset == 300:
         #     images[0] = blinking_image1_off
-    measurement_command.value = 8 # 計測自体を終了する命令.
+    with lock:
+        measurement_command.value = 8 # 計測自体を終了する命令.
     print("End of the visual function.")
     glfw.destroy_window(window) # ウィンドウを破棄
     glfw.terminate() # GLFWを終了
@@ -1758,7 +1768,7 @@ def main():
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
     process0_1 = multiprocessing.Process(target=func_serial_preparation, args=(priority1, com, lock, measurement_command, threshold_look_10hz_max, threshold_look_6hz_max, threshold_non_look_10hz_max, threshold_non_look_6hz_max, threshold_look_10hz_min, threshold_look_6hz_min, threshold_non_look_10hz_min, threshold_non_look_6hz_min))
-    process0_2 = multiprocessing.Process(target=func_visual_preparation, args=(priority1, measurement_command))
+    process0_2 = multiprocessing.Process(target=func_visual_preparation, args=(priority1, measurement_command,lock))
     # プロセスの開始
     process0_1.start()
     process0_2.start()
