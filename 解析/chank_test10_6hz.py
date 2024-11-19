@@ -223,12 +223,12 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
 
 
 
-    while measurement_command != 8: # 8が終了命令.
+    while measurement_command.value != 8: # 8が終了命令.
     # for i in range(10000000):
         current_time = time.perf_counter()  # 現在のタイムスタンプを取得
         interval_time = current_time - start_time
         if interval_time >= 1* t:
-            print(f"1秒間{interval_time}で受信したデータの数: {data_count}, {measurement_command}")
+            print(f"1秒間{interval_time}で受信したデータの数: {data_count}, {measurement_command.value}")
             data_count = 0
             t = t + 1
 
