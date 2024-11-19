@@ -762,8 +762,11 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
     with lock:
         measurement_command.value = 3 # 10Hz計測終了命令.
+
+    while measurement_command.value != 0: #保存などの処理が終わるまで待機.
+        pass
     print("10Hz done!!!!")
-    time.sleep(0.5)
+    
 
     previous_time = time.time()
     images = [look_point_image]
@@ -778,7 +781,6 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
     print("2nd interval done!!!!")
-    time.sleep(0.5)
 
     # 60秒間6Hz表示.
     previous_time = time.time()
@@ -794,8 +796,11 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
     with lock:
         measurement_command.value = 5 # 6Hz計測終了命令.
+    
+    while measurement_command.value != 0: #保存などの処理が終わるまで待機.
+        pass
     print("6Hz done!!!!")
-    time.sleep(0.5)
+
     
     previous_time = time.time()
     images = [look_point_image]
@@ -810,7 +815,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
     print("3rd interval done!!!!")
-    time.sleep(0.5)
+
 
     previous_time = time.time()
     images = [look_point_image]
@@ -826,6 +831,9 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
     with lock:
         measurement_command.value = 7 # 非注視計測終了命令.
+
+    while measurement_command.value != 0: #保存などの処理が終わるまで待機.
+        pass
     print("Non-gaze done!!!!")
     time.sleep(0.5)
 
