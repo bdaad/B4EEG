@@ -740,7 +740,7 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
-    print("interval done!!!!")
+    print("1st interval done!!!!")
 
 
     previous_time = time.time()
@@ -755,6 +755,7 @@ def func_visual_preparation(priority, measurement_command):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
     measurement_command.value = 3 # 10Hz計測終了命令.
+    print("10Hz done!!!!")
 
     previous_time = time.time()
     images = [look_point_image]
@@ -767,6 +768,7 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
+    print("2nd interval done!!!!")
 
     # 60秒間6Hz表示.
     previous_time = time.time()
@@ -780,6 +782,7 @@ def func_visual_preparation(priority, measurement_command):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
     measurement_command.value = 5 # 6Hz計測終了命令.
+    print("6Hz done!!!!")
     
     previous_time = time.time()
     images = [look_point_image]
@@ -792,6 +795,7 @@ def func_visual_preparation(priority, measurement_command):
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
+    print("3rd interval done!!!!")
 
     previous_time = time.time()
     images = [look_point_image]
@@ -805,6 +809,7 @@ def func_visual_preparation(priority, measurement_command):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
     measurement_command.value = 7 # 非注視計測終了命令.
+    print("Non-gaze done!!!!")
 
 
         # # 遅延探しテスト用コード本番では使用しない これは6秒後に点滅をオフにする.
