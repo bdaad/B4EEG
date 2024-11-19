@@ -799,10 +799,11 @@ def func_visual_preparation(priority, measurement_command):
         # # 遅延探しテスト用コード本番では使用しない これは6秒後に点滅をオフにする.
         # if blinking_image1.frame_count_not_reset == 300:
         #     images[0] = blinking_image1_off
-
+    
+    print("End of the visual function.")
     glfw.destroy_window(window) # ウィンドウを破棄
     glfw.terminate() # GLFWを終了
-    time.delay(2) # 1秒待つ.
+    time.sleep(2) # 1秒待つ.
 
 
 
