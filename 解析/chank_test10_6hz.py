@@ -751,6 +751,8 @@ def func_visual_preparation(priority, measurement_command):
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
     measurement_command.value = 3 # 10Hz計測終了命令.
 
     previous_time = time.time()
@@ -762,7 +764,8 @@ def func_visual_preparation(priority, measurement_command):
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
-
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
 
     # 60秒間6Hz表示.
     previous_time = time.time()
@@ -773,6 +776,8 @@ def func_visual_preparation(priority, measurement_command):
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
     measurement_command.value = 5 # 6Hz計測終了命令.
     
     previous_time = time.time()
@@ -784,7 +789,8 @@ def func_visual_preparation(priority, measurement_command):
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
-
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
 
     previous_time = time.time()
     images = [look_point_image]
@@ -795,6 +801,8 @@ def func_visual_preparation(priority, measurement_command):
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
                 images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
     measurement_command.value = 7 # 非注視計測終了命令.
 
 
