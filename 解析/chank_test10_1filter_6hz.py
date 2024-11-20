@@ -1839,9 +1839,9 @@ def main():
         threshold_look_10hz_min.value = 0
         threshold_look_6hz_min.value = 0
         threshold_non_look_10hz_max.value = 50
-        threshold_non_look_6hz_max.value = 0
+        threshold_non_look_6hz_max.value = 50
         threshold_non_look_10hz_min.value = -50
-        threshold_non_look_6hz_min.value = 0
+        threshold_non_look_6hz_min.value = -50
 
 
 
