@@ -1850,6 +1850,7 @@ def main():
     # com = input_com()
     # print(com)
 
+
     #標本データを作成するかどうか. trueの場合、標本データを作成する.
     setup_specimen = True
 
