@@ -1807,7 +1807,7 @@ def main():
 
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
-    setup_specimen = True
+    setup_specimen = False
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
@@ -1838,9 +1838,9 @@ def main():
         threshold_look_6hz_max.value = 0
         threshold_look_10hz_min.value = 0
         threshold_look_6hz_min.value = 0
-        threshold_non_look_10hz_max.value = 0
+        threshold_non_look_10hz_max.value = 50
         threshold_non_look_6hz_max.value = 0
-        threshold_non_look_10hz_min.value = 0
+        threshold_non_look_10hz_min.value = -50
         threshold_non_look_6hz_min.value = 0
 
 
