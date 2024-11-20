@@ -1104,6 +1104,8 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
     chank_copy = []
     chank_copy2 = []
     # flag = False
+    previous_state_10hz = 0
+    previous_state_6hz = 0
     count = 0
     count2 = 0
     time.sleep(3)
@@ -1124,7 +1126,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min)
+            phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz)
             count = count + 1
 
 
@@ -1135,7 +1137,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 0, 0.167, 167) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167, threshold_non_look_6hz_max, threshold_non_look_6hz_min)    # fre_change_word.
+            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1167,12 +1169,19 @@ def plot_multiple_lines(y_values, count, gaze_flag, gaze_flag2, folder, start, e
         plt.close()
 
 
-def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min): #位相分析
+def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state): #位相分析
     x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
-
+    '''
+    previous_state = 0 : 初期状態
+    previous_state = 1 : 注視10hz
+    previous_state = 2 : 反転注視10hz
+    previous_state = 3 : 注視6hz
+    previous_state = 4 : 反転注視6hz
+    
+    '''
 
     max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個
 
