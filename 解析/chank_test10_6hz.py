@@ -740,11 +740,12 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [look_point_image]
-    
+    n= 5
+
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10 > time.time(): # 10秒間ループ
+    while previous_time + 10/n > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -759,7 +760,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 60秒間10Hz表示.
     with lock:
         measurement_command.value = 2 # 10Hz計測開始命令.
-    while previous_time + 60 > time.time(): # 60秒間ループ
+    while previous_time + 60/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -779,7 +780,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10 > time.time(): # 10秒間ループ
+    while previous_time + 10/n > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -813,7 +814,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10 > time.time(): # 10秒間ループ
+    while previous_time + 10/n > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1698,7 +1699,7 @@ def phase_ana(y_values,y_values_2, count, gaze_flag, gaze_flag2, folder, start, 
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
         # threshold_look_max以上の要素数を返す.
-        if len(max_values_per_row[(max_values_per_row >= threshold_look_max.value)]) >= 15 or max_values_per_row[(max_values_per_row <= threshold_look_min.value)] >= 15: #閾値範囲以外の個数が15個以上ある場合、注視判別.
+        if len(max_values_per_row[(max_values_per_row >= threshold_non_look_max.value)]) >= 15 or max_values_per_row[(max_values_per_row <= threshold_non_look_max.value)] >= 15: #閾値範囲以外の個数が15個以上ある場合、注視判別.
     
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11: #10~50の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True 
@@ -1709,7 +1710,7 @@ def phase_ana(y_values,y_values_2, count, gaze_flag, gaze_flag2, folder, start, 
             gaze_flag2.value = False
     
     elif range_ms == 167: #6Hzの場合
-        if len(max_values_per_row[(max_values_per_row >= threshold_look_max.value)]) >= 15 or max_values_per_row[(max_values_per_row <= threshold_look_min.value)] >= 15: #閾値範囲以外の個数が15個以上ある場合、注視判別.
+        if len(max_values_per_row[(max_values_per_row >= threshold_non_look_max.value)]) >= 15 or max_values_per_row[(max_values_per_row <= threshold_non_look_max.value)] >= 15: #閾値範囲以外の個数が15個以上ある場合、注視判別.
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 83)]) >= 11: #0~83の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True 
             elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11: #84~167の範囲に11個以上ある場合  : 位相反転
