@@ -297,6 +297,8 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
 
                 elif measurement_command.value == 3: #10Hz計測終了命令
                     print("measurement_command.value == 3")
+                    print(np.array(store_list_look_10hz).shape)
+                    print(np.array(store_list_look_10hz).shape)
                     save_2d_array_to_file(store_list_look_10hz, "look_10hz")
                     #store_list_look_10hzの極大値を求める.
                     maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_look_10hz), top_n=50) #極大値top50を求める.
