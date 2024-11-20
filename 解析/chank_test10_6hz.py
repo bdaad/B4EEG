@@ -225,6 +225,9 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
     y_prev_bp_high_q_6hz = np.zeros((3, Q_high_q_6hz))
     x_prev_bp_high_q_6hz = np.zeros((3, P_high_q_6hz))
 
+    last_data_high_q_10hz = [0,0,0] # 最後に受信したデータ(補間用)
+    last_data_high_q_6hz = [0,0,0] # 最後に受信したデータ(補間用)
+
 
 
     while measurement_command.value != 8: # 8が終了命令.
@@ -1842,7 +1845,7 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM9"
+    com = "COM8"
     # com = input_com()
     # print(com)
 
