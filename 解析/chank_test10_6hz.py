@@ -829,7 +829,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #60秒間注視点のみ表示.(中視点非注視時のデータ計測)
     with lock:
         measurement_command.value = 6 # 非注視計測開始命令.
-    while previous_time + 60 > time.time(): # 60秒間ループ
+    while previous_time + 60/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
