@@ -740,7 +740,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [look_point_image]
-    n= 5
+    n= 10
 
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
