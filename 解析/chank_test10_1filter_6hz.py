@@ -1202,7 +1202,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min]) >= 15:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11: #10~50の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True 
             elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 100)]) >= 11: #51~90の範囲に11個以上ある場合  : 位相反転
@@ -1212,7 +1212,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                 gaze_flag2.value = False
         
     elif range_ms == 167: #6Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min]) >= 15:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 83)]) >= 11: #16~83の範囲に15個以上ある場合  : 位相非反転
                 gaze_flag.value = True 
             elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11: #84~151の範囲に15個以上ある場合  : 位相反転
