@@ -639,24 +639,6 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         
 
-   
-        # # # 15Hzの1周期分.. 60/15 = 4
-        # with lock:
-        #     if blinking_image1.frame_count_not_reset % 4 == 0:
-        #         if flag_blink_2.value == True:
-        #             flag_blink_2.value = False
-        #         else:
-        #             flag_blink_2.value = True
-
-
-        # 12Hzの1周期分.. 60/12 = 5
-        # with lock:
-        #     if blinking_image3.frame_count_not_reset % 5 == 0:
-        #         if flag_blink_2.value == True:
-        #             flag_blink_2.value = False
-        #         else:
-        #             flag_blink_2.value = True
-
 
         # 6Hzの1周期分.. 60/6 = 10
         with lock:
@@ -720,7 +702,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # か.
-        if gaze_flag_1_2.value == True:
+        elif gaze_flag_1_2.value == True:
             if character_count == 0:
                 images[5] = character_image2_on #offかをonかに変更
                 flag_b = True
@@ -739,7 +721,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # さ.
-        if gaze_flag_2.value == True:
+        elif gaze_flag_2.value == True:
             if character_count == 0: #offさをonさに変更
                 images[6] = character_image3_on
                 flag_c = True
@@ -758,7 +740,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_count += 1
 
         # た.
-        if gaze_flag_2_2.value == True:
+        elif gaze_flag_2_2.value == True:
             if character_count == 0:
                 images[7] = character_image4_on
                 flag_d = True
@@ -810,7 +792,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_change_curennt_frame = blinking_image1.frame_count_not_reset #表示秒数用のために取得.
         
     # か.
-        if gaze_flag_1_2.value == False and flag_b == True:
+        elif gaze_flag_1_2.value == False and flag_b == True:
             if character_count >= 15 and character_count < 120:
                 print("か")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -842,7 +824,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         
     # さ.
-        if gaze_flag_2.value == False and flag_c == True:
+        elif gaze_flag_2.value == False and flag_c == True:
             if character_count >= 15 and character_count < 120:
                 print("さ")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -872,7 +854,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             character_change_curennt_frame = blinking_image1.frame_count_not_reset
 
     # た.
-        if gaze_flag_2_2.value == False and flag_d == True:
+        elif gaze_flag_2_2.value == False and flag_d == True:
             if character_count >= 15 and character_count < 120:
                 print("た")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -1207,9 +1189,9 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                 gaze_flag.value = True 
             elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 100)]) >= 11: #51~90の範囲に11個以上ある場合  : 位相反転
                 gaze_flag2.value = True
-            else:
-                gaze_flag.value = False
-                gaze_flag2.value = False
+        else:
+            gaze_flag.value = False
+            gaze_flag2.value = False
         
     elif range_ms == 167: #6Hzの場合
         if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
@@ -1217,9 +1199,9 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                 gaze_flag.value = True 
             elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11: #84~151の範囲に15個以上ある場合  : 位相反転
                 gaze_flag2.value = True
-            else:
-                gaze_flag.value = False
-                gaze_flag2.value = False
+        else:
+            gaze_flag.value = False
+            gaze_flag2.value = False
 
     
 
