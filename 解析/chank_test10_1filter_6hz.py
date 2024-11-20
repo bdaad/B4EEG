@@ -1194,23 +1194,37 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
         if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
-            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11: #10~50の範囲に11個以上ある場合  : 位相非反転
-                gaze_flag.value = True 
-            elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 100)]) >= 11: #51~90の範囲に11個以上ある場合  : 位相反転
+            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
+                gaze_flag.value = True
+                previous_state = 1
+            elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 100)]) >= 11 and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
                 gaze_flag2.value = True
+                previous_state = 2
+            else:
+                gaze_flag.value = False
+                gaze_flag2.value = False
+                previous_state = 0
         else:
             gaze_flag.value = False
             gaze_flag2.value = False
+            previous_state = 0
         
     elif range_ms == 167: #6Hzの場合
         if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
-            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 83)]) >= 11: #16~83の範囲に15個以上ある場合  : 位相非反転
-                gaze_flag.value = True 
-            elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11: #84~151の範囲に15個以上ある場合  : 位相反転
+            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 83)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+                gaze_flag.value = True
+                previous_state = 3
+            elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 gaze_flag2.value = True
+                previous_state = 4
+            else:
+                gaze_flag.value = False
+                gaze_flag2.value = False
+                previous_state = 0
         else:
             gaze_flag.value = False
             gaze_flag2.value = False
+            previous_state = 0
 
     
 
