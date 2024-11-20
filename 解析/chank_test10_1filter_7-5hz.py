@@ -189,14 +189,15 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
     # a_bp_15hz = np.array([1.000000000000000000000000000000, -3.979456903924181165876916566049,5.941304776471029391871070401976, -3.944210692344831681310779458727,0.982364711720532302052788509172])
     # b_bp_15hz = np.array([0.000039222815344601667526380079,  0.000000000000000000000000000000,-0.000078445630689203335052760158,  0.000000000000000000000000000000,0.000039222815344601667526380079])
 
-
-
     #higih-Qフィルタ
     a_bp_10hz = np.array([1.000000000000000000000000000000, -5.986337395899265167997782555176, 14.943525948179951612360127910506, -19.910622476715822415371803799644, 14.934132172565124818675030837767, -5.978813517693076562409260077402, 0.998115330047988802419922649278])
     b_bp_10hz = np.array([0.000000000104796088903483945995, 0.000000000000000000000000000000, -0.000000000314388266710451837984, 0.000000000000000000000000000000, 0.000000000314388266710451837984, 0.000000000000000000000000000000, -0.000000000104796088903483945995])
+
     # 15Hzって書いてあるけど係数は6Hzのものです.
-    a_bp_15hz = np.array([1.000000000000000000000000000000, -5.994507057221904133825773897115, 14.976779323045578351525364269037, -19.962031209944754550633660983294, 14.970494253127723638385759841185, -5.989476871554792580809589708224, 0.998741565358762461990238534781])
-    b_bp_15hz = np.array([0.000000000031178759423254719581, 0.000000000000000000000000000000, -0.000000000093536278269764152280, 0.000000000000000000000000000000, 0.000000000093536278269764152280, 0.000000000000000000000000000000, -0.000000000031178759423254719581])
+    # 6Hz用.
+    # 超高Q--7.5Hz用.(q=120).
+    a_bp_15hz = np.array([1.000000000000000000000000000000, -5.992046052538612777027537958929, 14.966946335049158278707182034850, -19.947289296362864519096547155641, 14.960665391587113504101580474526, -5.987017931980501472821742936503, 0.998741565358762239945633609750])
+    b_bp_15hz = np.array([0.000000000031178759423254480474, 0.000000000000000000000000000000, -0.000000000093536278269763441422, 0.000000000000000000000000000000, 0.000000000093536278269763441422, 0.000000000000000000000000000000, -0.000000000031178759423254480474])
 
 
 
@@ -557,8 +558,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
     blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=6, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
-    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=6, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
+    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
+    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
     
     # blinking_image1 = BlinkingImage(position=(0.0, 0.0), size=(0.6, 0.6), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     # blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -640,9 +641,18 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
         
 
 
-        # 6Hzの1周期分.. 60/6 = 10
+        # # 6Hzの1周期分.. 60/6 = 10
+        # with lock:
+        #     if blinking_image3.frame_count_not_reset % 10 == 0:
+        #         if flag_blink_2.value == True:
+        #             flag_blink_2.value = False
+        #         else:
+        #             flag_blink_2.value = True
+
+
+        # 7.5Hzの1周期分.. 60/7.5 = 8
         with lock:
-            if blinking_image3.frame_count_not_reset % 10 == 0:
+            if blinking_image3.frame_count_not_reset % 8 == 0:
                 if flag_blink_2.value == True:
                     flag_blink_2.value = False
                 else:
@@ -1054,49 +1064,6 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
 # import win_precise_time
 
 
-def func_analysis(priority, adjust_chank_list, analysis_flag, gaze_flag, lock):
-    p = psutil.Process()
-    p.nice(priority)  # psutilで優先順位を設定
-    print(f"Process (func_analysis) started with priority {priority}")
-    chank_copy = []
-    # flag = False
-    count = 0
-    time.sleep(3)
-    print("分析")
-    
-    while True: # 20個のデータが溜まったら..分析を行う
-        if len(adjust_chank_list) >= 20:
-            break
-
-    print("分析開始")
-        
-    # 分析を行う.
-    while True:
-        if analysis_flag.value == True:
-            with lock:
-                # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                chank_copy = adjust_chank_list[-20:] #最後の20個のデータをコピー
-                analysis_flag.value = False
-
-            # chank_copyの要素を出力する
-            # print("chank_copy")
-            # for row in chank_copy:
-            #     print(row)
-                    
-            # print("行: ", len(chank_copy))#行数
-            # print("列: ", len(chank_copy[0]))#列数
-
-            plot_multiple_lines(chank_copy, count, gaze_flag, "10Hz")
-            plot_phase_ana(chank_copy, count, gaze_flag, "10Hz")
-            # print("11111111111111111111")
-            # print(time.time())
-            count = count + 1
-            # print("count: ", count)
-                    # flag = True
-        # else:
-            # win_precise_time.sleep(0.001)
-
-
 def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2, analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
@@ -1135,9 +1102,9 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 0, 0.167, 167) # fre_change_word.
+            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz)    # fre_change_word.
+            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1209,12 +1176,12 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             gaze_flag2.value = False
             previous_state = 0
         
-    elif range_ms == 167: #6Hzの場合
+    elif range_ms == 133: #7-5Hzの場合
         if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
-            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 83)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 66)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 167)]) >= 11 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row[(max_indices_per_row >= 67) & (max_indices_per_row <= 133)]) >= 11 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 gaze_flag2.value = True
                 previous_state = 4
             else:
@@ -1225,7 +1192,6 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             gaze_flag.value = False
             gaze_flag2.value = False
             previous_state = 0
-
     
 
     if count % 20 == 0:
@@ -1243,60 +1209,6 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
 
 
 
-def plot_phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms): #位相分析
-    x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
-
-    # グラフの描画
-    # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
-
-
-    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個
-    # ここに位相分析の処理を書く
-        # None.
-    # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
-    if range_ms == 100: #10Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 10) & (max_indices_per_row <= 50)]) >= 15: #10~50の範囲に11個以上ある場合  : 位相非反転
-            gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 90)]) >= 15: #51~90の範囲に11個以上ある場合  : 位相反転
-            gaze_flag2.value = True
-        else:
-            gaze_flag.value = False
-            gaze_flag2.value = False
-        
-    elif range_ms == 167: #6Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 16) & (max_indices_per_row <= 83)]) >= 15: #16~83の範囲に15個以上ある場合  : 位相非反転
-            gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 84) & (max_indices_per_row <= 151)]) >= 15: #84~151の範囲に15個以上ある場合  : 位相反転
-            gaze_flag2.value = True
-        else:
-            gaze_flag.value = False
-            gaze_flag2.value = False
-
-    elif range_ms == 83: #12Hzの場合
-        None
-    
-    elif range_ms == 67: #15Hzの場合
-        if len(max_indices_per_row[(max_indices_per_row >= 7) & (max_indices_per_row <= 33)]) >= 15: #7~33の範囲に15個以上ある場合  : 位相非反転
-            gaze_flag.value = True 
-        elif len(max_indices_per_row[(max_indices_per_row >= 34) & (max_indices_per_row <= 60)]) >= 15: #34~60の範囲に15個以上ある場合  : 位相反転
-            gaze_flag2.value = True
-        else:
-            gaze_flag.value = False
-            gaze_flag2.value = False
-    
-
-    if count % 20 == 0:
-        plt.plot(x, max_indices_per_row, 'o', label='max_indices_per_row')  # `scatter`の代わりに`plot`を使用
-        plt.title('Multiple Lines on the Same Graph')
-        plt.xlabel('X axis')
-        plt.ylabel('Y axis')
-        plt.ylim(0, range_ms)
-        plt.legend(loc='upper right')
-        plt.grid(True)
-        current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/phase/{folder}/{current_time}.png'
-        plt.savefig(file_name_path, dpi=70)
-        plt.close()
 
 
 
@@ -1378,8 +1290,8 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=6, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
-    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=6, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
+    blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
+    blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
     blinking_image1_off = BlinkingImage(position=(-1.0, 0.0), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=0.000000000001, refresh_rate=refresh_rate, start_on=False, projection=projection)
     
 
@@ -1574,10 +1486,9 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
     a_bp_high_q_10hz = np.array([1.000000000000000000000000000000, -5.986337395899265167997782555176, 14.943525948179951612360127910506, -19.910622476715822415371803799644, 14.934132172565124818675030837767, -5.978813517693076562409260077402, 0.998115330047988802419922649278])
     b_bp_high_q_10hz = np.array([0.000000000104796088903483945995, 0.000000000000000000000000000000, -0.000000000314388266710451837984, 0.000000000000000000000000000000, 0.000000000314388266710451837984, 0.000000000000000000000000000000, -0.000000000104796088903483945995])
 
-    # 超高Q--6Hz用.(q=96).
-    a_bp_high_q_6hz = np.array([1.000000000000000000000000000000, -5.994507057221904133825773897115, 14.976779323045578351525364269037, -19.962031209944754550633660983294, 14.970494253127723638385759841185, -5.989476871554792580809589708224, 0.998741565358762461990238534781])
-    b_bp_high_q_6hz = np.array([0.000000000031178759423254719581, 0.000000000000000000000000000000, -0.000000000093536278269764152280, 0.000000000000000000000000000000, 0.000000000093536278269764152280, 0.000000000000000000000000000000, -0.000000000031178759423254719581])
-
+    # 超高Q--7.5Hz用.(q=120).
+    a_bp_high_q_6hz = np.array([1.000000000000000000000000000000, -5.992046052538612777027537958929, 14.966946335049158278707182034850, -19.947289296362864519096547155641, 14.960665391587113504101580474526, -5.987017931980501472821742936503, 0.998741565358762239945633609750])
+    b_bp_high_q_6hz = np.array([0.000000000031178759423254480474, 0.000000000000000000000000000000, -0.000000000093536278269763441422, 0.000000000000000000000000000000, 0.000000000093536278269763441422, 0.000000000000000000000000000000, -0.000000000031178759423254480474])
 
 
 
@@ -1858,7 +1769,7 @@ def main():
 
     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 1000data / 10Hz = 100
     # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 1000data / 15Hz = 66.666666 = 67         # fre_change_word.
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 167, lock)) #15Hz: 1000data / 6Hz = 166.666666 = 167         # fre_change_word.
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
 
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
