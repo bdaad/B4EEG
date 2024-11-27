@@ -1182,6 +1182,8 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
 
 
     g = 1.5 # g倍以上.
+    print("ave_max_value: ", ave_max_value)
+    print("previus_ave_max: ", previus_ave_max)
 
     # ここに位相分析の処理を書く
         # None.
