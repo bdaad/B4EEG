@@ -1181,7 +1181,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     ave_min_value = np.mean(min_value_per_row) 
 
 
-    g = 1.1 # g倍以上.
+    g = 1.5 # g倍以上.
 
     # ここに位相分析の処理を書く
         # None.
@@ -1338,7 +1338,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [look_point_image]
-    n= 2 #以下以外定数.
+    n= 10 #以下以外定数.
     m=1 #注視点注視、点滅非注視時の表示時間定数.
 
     #10秒間注視点のみ表示.(インターバル要員)
