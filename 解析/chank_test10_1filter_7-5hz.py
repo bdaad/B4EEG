@@ -1668,14 +1668,14 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     save_2d_array_to_file(store_list_non_look_6hz, "non_look_6hz")
                     #store_list_non_look_10hzの極大値を求める.
   
-                    maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_non_look_10hz)[:, 0], top_n=30) #極大値top50を求める.
-                    minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_non_look_10hz)[:, 0], top_n=30) #極小値top50を求める.
+                    maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_non_look_10hz)[:, 0], top_n=50) #極大値top50を求める.
+                    minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_non_look_10hz)[:, 0], top_n=50) #極小値top50を求める.
                     with lock:
                         threshold_non_look_10hz_max.value = np.mean(maxima_values_topn)
                         threshold_non_look_10hz_min.value = np.mean(minima_values_topn)
 
-                    maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_non_look_6hz)[:, 0], top_n=30) #極大値top50を求める.
-                    minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_non_look_6hz)[:, 0], top_n=30) #極小値top50を求める.
+                    maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_non_look_6hz)[:, 0], top_n=50) #極大値top50を求める.
+                    minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_non_look_6hz)[:, 0], top_n=50) #極小値top50を求める.
                     with lock:
                         threshold_non_look_6hz_max.value = np.mean(maxima_values_topn)
                         threshold_non_look_6hz_min.value = np.mean(minima_values_topn)
