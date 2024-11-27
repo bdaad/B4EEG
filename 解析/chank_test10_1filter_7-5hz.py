@@ -1084,6 +1084,9 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
     # flag = False
     previous_state_10hz = 0
     previous_state_6hz = 0
+    previus_ave_max = 0
+    previus_ave_min = 0
+
     count = 0
     count2 = 0
     time.sleep(3)
@@ -1104,7 +1107,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz)
+            phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max, previus_ave_min)
             count = count + 1
 
 
@@ -1115,7 +1118,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz)    # fre_change_word.
+            phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max, previus_ave_min)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1147,7 +1150,7 @@ def plot_multiple_lines(y_values, count, gaze_flag, gaze_flag2, folder, start, e
         plt.close()
 
 
-def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state): #位相分析
+def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state, previus_ave_max, previus_ave_min): #位相分析
     x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
@@ -1166,12 +1169,17 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     max_value_per_row = np.max(y_values, axis=1) # 各行の最大値を取得. 要素数は20個
     min_value_per_row = np.min(y_values, axis=1) # 各行の最小値を取得. 要素数は20個
 
+    #max_value_per_rowの平均
+    ave_max_value = np.mean(max_value_per_row)
+    #min_value_per_rowの平均
+    ave_min_value = np.mean(min_value_per_row) 
+
 
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max <= ave_max_value and previus_ave_min >= ave_min_value:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 1
@@ -1188,7 +1196,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             previous_state = 0
         
     elif range_ms == 133: #7-5Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max <= ave_max_value and previus_ave_min >= ave_min_value:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 66)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 3
@@ -1205,6 +1213,9 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             previous_state = 0
     
 
+    previus_ave_max = ave_max_value
+    previus_ave_min = ave_min_value
+    
     if count % 20 == 0:
         plt.plot(x, max_indices_per_row, 'o', label='max_indices_per_row')  # `scatter`の代わりに`plot`を使用
         plt.title('Multiple Lines on the Same Graph')
