@@ -1774,11 +1774,11 @@ def main():
 
         gain = 0.5
         with lock:
-            threshold_non_look_10hz_max.value = threshold_non_look_10hz_max + (threshold_look_10hz_max.value - threshold_non_look_10hz_max.value)*gain
-            threshold_non_look_6hz_max.value = threshold_non_look_6hz_max + (threshold_look_6hz_max.value - threshold_non_look_6hz_max.value)*gain
+            threshold_non_look_10hz_max.value = threshold_non_look_10hz_max.value + (threshold_look_10hz_max.value - threshold_non_look_10hz_max.value)*gain
+            threshold_non_look_6hz_max.value = threshold_non_look_6hz_max.value + (threshold_look_6hz_max.value - threshold_non_look_6hz_max.value)*gain
 
-            threshold_non_look_10hz_min.value = threshold_non_look_10hz_min + (threshold_look_10hz_min.value - threshold_non_look_10hz_min.value)*gain
-            threshold_non_look_6hz_min.value = threshold_non_look_6hz_min + (threshold_look_6hz_min.value - threshold_non_look_6hz_min.value)*gain
+            threshold_non_look_10hz_min.value = threshold_non_look_10hz_min.value + (threshold_look_10hz_min.value - threshold_non_look_10hz_min.value)*gain
+            threshold_non_look_6hz_min.value = threshold_non_look_6hz_min.value + (threshold_look_6hz_min.value - threshold_non_look_6hz_min.value)*gain
 
         print("threshold_look_10hz_max: ", threshold_look_10hz_max.value)
         print("threshold_look_6hz_max: ", threshold_look_6hz_max.value)
