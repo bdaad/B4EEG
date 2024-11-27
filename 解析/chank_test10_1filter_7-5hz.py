@@ -1175,11 +1175,13 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     ave_min_value = np.mean(min_value_per_row) 
 
 
+    g = 1.1 # g倍以上.
+
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max <= ave_max_value and previus_ave_min >= ave_min_value:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max*g <= ave_max_value and previus_ave_min*g >= ave_min_value:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 1
@@ -1196,7 +1198,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             previous_state = 0
         
     elif range_ms == 133: #7-5Hzの場合
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max <= ave_max_value and previus_ave_min >= ave_min_value:
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and previus_ave_max*g <= ave_max_value and previus_ave_min*g >= ave_min_value:
             if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 66)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 3
@@ -1772,7 +1774,7 @@ def main():
         print("ajustment threshold")
         # 閾値の調整 + 5%up
         gain = 1.05
-        gain = 1.00
+        gain = 1.05
         with lock:
             threshold_look_10hz_max.value = threshold_look_10hz_max.value * gain
             threshold_look_6hz_max.value = threshold_look_6hz_max.value * gain
