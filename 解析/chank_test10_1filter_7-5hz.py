@@ -1167,9 +1167,9 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     down_count_threshold = 3 # 4回連続で閾値を下回った場合、gaze_flagをFalseにする.
     g = 1 # g倍以上.
     # print(range_ms)
-    if range_ms == 100:
-        print("ave_max_value: ", ave_max_value)
-        print("previus_ave_max: ", previus_ave_max)
+    # if range_ms == 100:
+    #     print("ave_max_value: ", ave_max_value)
+    #     print("previus_ave_max: ", previus_ave_max)
 
     # ここに位相分析の処理を書く
         # None.
@@ -1803,7 +1803,7 @@ def main():
         print("ajustment threshold")
         # 閾値の調整 + 5%up
         gain = 1.05
-        gain = 1.0
+        gain = 1.05
         with lock:
             threshold_look_10hz_max.value = threshold_look_10hz_max.value * gain
             threshold_look_6hz_max.value = threshold_look_6hz_max.value * gain
