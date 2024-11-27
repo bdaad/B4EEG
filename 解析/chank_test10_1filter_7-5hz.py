@@ -1117,7 +1117,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max, previus_ave_min)
+            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz)
             count = count + 1
 
 
@@ -1128,36 +1128,12 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max, previus_ave_min)    # fre_change_word.
+            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz)    # fre_change_word.
             count2 = count2 + 1
 
 
 
 
-def plot_multiple_lines(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points): #平均値の追加
-    """
-    start, # 開始値
-    end, # 終了値
-    num_points # 生成する数値の数
-    """
-    x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
-
-    # グラフの描画
-    # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
-
-    if count % 20 == 0:
-        for i, y in enumerate(y_values):
-            plt.plot(x, y, label=f'Line {i+1}')
-
-        plt.title('Multiple Lines on the Same Graph')
-        plt.xlabel('X axis')
-        plt.ylabel('Y axis')
-        plt.legend(loc='upper right')
-        plt.grid(True)
-        current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
-        file_name_path = f'./plt_img/add_ave/{folder}/{current_time}.png'
-        plt.savefig(file_name_path, dpi=70)
-        plt.close()
 
 
 def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state, previus_ave_max, previus_ave_min): #位相分析
@@ -1247,6 +1223,30 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     return previous_state, previus_ave_max, previus_ave_min
 
 
+def plot_multiple_lines(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points): #平均値の追加
+    """
+    start, # 開始値
+    end, # 終了値
+    num_points # 生成する数値の数
+    """
+    x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
+
+    # グラフの描画
+    # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
+
+    if count % 20 == 0:
+        for i, y in enumerate(y_values):
+            plt.plot(x, y, label=f'Line {i+1}')
+
+        plt.title('Multiple Lines on the Same Graph')
+        plt.xlabel('X axis')
+        plt.ylabel('Y axis')
+        plt.legend(loc='upper right')
+        plt.grid(True)
+        current_time = datetime.datetime.now().strftime("%m%d_%H%M%S_%f")
+        file_name_path = f'./plt_img/add_ave/{folder}/{current_time}.png'
+        plt.savefig(file_name_path, dpi=70)
+        plt.close()
 
 
 
