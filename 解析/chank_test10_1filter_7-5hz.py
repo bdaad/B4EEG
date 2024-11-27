@@ -604,8 +604,14 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     character_image4_4_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
     character_image4_5_on = BlinkingImage(position=(1.0, 0.2), size=(0.45, 0.45), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
+    # 入力文字の表示用.
+    black_image = BlinkingImage(position=(0.0, 0.2), size=(0.7, 0.7), image_path="./black.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
-    images = [blinking_image1, blinking_image2, blinking_image3, blinking_image4, character_image1, character_image2, character_image3, character_image4, look_point_image]
+
+
+    images = [blinking_image1, blinking_image2, blinking_image3, blinking_image4, character_image1, character_image2, character_image3, character_image4, look_point_image, black_image]
+    #images= [10Hz点滅,         反転10Hz点滅,     7.5Hz点滅,        7.5Hz反転点滅,    点滅の上表示文字あOFF, 点滅の上表示文字かOFF, 点滅の上表示文字さOFF, 点滅の上表示文字たOFF, 注視点, 入力確定文字表示のクリア]
+    
     # images = [blinking_image, blinking_image2, blinking_image3, blinking_image4]
     # images = [blinking_image]
 
@@ -795,7 +801,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             elif images[4] == character_image1_on:
                 print("お")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
+            # images.append(input_character)
+            images[9] = input_character #入力確定文字表示更新
             character_count = 0
             flag_a = False
             images[4] = character_image1 #on???をoffあに変更
@@ -825,7 +832,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             elif images[5] == character_image2_on:
                 print("こ")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
+            # images.append(input_character)
+            images[9] = input_character
             character_count = 0
             flag_b = False
             images[5] = character_image2
@@ -857,7 +865,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             elif images[6] == character_image3_on:
                 print("そ")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
+            # images.append(input_character)
+            images[9] = input_character #入力確定文字表示更新
             character_count = 0
             flag_c = False
             images[6] = character_image3
@@ -887,7 +896,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             elif images[7] == character_image4_on:
                 print("と")
                 input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-            images.append(input_character)
+            # images.append(input_character)
+            images[9] = input_character #入力確定文字表示更新
             character_count = 0
             flag_d = False
             images[7] = character_image4
@@ -902,7 +912,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
         # input_characterを60フレーム分表示して削除する.
         if input_character != "None":
             if character_change_curennt_frame + 60 == blinking_image1.frame_count_not_reset: #60フレーム表示したら
-                images.remove(input_character)
+                # images.remove(input_character)
+                images[9] = black_image
                 input_character = "None"
                 character_change_curennt_frame = 0
                 print("input_characterを削除しました。")
@@ -1309,7 +1320,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     images = [look_point_image]
     n= 10 #以下以外定数.
-    m=1 #注視点注視、点滅非注視時の表示時間定数.
+    m=10 #注視点注視、点滅非注視時の表示時間定数.
 
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
