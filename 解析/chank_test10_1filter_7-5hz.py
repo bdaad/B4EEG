@@ -1320,7 +1320,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     images = [look_point_image]
     n= 10 #以下以外定数.
-    m=10 #注視点注視、点滅非注視時の表示時間定数.
+    m=1 #注視点注視、点滅非注視時の表示時間定数.
 
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
@@ -1761,7 +1761,7 @@ def main():
         print("ajustment threshold")
         # 閾値の調整 + 5%up
         gain = 1.05
-        gain = 1.00
+        gain = 1.01
         with lock:
             threshold_look_10hz_max.value = threshold_look_10hz_max.value * gain
             threshold_look_6hz_max.value = threshold_look_6hz_max.value * gain
