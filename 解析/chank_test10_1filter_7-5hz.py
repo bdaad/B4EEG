@@ -1090,8 +1090,12 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
     # flag = False
     previous_state_10hz = 0
     previous_state_6hz = 0
-    previus_ave_max = 0
-    previus_ave_min = 0
+
+    previus_ave_max_10hz = 0
+    previus_ave_max_6hz = 0
+    
+    previus_ave_min_10hz = 0
+    previus_ave_min_6hz = 0
 
     count = 0
     count2 = 0
@@ -1113,7 +1117,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            previous_state_10hz, previus_ave_max, previus_ave_min = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max, previus_ave_min)
+            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max, previus_ave_min)
             count = count + 1
 
 
@@ -1124,7 +1128,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            previous_state_6hz, previus_ave_max, previus_ave_min = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max, previus_ave_min)    # fre_change_word.
+            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max, previus_ave_min)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1182,6 +1186,7 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
 
 
     g = 1.5 # g倍以上.
+    print(range_ms)
     print("ave_max_value: ", ave_max_value)
     print("previus_ave_max: ", previus_ave_max)
 
