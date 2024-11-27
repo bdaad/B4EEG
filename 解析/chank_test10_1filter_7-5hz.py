@@ -1308,7 +1308,8 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [look_point_image]
-    n= 10
+    n= 10 #以下以外定数.
+    m=1 #注視点注視、点滅非注視時の表示時間定数.
 
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
@@ -1394,10 +1395,10 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     previous_time = time.time()
     images = [look_point_image]
-    #60秒間注視点のみ表示.(中視点非注視時のデータ計測)
+    #60秒間注視点のみ表示.(中視点注視、点滅非注視時のデータ計測)
     with lock:
         measurement_command.value = 6 # 非注視計測開始命令.
-    while previous_time + 60/n > time.time(): # 60秒間ループ
+    while previous_time + 60/m > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1723,7 +1724,7 @@ def main():
 
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
-    setup_specimen = False
+    setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
@@ -1759,7 +1760,7 @@ def main():
             threshold_non_look_6hz_max.value = threshold_non_look_6hz_max.value * gain
             threshold_non_look_10hz_min.value = threshold_non_look_10hz_min.value * gain
             threshold_non_look_6hz_min.value = threshold_non_look_6hz_min.value * gain
-        
+
 
 
 
