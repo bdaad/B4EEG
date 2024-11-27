@@ -1789,7 +1789,7 @@ def main():
         print("ajustment threshold")
         # 閾値の調整 + 5%up
         gain = 1.05
-        gain = 1.1
+        gain = 1.0
         with lock:
             threshold_look_10hz_max.value = threshold_look_10hz_max.value * gain
             threshold_look_6hz_max.value = threshold_look_6hz_max.value * gain
