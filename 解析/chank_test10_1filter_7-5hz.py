@@ -1745,6 +1745,25 @@ def main():
         print("threshold_non_look_6hz_max: ", threshold_non_look_6hz_max.value)
         print("threshold_non_look_10hz_min: ", threshold_non_look_10hz_min.value)
         print("threshold_non_look_6hz_min: ", threshold_non_look_6hz_min.value)
+
+        print("ajustment threshold")
+        # 閾値の調整 + 5%up
+        gain = 1.05
+        gain = 1.00
+        with lock:
+            threshold_look_10hz_max.value = threshold_look_10hz_max.value * gain
+            threshold_look_6hz_max.value = threshold_look_6hz_max.value * gain
+            threshold_look_10hz_min.value = threshold_look_10hz_min.value * gain
+            threshold_look_6hz_min.value = threshold_look_6hz_min.value * gain
+            threshold_non_look_10hz_max.value = threshold_non_look_10hz_max.value * gain
+            threshold_non_look_6hz_max.value = threshold_non_look_6hz_max.value * gain
+            threshold_non_look_10hz_min.value = threshold_non_look_10hz_min.value * gain
+            threshold_non_look_6hz_min.value = threshold_non_look_6hz_min.value * gain
+        
+
+
+
+
         # 配列に値を格納する.
         thresholds = [threshold_look_10hz_max.value, threshold_look_10hz_min.value, threshold_look_6hz_max.value, threshold_look_6hz_min.value, threshold_non_look_10hz_max.value, threshold_non_look_10hz_min.value, threshold_non_look_6hz_max.value, threshold_non_look_6hz_min.value]        # ファイルに保存する.
         save_2d_array_to_file(thresholds, "thresholds")
