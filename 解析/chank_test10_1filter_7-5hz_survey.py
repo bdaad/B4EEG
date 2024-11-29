@@ -1840,14 +1840,14 @@ def main():
         
     list_com()# COMポート一覧を表示
     # com = input_com()# COMポート接続の初期化
-    com = "COM8"
+    com = "COM9"
     # com = input_com()
     # print(com)
 
 
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
-    setup_specimen = False
+    setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
