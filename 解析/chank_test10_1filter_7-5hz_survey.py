@@ -1394,8 +1394,8 @@ def func_visual_preparation(priority, measurement_command, lock):
         measurement_command.value = 2 # 10Hz計測開始命令.
 
      # 15秒間注視点
-    print("15秒間注視点")
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    print("30秒間注視点")
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1407,7 +1407,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     print("10秒間10Hz")
     images = [blinking_image1]
     previous_time = time.time()
-    while previous_time + 10/n > time.time(): # 60秒間ループ
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1416,10 +1416,10 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
     # 15秒間注視点
-    print("15秒間注視点")
+    print("30秒間注視点")
     images = [blinking_image1_p]
     previous_time = time.time()
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1433,7 +1433,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     while measurement_command.value != 0: #保存などの処理が終わるまで待機.
         pass
-    print("15s-10s-15s(10Hz)done!!!!")
+    print("30s-10s-30s(10Hz)done!!!!")
     
 
     previous_time = time.time()
@@ -1463,7 +1463,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
     # 15秒間注視点
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1471,10 +1471,10 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
 
-    # 10秒間10Hz表示.
+    # 20秒間10Hz表示.
     previous_time = time.time()
     images = [blinking_image3]
-    while previous_time + 10/n > time.time(): # 60秒間ループ
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1485,7 +1485,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 15秒間注視点
     previous_time = time.time()
     images = [blinking_image3_p]
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    while previous_time + 30/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -1729,7 +1729,7 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     print("measurement_command.value == 3")
                     print(np.array(store_list_look_10hz).shape)
                     print(np.array(store_list_look_10hz).shape)
-                    save_2d_array_to_file(store_list_look_10hz, "non15s_look10hz10s_non15s")
+                    save_2d_array_to_file(store_list_look_10hz, "non30s_look10hz30s_non30s")
                     #store_list_look_10hzの極大値を求める.
                     maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_look_10hz)[:, 0], top_n=20) #極大値top50を求める.
                     minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_look_10hz)[:, 0], top_n=20) #極小値top50を求める.
@@ -1739,7 +1739,7 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #6Hz計測終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "non15s_look7-5hz10s_non15s")
+                    save_2d_array_to_file(store_list_look_6hz, "non30s_look7-5hz30s_non30s")
                     #store_list_look_6hzの極大値を求める.
                     maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極大値top50を求める.
                     minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極小値top50を求める.
