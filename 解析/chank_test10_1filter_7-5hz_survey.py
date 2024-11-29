@@ -1679,9 +1679,16 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     # **バンドパスフィルタの適用**
                     # int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
                     # int_list_data_bp_6hz, y_prev_bp_6hz, x_prev_bp_6hz = iir_real_time_3ch(int_list_data, a_bp_6hz, b_bp_6hz, y_prev_bp_6hz, x_prev_bp_6hz) #バンドパスフィルタの適用.
-                    int_list_data_bp_high_q_10hz, y_prev_bp_high_q_10hz, x_prev_bp_high_q_10hz = iir_real_time_3ch(int_list_data, a_bp_high_q_10hz, b_bp_high_q_10hz, y_prev_bp_high_q_10hz, x_prev_bp_high_q_10hz) #バンドパスフィルタの適用.
-                    int_list_data_bp_high_q_6hz, y_prev_bp_high_q_6hz, x_prev_bp_high_q_6hz = iir_real_time_3ch(int_list_data, a_bp_high_q_6hz, b_bp_high_q_6hz, y_prev_bp_high_q_6hz, x_prev_bp_high_q_6hz) #バンドパスフィルタの適用.
                     
+                    
+                    # フィルタオン.
+                    # int_list_data_bp_high_q_10hz, y_prev_bp_high_q_10hz, x_prev_bp_high_q_10hz = iir_real_time_3ch(int_list_data, a_bp_high_q_10hz, b_bp_high_q_10hz, y_prev_bp_high_q_10hz, x_prev_bp_high_q_10hz) #バンドパスフィルタの適用.
+                    # int_list_data_bp_high_q_6hz, y_prev_bp_high_q_6hz, x_prev_bp_high_q_6hz = iir_real_time_3ch(int_list_data, a_bp_high_q_6hz, b_bp_high_q_6hz, y_prev_bp_high_q_6hz, x_prev_bp_high_q_6hz) #バンドパスフィルタの適用.
+                    
+                    # フィルタオフ.
+                    int_list_data_bp_high_q_10hz = int_list_data
+                    int_list_data_bp_high_q_6hz = int_list_data
+
                     # データの補間処理
                     # last_data_10hz = int_list_data_bp_10hz
                     # last_data_6hz = int_list_data_bp_6hz
