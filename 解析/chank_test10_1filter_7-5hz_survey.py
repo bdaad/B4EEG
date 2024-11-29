@@ -1406,6 +1406,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 10秒間10Hz表示.
     print("10秒間10Hz")
     images = [blinking_image1]
+    previous_time = time.time()
     while previous_time + 10/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -1417,6 +1418,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 15秒間注視点
     print("15秒間注視点")
     images = [blinking_image1_p]
+    previous_time = time.time()
     while previous_time + 15/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
