@@ -1348,6 +1348,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     blinking_image1_p = BlinkingImage(position=(-1.0, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    
     blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
     blinking_image3_p = BlinkingImage(position=(0.5, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
 
@@ -1393,6 +1394,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         measurement_command.value = 2 # 10Hz計測開始命令.
 
      # 15秒間注視点
+    print("15秒間注視点")
     while previous_time + 15/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
@@ -1402,6 +1404,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
     # 10秒間10Hz表示.
+    print("10秒間10Hz")
     images = [blinking_image1]
     while previous_time + 10/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
@@ -1412,6 +1415,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
     # 15秒間注視点
+    print("15秒間注視点")
     images = [blinking_image1_p]
     while previous_time + 15/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
