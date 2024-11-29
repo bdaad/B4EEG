@@ -1345,12 +1345,12 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
     blinking_image1 = BlinkingImage(position=(-1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image1_p = BlinkingImage(position=(-1.0, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image1_p = BlinkingImage(position=(-1.2, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     
     blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
     
     blinking_image3 = BlinkingImage(position=(0.5, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
-    blinking_image3_p = BlinkingImage(position=(0.5, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
+    blinking_image3_p = BlinkingImage(position=(0.7, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
 
 
     blinking_image4 = BlinkingImage(position=(1.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
