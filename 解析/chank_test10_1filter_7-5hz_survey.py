@@ -1472,6 +1472,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
     # 10秒間10Hz表示.
+    previous_time = time.time()
     images = [blinking_image3]
     while previous_time + 10/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
@@ -1482,6 +1483,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
     # 15秒間注視点
+    previous_time = time.time()
     images = [blinking_image3_p]
     while previous_time + 15/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
