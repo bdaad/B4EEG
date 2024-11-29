@@ -1462,7 +1462,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         measurement_command.value = 4 # 6Hz計測開始命令.
 
 
-     # 15秒間注視点
+    # 15秒間注視点
     while previous_time + 15/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
