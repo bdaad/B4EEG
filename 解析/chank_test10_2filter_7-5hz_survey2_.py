@@ -1042,7 +1042,7 @@ def func_serial(priority, com, shared_receive_list_1, receive_value_1, shared_re
 
 
 
-def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, chank_size, lock):
+def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, chank_size, lock, receive_value2, chank_list2, adjust_chank_list2):
     """
     1000data / 3Hz = 333.333data = 334data : 60/3 = 20
     1000data / 5Hz = 200data : 60/5 = 12                       採用(未実験)
@@ -1059,8 +1059,12 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_chank) started with priority {priority}")
     flag_state = None
-    chank_chank_list_1 = [] #buffer1
-    chank_chank_list_2 = [] #buffer2
+    chank_chank_list_1 = [] #buffer1 (higi q)
+    chank_chank_list_2 = [] #buffer2 (higi q)
+
+    chank_chank_list_1_2 = [] #buffer1 (usual q)
+    chank_chank_list_2_2 = [] #buffer2 (usual q)
+
     pretime = time.time()
     current_time = 0;
     # po = 0
@@ -1085,16 +1089,23 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
                     
                     with lock:
                         chank_list.append(chank_chank_list_2)
+                        chank_list2.append(chank_chank_list_2_2)
 
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
+                        chank_list_copy2 = copy.deepcopy(list(chank_chank_list_2_2))
                         
-                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size)) 
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
+                        adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
+
                         analysis_flag.value = True
                     chank_chank_list_2 = []
+                    chank_chank_list_2_2 = []
                     pretime = current_time
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_1.append(receive_value[0])
+                        chank_chank_list_1_2.append(receive_value2[0])
+
                         clock_signal.value = False
 
             elif flag_blink.value == False:
@@ -1104,16 +1115,24 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
 
                     with lock:
                         chank_list.append(chank_chank_list_1)
+                        chank_list2.append(chank_chank_list_1_2)
+
                         chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
+                        chank_list_copy2 = copy.deepcopy(list(chank_chank_list_1_2))
+
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
+                        adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
+
                         analysis_flag.value = True
                     chank_chank_list_1 = []
+                    chank_chank_list_1_2 = []
                     # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)  
                     pretime = current_time
 
                 with lock:
                     if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
                         chank_chank_list_2.append(receive_value[0])
+                        chank_chank_list_2_2.append(receive_value2[0])
                         clock_signal.value = False
 
 
@@ -1854,8 +1873,10 @@ def main():
     flag_blink_1 = manager.Value('b', True)
     flag_blink_2 = manager.Value('b', True)
 
-    chank_list_1 = manager.list()
-    chank_list_2 = manager.list()
+    chank_list_1 = manager.list() # high q 10Hz
+    chank_list_1_2 = manager.list() # usual q 10Hz
+    chank_list_2 = manager.list() # high q 7.5Hz
+    chank_list_2_2 = manager.list() # usual q 7.5Hz
 
     receive_value_1 = manager.list()  # high q 10Hz
     receive_value_1_2 = manager.list()  # usual q 10Hz
@@ -1866,8 +1887,10 @@ def main():
     clock_signal_1 = manager.Value('b', False)
     clock_signal_2 = manager.Value('b', False)
 
-    adjust_chank_list_1 = manager.list()
-    adjust_chank_list_2 = manager.list()
+    adjust_chank_list_1 = manager.list() # high q 10Hz
+    adjust_chank_list_1_2 = manager.list() # usual q 10Hz    
+    adjust_chank_list_2 = manager.list() # high q 7.5Hz
+    adjust_chank_list_2_2 = manager.list() # usual q 7.5Hz
 
     analysis_flag_1 = manager.Value('b', False)
     analysis_flag_2 = manager.Value('b', False)
@@ -1981,9 +2004,9 @@ def main():
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2))
     
 
-    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 1000data / 10Hz = 100
+    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2)) #10Hz: 1000data / 10Hz = 100
     # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 1000data / 15Hz = 66.666666 = 67         # fre_change_word.
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
+    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
 
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
