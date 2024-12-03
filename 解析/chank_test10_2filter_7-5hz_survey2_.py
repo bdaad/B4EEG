@@ -1911,11 +1911,11 @@ def main():
     # psutil.HIGH_PRIORITY_CLASS (128): 高い優先度
     # psutil.REALTIME_PRIORITY_CLASS (256): 最高優先度
     # プロセスの優先度を設定
-    priority1 = psutil.NORMAL_PRIORITY_CLASS
+    priority1 = psutil.REALTIME_PRIORITY_CLASS
     priority2 = psutil.REALTIME_PRIORITY_CLASS
     priority3 = psutil.REALTIME_PRIORITY_CLASS
-    priority4 = psutil.NORMAL_PRIORITY_CLASS
-    priority5 = psutil.NORMAL_PRIORITY_CLASS
+    priority4 = psutil.REALTIME_PRIORITY_CLASS
+    priority5 = psutil.REALTIME_PRIORITY_CLASS
 
         
     list_com()# COMポート一覧を表示
@@ -2019,7 +2019,7 @@ def main():
     process2.start()
     process3.start()
     process4.start()
-    process5.start()
+    # process5.start()
 
 
 
@@ -2029,7 +2029,7 @@ def main():
     print(f"process2 PID: {process2.pid}")
     print(f"process3 PID: {process3.pid}")
     print(f"process4 PID: {process4.pid}")
-    print(f"process5 PID: {process5.pid}")
+    # print(f"process5 PID: {process5.pid}")
 
 
     # プロセスの終了を待つ
@@ -2037,7 +2037,7 @@ def main():
     process2.join()
     process3.join()
     process4.join()
-    process5.join()
+    # process5.join()
 # /***********************************************************/
 
 
