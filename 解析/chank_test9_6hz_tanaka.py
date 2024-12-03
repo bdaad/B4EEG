@@ -161,7 +161,7 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                 # result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除\r\n
                 result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n      #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 rec_all.append(result)
-                # result = result + b',0,0'
+                result = result + b',0,0'
                 # print(result)
                 #result.decode()の型を出力する.
                 # print(type(result.decode()))
