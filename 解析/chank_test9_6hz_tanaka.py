@@ -161,7 +161,8 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                 # result = re.sub(rb'\r\n$', b'', result)  # 改行コードを削除\r\n
                 result = re.sub(rb'\n$', b'', result)  # 改行コードを削除\n      #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
                 rec_all.append(result)
-                result = result + b',0,0'
+                # result = result + b',0,0'
+                # rec_all = rec_all + b',0,0'
                 # print(result)
                 #result.decode()の型を出力する.
                 # print(type(result.decode()))
@@ -169,6 +170,7 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                     # int_list_data = [int(x) for x in result.decode().split(',')]
                     # rec_all = [int(result.decode()), int(0), int(0)]  # 241202 これもダメ
                     int_list_data = [int(result.decode()), int(0), int(0)] #aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+                    int_all_data = [int(rec_all.decode()), int(0), int(0)]
                     # print(int_list_data)
                     # int_list_data = iir_real_time_3ch(int_list_data, a, b, y_prev, x_prev) # フィルタ処理BPF.
 
