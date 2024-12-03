@@ -563,7 +563,7 @@ def init_glfw(width, height, title):
 
 
 
-def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2):
+def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, chank_list_1_2, adjust_chank_list_1_2, chank_list_2_2, adjust_chank_list_2_2):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_visual) started with priority {priority}")
@@ -1001,6 +1001,12 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
                 save_2d_array_to_file(adjust_chank_list_1, "adjust_chank_list_1")
                 save_2d_array_to_file(chank_list_2, "chank_list_2")
                 save_2d_array_to_file(adjust_chank_list_2, "adjust_chank_list_2")
+
+                save_2d_array_to_file(chank_list_1_2, "chank_list_1_2")
+                save_2d_array_to_file(adjust_chank_list_1_2, "adjust_chank_list_1_2")
+                save_2d_array_to_file(chank_list_2_2, "chank_list_2_2")
+                save_2d_array_to_file(adjust_chank_list_2_2, "adjust_chank_list_2_2")
+
             sys.exit()
 
         glfw.swap_buffers(window)
@@ -1284,7 +1290,16 @@ def func_chanks(priority, receive_value, flag_blink, chank_list, clock_signal, a
 # import win_precise_time
 
 
-def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2, analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min):
+def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2, analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min, adjust_chank_list_1_2, adjust_chank_list_2_2):
+    '''
+    adjust_chank_list_1    high q 10Hz
+    adjust_chank_list_2    high q 7.5Hz
+    adjust_chank_list_1_2  usual q 10Hz
+    adjust_chank_list_2_2  usual q 7.5Hz
+    '''
+    
+
+
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_analysis) started with priority {priority}")
@@ -1320,10 +1335,12 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
             with lock:
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy = adjust_chank_list_1[-20:] #最後の20個のデータをコピー
+                chank_copy_2 = adjust_chank_list_1_2[-20:] #最後の20個のデータをコピー
+
                 analysis_flag_1.value = False
-            plot_multiple_lines(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
+            plot_multiple_lines(chank_copy_2, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz)
+            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, chank_copy_2)
             count = count + 1
 
 
@@ -1331,10 +1348,11 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
             with lock:
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
+                chank_copy2_2 = adjust_chank_list_2_2[-20:]
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
+            plot_multiple_lines(chank_copy2_2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz)    # fre_change_word.
+            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1342,7 +1360,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
 
 
 
-def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state, previus_ave_max, previus_ave_min, down_count): #位相分析
+def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_points, range_ms, threshold_max, threshold_min, previous_state, previus_ave_max, previus_ave_min, down_count, y_values_2): #位相分析
     x = np.linspace(start, end, num_points)  # 0から10までの100個の等間隔の点
 
     # グラフの描画
@@ -1356,7 +1374,9 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     
     '''
 
-    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個
+    max_indices_per_row = np.argmax(y_values, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個      high q.
+    max_indices_per_row_2 = np.argmax(y_values_2, axis=1) # 各行の最大値のインデックスを取得. 要素数は20個  usual q.
+
 
     max_value_per_row = np.max(y_values, axis=1) # 各行の最大値を取得. 要素数は20個
     min_value_per_row = np.min(y_values, axis=1) # 各行の最小値を取得. 要素数は20個
@@ -1378,16 +1398,13 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     if range_ms == 100: #10Hzの場合
-        if previus_ave_max*g <= ave_max_value and previus_ave_min*g >= ave_min_value:
-            down_count+=1
-        else:
-            down_count = 0
+
         
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and down_count <= down_count_threshold:
-            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 50)]) >= 11 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
+        if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15):
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 50)]) >= 11 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 1
-            elif len(max_indices_per_row[(max_indices_per_row >= 51) & (max_indices_per_row <= 100)]) >= 11 and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 51) & (max_indices_per_row_2 <= 100)]) >= 11 and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
                 gaze_flag2.value = True
                 previous_state = 2
             else:
@@ -1405,11 +1422,11 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
         else:
             down_count = 0
 
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 and len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15 and down_count <= down_count_threshold:
-            if len(max_indices_per_row[(max_indices_per_row >= 0) & (max_indices_per_row <= 66)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 15 or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 15:
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 66)]) >= 11 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row[(max_indices_per_row >= 67) & (max_indices_per_row <= 133)]) >= 11 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 67) & (max_indices_per_row_2 <= 133)]) >= 11 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 gaze_flag2.value = True
                 previous_state = 4
             else:
@@ -2152,9 +2169,9 @@ def main():
 
     process2and3 = multiprocessing.Process(target=func_chanks, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2, priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2))
 
-    process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
+    process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2,        chank_list_1_2, adjust_chank_list_1_2, chank_list_2_2, adjust_chank_list_2_2))
     
-    process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2 ,analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min))
+    process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2 ,analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min, adjust_chank_list_1_2, adjust_chank_list_2_2))
 
 
 
