@@ -1494,6 +1494,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events()  # イベントを処理
     print("1st interval done!!!!")
 
+    keizoku = 3  # 表示の長さ
     for i in range(10):
         previous_time = time.time()
         images = [blinking_image1_p]
@@ -1502,7 +1503,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
         # 3秒間注視点
         print("3秒間注視点")
-        while previous_time + 3 / n > time.time():  # 60秒間ループ
+        while previous_time + keizoku / n > time.time():  # 60秒間ループ
             glClear(GL_COLOR_BUFFER_BIT)  # カラーバッファをクリア
             for image in images:  # 画像を描画
                 if not image.update():  # 表示時間が経過したら
@@ -1514,7 +1515,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         print("3秒間10Hz")
         images = [blinking_image1]
         previous_time = time.time()
-        while previous_time + 3 / n > time.time():  # 60秒間ループ
+        while previous_time + keizoku / n > time.time():  # 60秒間ループ
             glClear(GL_COLOR_BUFFER_BIT)  # カラーバッファをクリア
             for image in images:  # 画像を描画
                 if not image.update():  # 表示時間が経過したら
@@ -1526,7 +1527,7 @@ def func_visual_preparation(priority, measurement_command, lock):
         print("3秒間注視点")
         images = [blinking_image1_p]
         previous_time = time.time()
-        while previous_time + 3 / n > time.time():  # 60秒間ループ
+        while previous_time + keizoku / n > time.time():  # 60秒間ループ
             glClear(GL_COLOR_BUFFER_BIT)  # カラーバッファをクリア
             for image in images:  # 画像を描画
                 if not image.update():  # 表示時間が経過したら
