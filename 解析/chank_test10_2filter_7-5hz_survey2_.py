@@ -1338,7 +1338,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 chank_copy_2 = adjust_chank_list_1_2[-20:] #最後の20個のデータをコピー
 
                 analysis_flag_1.value = False
-            plot_multiple_lines(chank_copy_2, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
+            # plot_multiple_lines(chank_copy_2, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
             previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, chank_copy_2)
             count = count + 1
@@ -1350,7 +1350,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
                 chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
                 chank_copy2_2 = adjust_chank_list_2_2[-20:]
                 analysis_flag_2.value = False
-            plot_multiple_lines(chank_copy2_2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
+            # plot_multiple_lines(chank_copy2_2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
             previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2)    # fre_change_word.
             count2 = count2 + 1
@@ -1587,8 +1587,8 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [look_point_image]
-    n= 1 #以下以外定数.
-    m=1 #注視点注視、点滅非注視時の表示時間定数.
+    n= 5 #以下以外定数.
+    m=5 #注視点注視、点滅非注視時の表示時間定数.
 
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
@@ -2086,7 +2086,7 @@ def main():
 
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
-    setup_specimen = False
+    setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
