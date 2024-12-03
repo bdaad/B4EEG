@@ -1091,9 +1091,9 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
                         chank_list.append(chank_chank_list_2)
                         chank_list2.append(chank_chank_list_2_2)
 
-                        chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
-                        chank_list_copy2 = copy.deepcopy(list(chank_chank_list_2_2))
-                        
+                    chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
+                    chank_list_copy2 = copy.deepcopy(list(chank_chank_list_2_2))
+                    with lock:    
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
                         adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
 
@@ -1117,9 +1117,9 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
                         chank_list.append(chank_chank_list_1)
                         chank_list2.append(chank_chank_list_1_2)
 
-                        chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
-                        chank_list_copy2 = copy.deepcopy(list(chank_chank_list_1_2))
-
+                    chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
+                    chank_list_copy2 = copy.deepcopy(list(chank_chank_list_1_2))
+                    with lock:
                         adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
                         adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
 

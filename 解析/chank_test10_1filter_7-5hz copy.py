@@ -1781,7 +1781,7 @@ def main():
 
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
-    setup_specimen = False
+    setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
