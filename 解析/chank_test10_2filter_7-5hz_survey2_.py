@@ -1139,6 +1139,148 @@ def func_chank(priority, receive_value, flag_blink, chank_list, clock_signal, ad
 
 
 
+def func_chanks(priority, receive_value, flag_blink, chank_list, clock_signal, adjust_chank_list, analysis_flag, chank_size, lock, receive_value2, chank_list2, adjust_chank_list2, x_priority, x_receive_value, x_flag_blink, x_chank_list, x_clock_signal, x_adjust_chank_list, x_analysis_flag, x_chank_size, x_lock, x_receive_value2, x_chank_list2, x_adjust_chank_list2):
+    flag_state = None
+    chank_chank_list_1 = [] #buffer1 (higi q)
+    chank_chank_list_2 = [] #buffer2 (higi q)
+    chank_chank_list_1_2 = [] #buffer1 (usual q)
+    chank_chank_list_2_2 = [] #buffer2 (usual q)
+    pretime = time.time()
+    current_time = 0;
+
+
+    x_flag_state = None
+    x_chank_chank_list_1 = [] #buffer1 (higi q)
+    x_chank_chank_list_2 = [] #buffer2 (higi q)
+    x_chank_chank_list_1_2 = [] #buffer1 (usual q)
+    x_chank_chank_list_2_2 = [] #buffer2 (usual q)
+    x_pretime = time.time()
+    x_current_time = 0;
+
+
+
+    while True:
+        if flag_state is None:
+            with lock:
+                print("first flag_blink: ", flag_blink.value)
+                if flag_blink.value == True:
+                    flag_state = True
+        else:
+            if flag_blink.value == True:
+                if len(chank_chank_list_2) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+                    
+                    with lock:
+                        chank_list.append(chank_chank_list_2)
+                        chank_list2.append(chank_chank_list_2_2)
+
+                    chank_list_copy = copy.deepcopy(list(chank_chank_list_2))
+                    chank_list_copy2 = copy.deepcopy(list(chank_chank_list_2_2))
+                    with lock:    
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
+                        adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
+
+                        analysis_flag.value = True
+                    chank_chank_list_2 = []
+                    chank_chank_list_2_2 = []
+                    pretime = current_time
+                with lock:
+                    if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
+                        chank_chank_list_1.append(receive_value[0])
+                        chank_chank_list_1_2.append(receive_value2[0])
+
+                        clock_signal.value = False
+
+            elif flag_blink.value == False:
+                if len(chank_chank_list_1) != 0:
+                    current_time = time.time()
+                    interval_time = current_time - pretime
+
+                    with lock:
+                        chank_list.append(chank_chank_list_1)
+                        chank_list2.append(chank_chank_list_1_2)
+
+                    chank_list_copy = copy.deepcopy(list(chank_chank_list_1))
+                    chank_list_copy2 = copy.deepcopy(list(chank_chank_list_1_2))
+                    with lock:
+                        adjust_chank_list.append(adjust_data_to_size(chank_list_copy, target_size=chank_size))
+                        adjust_chank_list2.append(adjust_data_to_size(chank_list_copy2, target_size=chank_size))
+
+                        analysis_flag.value = True
+                    chank_chank_list_1 = []
+                    chank_chank_list_1_2 = []
+                    # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)  
+                    pretime = current_time
+
+                with lock:
+                    if isinstance(receive_value, ListProxy) and len(receive_value) > 0 and clock_signal.value == True:
+                        chank_chank_list_2.append(receive_value[0])
+                        chank_chank_list_2_2.append(receive_value2[0])
+                        clock_signal.value = False
+  
+        if x_flag_state is None:
+            with x_lock:
+                print("first flag_blink: ", x_flag_blink.value)
+                if x_flag_blink.value == True:
+                    x_flag_state = True
+        else:
+            if x_flag_blink.value == True:
+                if len(x_chank_chank_list_2) != 0:
+                    x_current_time = time.time()
+                    x_interval_time = x_current_time - x_pretime
+                    
+                    with x_lock:
+                        x_chank_list.append(x_chank_chank_list_2)
+                        x_chank_list2.append(x_chank_chank_list_2_2)
+
+                    x_chank_list_copy = copy.deepcopy(list(x_chank_chank_list_2))
+                    x_chank_list_copy2 = copy.deepcopy(list(x_chank_chank_list_2_2))
+                    with x_lock:    
+                        x_adjust_chank_list.append(adjust_data_to_size(x_chank_list_copy, target_size=x_chank_size))
+                        x_adjust_chank_list2.append(adjust_data_to_size(x_chank_list_copy2, target_size=x_chank_size))
+
+                        x_analysis_flag.value = True
+                    x_chank_chank_list_2 = []
+                    x_chank_chank_list_2_2 = []
+                    x_pretime = x_current_time
+                with x_lock:
+                    if isinstance(x_receive_value, ListProxy) and len(x_receive_value) > 0 and x_clock_signal.value == True:
+                        x_chank_chank_list_1.append(x_receive_value[0])
+                        x_chank_chank_list_1_2.append(x_receive_value2[0])
+
+                        x_clock_signal.value = False
+
+            elif x_flag_blink.value == False:
+                if len(x_chank_chank_list_1) != 0:
+                    x_current_time = time.time()
+                    x_interval_time = x_current_time - x_pretime
+
+                    with x_lock:
+                        x_chank_list.append(x_chank_chank_list_1)
+                        x_chank_list2.append(x_chank_chank_list_1_2)
+
+                    x_chank_list_copy = copy.deepcopy(list(x_chank_chank_list_1))
+                    x_chank_list_copy2 = copy.deepcopy(list(x_chank_chank_list_1_2))
+                    with x_lock:
+                        x_adjust_chank_list.append(adjust_data_to_size(x_chank_list_copy, target_size=x_chank_size))
+                        x_adjust_chank_list2.append(adjust_data_to_size(x_chank_list_copy2, target_size=x_chank_size))
+
+                        x_analysis_flag.value = True
+                    x_chank_chank_list_1 = []
+                    x_chank_chank_list_1_2 = []
+                    # print("chank_list len: ", len(chank_list_copy), "interval_time: ", interval_time)  
+                    x_pretime = x_current_time
+
+                with x_lock:
+                    if isinstance(x_receive_value, ListProxy) and len(x_receive_value) > 0 and x_clock_signal.value == True:
+                        x_chank_chank_list_2.append(x_receive_value[0])
+                        x_chank_chank_list_2_2.append(x_receive_value2[0])
+                        x_clock_signal.value = False
+  
+
+
+
 # import win_precise_time
 
 
@@ -2004,9 +2146,11 @@ def main():
     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2))
     
 
-    process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2)) #10Hz: 1000data / 10Hz = 100
-    # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 1000data / 15Hz = 66.666666 = 67         # fre_change_word.
-    process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
+    # process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2)) #10Hz: 1000data / 10Hz = 100
+    # # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 67, lock)) #15Hz: 1000data / 15Hz = 66.666666 = 67         # fre_change_word.
+    # process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
+
+    process2and3 = multiprocessing.Process(target=func_chanks, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2, priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2))
 
     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2))
     
@@ -2016,28 +2160,30 @@ def main():
 
     # プロセスの開始
     process1.start()
-    process2.start()
-    process3.start()
+    # process2.start()
+    # process3.start()
+    process2and3.start()
     process4.start()
-    # process5.start()
+    process5.start()
 
 
 
     main_process = psutil.Process()  # 自身のプロセスを取得
     print(f"main_process PID: {main_process.pid}")
     print(f"process1 PID: {process1.pid}")
-    print(f"process2 PID: {process2.pid}")
-    print(f"process3 PID: {process3.pid}")
+    # print(f"process2 PID: {process2.pid}")
+    # print(f"process3 PID: {process3.pid}")
     print(f"process4 PID: {process4.pid}")
-    # print(f"process5 PID: {process5.pid}")
+    print(f"process5 PID: {process5.pid}")
 
 
     # プロセスの終了を待つ
     process1.join()
-    process2.join()
-    process3.join()
+    # process2.join()
+    # process3.join()
+    process2and3.join()
     process4.join()
-    # process5.join()
+    process5.join()
 # /***********************************************************/
 
 
