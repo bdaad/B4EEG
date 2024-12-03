@@ -172,7 +172,7 @@ def input_com():
 
 
 # 1000Hzでデータ要求を送信しないで、受信も行い、データの数をカウントする関数
-def communicate_and_count_test(ser , received_list_1, receive_value_1, received_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock):
+def communicate_and_count_test(ser , received_list_1, receive_value_1, received_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2):
     start_time = time.perf_counter()  # 計測開始時間
     data_count = 0  # データのカウント
     t = 1
@@ -269,29 +269,47 @@ def communicate_and_count_test(ser , received_list_1, receive_value_1, received_
                     int_list_data_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz = iir_real_time_3ch(int_list_data, a_bp_10hz, b_bp_10hz, y_prev_bp_10hz, x_prev_bp_10hz) #バンドパスフィルタの適用.
                     int_list_data_bp_7_5hz, y_prev_bp_7_5hz, x_prev_bp_7_5hz = iir_real_time_3ch(int_list_data, a_bp_7_5hz, b_bp_7_5hz, y_prev_bp_7_5hz, x_prev_bp_7_5hz) #バンドパスフィルタの適用.
 
-
                     #high q
                     int_list_data_bp_highq_10hz, y_prev_bp_highq_10hz, x_prev_bp_highq_10hz = int_list_data, y_prev_bp_highq_10hz, x_prev_bp_highq_10hz
                     int_list_data_bp_highq_7_5hz, y_prev_bp_highq_7_5hz, x_prev_bp_highq_7_5hz = int_list_data, y_prev_bp_highq_7_5hz, x_prev_bp_highq_7_5hz
+    
                     
+                    # usual q
+                    last_data_10hz = int_list_data_bp_10hz
+                    last_data_7_5hz = int_list_data_bp_7_5hz
+                    
+                    # high q
                     last_data_highq_10hz = int_list_data_bp_highq_10hz
                     last_data_highq_7_5hz = int_list_data_bp_highq_7_5hz
 
 
+
                 except ValueError: #エラー処理
                     print("ValueError")
-                    # int_list_data = last_data
+                    # usual q
+                    int_list_data_bp_10hz = last_data_10hz
+                    int_list_data_bp_7_5hz = last_data_7_5hz
+                    
+                    #high q
                     int_list_data_bp_highq_10hz = last_data_highq_10hz 
                     int_list_data_bp_highq_7_5hz = last_data_highq_7_5hz
 
                 with lock:  # ロックを使って排他制御
+                    
+                    # high q
                     received_list_1.append(receive_value_1)
                     received_list_2.append(receive_value_2)
+                    
                     clock_signal_1.value = True
                     clock_signal_2.value = True
-                    # receive_value[:] = int_list_data
+                    
+                    # high q
                     receive_value_1[:] = last_data_highq_10hz
                     receive_value_2[:] = last_data_highq_7_5hz
+
+                    # usual q
+                    receive_value_1_2[:] = last_data_10hz
+                    receive_value_2_2[:] = last_data_7_5hz
 
  
 # /**************グラフィック関連**********************************************/
@@ -1006,7 +1024,7 @@ def setup_projection_for_circle(width, height):
 
 
 
-def func_serial(priority, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock):
+def func_serial(priority, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2):
     p = psutil.Process()
     p.nice(priority)  # psutilで優先順位を設定
     print(f"Process (func_serial) started with priority {priority}")
@@ -1016,7 +1034,7 @@ def func_serial(priority, com, shared_receive_list_1, receive_value_1, shared_re
             break
         except serial.SerialException:
             print("COMポートが開けませんでした。再度入力してください。")
-    communicate_and_count_test(ser, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock)
+    communicate_and_count_test(ser, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2)
    
 
 
@@ -1839,8 +1857,11 @@ def main():
     chank_list_1 = manager.list()
     chank_list_2 = manager.list()
 
-    receive_value_1 = manager.list()  # 共有リスト10Hz
-    receive_value_2 = manager.list()  # 共有リスト15Hz
+    receive_value_1 = manager.list()  # high q 10Hz
+    receive_value_1_2 = manager.list()  # usual q 10Hz
+    receive_value_2 = manager.list()  # higi q 7.5Hz
+    receive_value_2_2 = manager.list()  # usual q 7.5Hz
+
 
     clock_signal_1 = manager.Value('b', False)
     clock_signal_2 = manager.Value('b', False)
@@ -1957,7 +1978,7 @@ def main():
 
 
     
-    process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock))
+    process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2))
     
 
     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock)) #10Hz: 1000data / 10Hz = 100
