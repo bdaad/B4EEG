@@ -2148,6 +2148,8 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
         plt.legend()
         plt.grid()
         plt.show()
+    
+        measurement_command = 0
 
 
 
