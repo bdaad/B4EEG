@@ -499,10 +499,10 @@ def func_visual_preparation(priority, measurement_command, lock):
 
     # 画像の初期化
     center_look_point_image = BlinkingImage(position=(0.0, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    top_look_point_image = BlinkingImage(position=(0.0, 0.1), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    bottom_look_point_image = BlinkingImage(position=(0.0, -0.1), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    left_look_point_image = BlinkingImage(position=(-0.1, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    right_look_point_image = BlinkingImage(position=(0.1, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    top_look_point_image = BlinkingImage(position=(0.0, 0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    bottom_look_point_image = BlinkingImage(position=(0.0, -0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    left_look_point_image = BlinkingImage(position=(-0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    right_look_point_image = BlinkingImage(position=(0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
 
 
     blinking_image1 = BlinkingImage(position=(-0.0, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -612,7 +612,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     
 
     # 10秒間10Hz表示.
-    images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
+    images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
     previous_time = time.time()
     while previous_time + 10/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
@@ -624,7 +624,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
     # 10秒間反転10Hz表示.
-    images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
+    images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
     previous_time = time.time()
     while previous_time + 10/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
