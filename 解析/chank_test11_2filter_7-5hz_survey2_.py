@@ -2141,7 +2141,40 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                         threshold_non_look_6hz_min.value = np.mean(minima_values_topn)
                     measurement_command.value = 0 #初期状態.
 
+                    
+                    print("threshold_non_look_10hz_max", threshold_non_look_10hz_max.value)
+                    print("threshold_non_look_10hz_min", threshold_non_look_10hz_min.value)
+                    print("threshold_non_look_6hz_max", threshold_non_look_6hz_max.value)
+                    print("threshold_non_look_6hz_min", threshold_non_look_6hz_min.value)
+                    # # 全時系列データをプロット(10Hz)
+                    plt.figure(figsize=(14, 6))
+                    # plt.plot(all_data, label="Raw Data", alpha=0.7)
+                    plt.plot(store_list_non_look_10hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
+                    plt.xlabel("Time (samples)")
+                    plt.ylabel("Amplitude")
+                    # plt.ylim(-150000, 150000)
+                    # plt.ylim(-10000, 10000)
+                    # plt.ylim(-70000, 70000)
+                    # plt.ylim(-100000, 100000)
+                    plt.title("All Time Series Data (Raw and Filtered)")
+                    plt.legend()
+                    plt.grid()
+                    plt.show()
 
+                    # # 全時系列データをプロット(7.5Hz)
+                    plt.figure(figsize=(14, 6))
+                    # plt.plot(all_data, label="Raw Data", alpha=0.7)
+                    plt.plot(store_list_non_look_6hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
+                    plt.xlabel("Time (samples)")
+                    plt.ylabel("Amplitude")
+                    # plt.ylim(-150000, 150000)
+                    # plt.ylim(-10000, 10000)
+                    # plt.ylim(-70000, 70000)
+                    # plt.ylim(-100000, 100000)
+                    plt.title("All Time Series Data (Raw and Filtered)")
+                    plt.legend()
+                    plt.grid()
+                    plt.show()
 
 
 
