@@ -34,68 +34,6 @@ import matplotlib.pyplot as plt
 
 
 
-# 極大値.
-def find_local_maxima(arr, top_n=None):
-    arr = np.asarray(arr)
-    if arr.ndim != 1:
-        raise ValueError("1次元の配列のみサポートされています")
-    
-    maxima = np.zeros_like(arr, dtype=bool)
-    # 内部の要素について、前後の要素と比較
-    maxima[1:-1] = (arr[1:-1] > arr[:-2]) & (arr[1:-1] > arr[2:])
-    
-    # 始点と終点は局地的極値とみなさない
-    maxima[0] = False
-    maxima[-1] = False
-    
-    # 極大値のインデックスと値を取得
-    maxima_indices = np.where(maxima)[0]
-    maxima_values = arr[maxima_indices]
-    
-    # 極大値を大きい順にソート
-    sorted_indices = np.argsort(-maxima_values)
-    maxima_indices = maxima_indices[sorted_indices]
-    maxima_values = maxima_values[sorted_indices]
-    
-    # 上位n個の極大値を取得
-    if top_n is not None:
-        maxima_indices = maxima_indices[:top_n]
-        maxima_values = maxima_values[:top_n]
-    
-    return maxima_indices, maxima_values
-
-
-# 極小値.
-def find_local_minima(arr, top_n=None):
-    arr = np.asarray(arr)
-    if arr.ndim != 1:
-        raise ValueError("1次元の配列のみサポートされています")
-    
-    minima = np.zeros_like(arr, dtype=bool)
-    # 内部の要素について、前後の要素と比較
-    minima[1:-1] = (arr[1:-1] < arr[:-2]) & (arr[1:-1] < arr[2:])
-    
-    # 始点と終点は局地的極値とみなさない
-    minima[0] = False
-    minima[-1] = False
-    
-    # 極小値のインデックスと値を取得
-    minima_indices = np.where(minima)[0]
-    minima_values = arr[minima_indices]
-    
-    # 極小値を小さい順にソート
-    sorted_indices = np.argsort(minima_values)
-    minima_indices = minima_indices[sorted_indices]
-    minima_values = minima_values[sorted_indices]
-    
-    # 上位n個の極小値を取得
-    if top_n is not None:
-        minima_indices = minima_indices[:top_n]
-        minima_values = minima_values[:top_n]
-    
-    return minima_indices, minima_values
-
-
 
 
 
@@ -689,36 +627,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
 
-    #     # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
-    #     if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
-    #         glfw.set_window_monitor(window, None, 100, 100, 800, 600, 0)  # ウィンドウモードに切り替え
-    #         glMatrixMode(GL_PROJECTION)
-    #         glLoadIdentity()
-    #         gluPerspective(45, (800 / 600), 0.1, 50.0)
-    #         glMatrixMode(GL_MODELVIEW)
-    #         glLoadIdentity()
-    #         glTranslatef(0.0, 0.0, -5)
-    #         fullscreen = False
 
-    #     # TABキーでプログラムを終了
-    #     if glfw.get_key(window, glfw.KEY_TAB) == glfw.PRESS:
-    #         # ./save_dataにデータを保存する. セーブするデータは、chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2
-    #         with lock:
-    #             save_2d_array_to_file(chank_list_1, "chank_list_1")
-    #             save_2d_array_to_file(adjust_chank_list_1, "adjust_chank_list_1")
-    #             save_2d_array_to_file(chank_list_2, "chank_list_2")
-    #             save_2d_array_to_file(adjust_chank_list_2, "adjust_chank_list_2")
-    #             save_2d_array_to_file(chank_list_3, "chank_list_3")
-    #             save_2d_array_to_file(adjust_chank_list_3, "adjust_chank_list_3")
-    #             save_2d_array_to_file(chank_list_4, "chank_list_4")
-    #             save_2d_array_to_file(adjust_chank_list_4, "adjust_chank_list_4")
-    #         sys.exit()
-
-    #     glfw.swap_buffers(window)
-    #     glfw.poll_events()
-
-    # glfw.destroy_window(window) # ウィンドウを破棄
-    # glfw.terminate() # GLFWを終了
 
 
 
@@ -1072,50 +981,6 @@ def main():
 
     print("end.")
 
-
-
-    
-#     process1 = multiprocessing.Process(target=func_serial, args=(priority1, com, shared_receive_list_1, receive_value_1, shared_receive_list_2, receive_value_2, clock_signal_1, clock_signal_2, lock, receive_value_1_2, receive_value_2_2))
-    
-
-#     process2 = multiprocessing.Process(target=func_chank, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2)) #10Hz: 1000data / 10Hz = 100
-#     process3 = multiprocessing.Process(target=func_chank, args=(priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2)) #7.5Hz: 1000data / 7.5Hz = 133.3333 = 133         # fre_change_word.
-
-#     # process2and3 = multiprocessing.Process(target=func_chanks, args=(priority2, receive_value_1, flag_blink_1, chank_list_1, clock_signal_1, adjust_chank_list_1, analysis_flag_1, 100, lock, receive_value_1_2, chank_list_1_2, adjust_chank_list_1_2, priority3, receive_value_2, flag_blink_2, chank_list_2, clock_signal_2, adjust_chank_list_2, analysis_flag_2, 133, lock, receive_value_2_2, chank_list_2_2, adjust_chank_list_2_2))
-
-#     process4 = multiprocessing.Process(target=func_visual, args=(priority4, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2,        chank_list_1_2, adjust_chank_list_1_2, chank_list_2_2, adjust_chank_list_2_2))
-    
-#     process5 = multiprocessing.Process(target=func_analysis2, args=(priority5, adjust_chank_list_1 ,analysis_flag_1, gaze_flag_1, gaze_flag_1_2, gaze_flag_2, gaze_flag_2_2, adjust_chank_list_2 ,analysis_flag_2, lock, threshold_non_look_10hz_max, threshold_non_look_10hz_min, threshold_non_look_6hz_max, threshold_non_look_6hz_min, adjust_chank_list_1_2, adjust_chank_list_2_2))
-
-
-
-#     # プロセスの開始
-#     process1.start()
-#     process2.start()
-#     process3.start()
-#     # process2and3.start()
-#     process4.start()
-#     process5.start()
-
-
-
-#     main_process = psutil.Process()  # 自身のプロセスを取得
-#     print(f"main_process PID: {main_process.pid}")
-#     print(f"process1 PID: {process1.pid}")
-#     # print(f"process2 PID: {process2.pid}")
-#     # print(f"process3 PID: {process3.pid}")
-#     print(f"process4 PID: {process4.pid}")
-#     # print(f"process5 PID: {process5.pid}")
-
-
-#     # プロセスの終了を待つ
-#     process1.join()
-#     process2.join()
-#     process3.join()
-#     # process2and3.join()
-#     process4.join()
-#     process5.join()
-# # /***********************************************************/
 
 
 if __name__ == '__main__':
