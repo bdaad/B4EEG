@@ -3,7 +3,8 @@
 # 実験室pcではうまく動作しない可能性大.
 
 import matplotlib
-matplotlib.use('Agg')  # import matplotlib.pyplot as plt の前に設定
+# matplotlib.use('Agg')  # import matplotlib.pyplot as plt の前に設定
+matplotlib.use('TkAgg')  # または 'QtAgg'
 import time
 from datetime import datetime
 from multiprocessing.managers import ListProxy
@@ -1931,8 +1932,6 @@ def func_visual_preparation(priority, measurement_command, lock):
     glfw.destroy_window(window) # ウィンドウを破棄
     glfw.terminate() # GLFWを終了
     time.sleep(2) # 1秒待つ.
-
-
 
 
 
