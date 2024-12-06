@@ -1682,6 +1682,8 @@ def func_visual_preparation(priority, measurement_command, lock):
     measurement_command = 7 : 非注視計測終了命令
 
     measurement_command = 8 : 計測自体を終了する命令.
+
+    measurement_command = 9 : グラフ表示.
     '''
     
     
@@ -1933,37 +1935,6 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
 
-    #     # ESCキーで全画面モードを終了し、ウィンドウモードに切り替え
-    #     if glfw.get_key(window, glfw.KEY_ESCAPE) == glfw.PRESS and fullscreen:
-    #         glfw.set_window_monitor(window, None, 100, 100, 800, 600, 0)  # ウィンドウモードに切り替え
-    #         glMatrixMode(GL_PROJECTION)
-    #         glLoadIdentity()
-    #         gluPerspective(45, (800 / 600), 0.1, 50.0)
-    #         glMatrixMode(GL_MODELVIEW)
-    #         glLoadIdentity()
-    #         glTranslatef(0.0, 0.0, -5)
-    #         fullscreen = False
-
-    #     # TABキーでプログラムを終了
-    #     if glfw.get_key(window, glfw.KEY_TAB) == glfw.PRESS:
-    #         # ./save_dataにデータを保存する. セーブするデータは、chank_list_1, adjust_chank_list_1, chank_list_2, adjust_chank_list_2
-    #         with lock:
-    #             save_2d_array_to_file(chank_list_1, "chank_list_1")
-    #             save_2d_array_to_file(adjust_chank_list_1, "adjust_chank_list_1")
-    #             save_2d_array_to_file(chank_list_2, "chank_list_2")
-    #             save_2d_array_to_file(adjust_chank_list_2, "adjust_chank_list_2")
-    #             save_2d_array_to_file(chank_list_3, "chank_list_3")
-    #             save_2d_array_to_file(adjust_chank_list_3, "adjust_chank_list_3")
-    #             save_2d_array_to_file(chank_list_4, "chank_list_4")
-    #             save_2d_array_to_file(adjust_chank_list_4, "adjust_chank_list_4")
-    #         sys.exit()
-
-    #     glfw.swap_buffers(window)
-    #     glfw.poll_events()
-
-    # glfw.destroy_window(window) # ウィンドウを破棄
-    # glfw.terminate() # GLFWを終了
-
 
 
 
@@ -2146,35 +2117,38 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     print("threshold_non_look_10hz_min", threshold_non_look_10hz_min.value)
                     print("threshold_non_look_6hz_max", threshold_non_look_6hz_max.value)
                     print("threshold_non_look_6hz_min", threshold_non_look_6hz_min.value)
-                    # # 全時系列データをプロット(10Hz)
-                    plt.figure(figsize=(14, 6))
-                    # plt.plot(all_data, label="Raw Data", alpha=0.7)
-                    plt.plot(store_list_non_look_10hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
-                    plt.xlabel("Time (samples)")
-                    plt.ylabel("Amplitude")
-                    # plt.ylim(-150000, 150000)
-                    # plt.ylim(-10000, 10000)
-                    # plt.ylim(-70000, 70000)
-                    # plt.ylim(-100000, 100000)
-                    plt.title("All Time Series Data (Raw and Filtered)")
-                    plt.legend()
-                    plt.grid()
-                    plt.show()
 
-                    # # 全時系列データをプロット(7.5Hz)
-                    plt.figure(figsize=(14, 6))
-                    # plt.plot(all_data, label="Raw Data", alpha=0.7)
-                    plt.plot(store_list_non_look_6hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
-                    plt.xlabel("Time (samples)")
-                    plt.ylabel("Amplitude")
-                    # plt.ylim(-150000, 150000)
-                    # plt.ylim(-10000, 10000)
-                    # plt.ylim(-70000, 70000)
-                    # plt.ylim(-100000, 100000)
-                    plt.title("All Time Series Data (Raw and Filtered)")
-                    plt.legend()
-                    plt.grid()
-                    plt.show()
+
+    while measurement_command != 9:
+        # # 全時系列データをプロット
+        plt.figure(figsize=(14, 6))
+        # plt.plot(all_data, label="Raw Data", alpha=0.7)
+        plt.plot(store_list_non_look_10hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
+        plt.xlabel("Time (samples)")
+        plt.ylabel("Amplitude")
+        # plt.ylim(-150000, 150000)
+        # plt.ylim(-10000, 10000)
+        # plt.ylim(-70000, 70000)
+        plt.ylim(-100000, 100000)
+        plt.title("All Time Series Data (Raw and Filtered)")
+        plt.legend()
+        plt.grid()
+        plt.show()
+
+        # # 全時系列データをプロット
+        plt.figure(figsize=(14, 6))
+        # plt.plot(all_data, label="Raw Data", alpha=0.7)
+        plt.plot(store_list_non_look_6hz, label="Filtered Data (10Hz)", alpha=0.7, color='orange')
+        plt.xlabel("Time (samples)")
+        plt.ylabel("Amplitude")
+        # plt.ylim(-150000, 150000)
+        # plt.ylim(-10000, 10000)
+        # plt.ylim(-70000, 70000)
+        plt.ylim(-100000, 100000)
+        plt.title("All Time Series Data (Raw and Filtered)")
+        plt.legend()
+        plt.grid()
+        plt.show()
 
 
 
