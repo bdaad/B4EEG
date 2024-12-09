@@ -31,10 +31,66 @@ import copy
 import matplotlib.pyplot as plt
 
 
+# 極大値.
+def find_local_maxima(arr, top_n=None):
+    arr = np.asarray(arr)
+    if arr.ndim != 1:
+        raise ValueError("1次元の配列のみサポートされています")
+    
+    maxima = np.zeros_like(arr, dtype=bool)
+    # 内部の要素について、前後の要素と比較
+    maxima[1:-1] = (arr[1:-1] > arr[:-2]) & (arr[1:-1] > arr[2:])
+    
+    # 始点と終点は局地的極値とみなさない
+    maxima[0] = False
+    maxima[-1] = False
+    
+    # 極大値のインデックスと値を取得
+    maxima_indices = np.where(maxima)[0]
+    maxima_values = arr[maxima_indices]
+    
+    # 極大値を大きい順にソート
+    sorted_indices = np.argsort(-maxima_values)
+    maxima_indices = maxima_indices[sorted_indices]
+    maxima_values = maxima_values[sorted_indices]
+    
+    # 上位n個の極大値を取得
+    if top_n is not None:
+        maxima_indices = maxima_indices[:top_n]
+        maxima_values = maxima_values[:top_n]
+    
+    return maxima_indices, maxima_values
 
 
-
-
+# 極小値.
+def find_local_minima(arr, top_n=None):
+    arr = np.asarray(arr)
+    if arr.ndim != 1:
+        raise ValueError("1次元の配列のみサポートされています")
+    
+    minima = np.zeros_like(arr, dtype=bool)
+    # 内部の要素について、前後の要素と比較
+    minima[1:-1] = (arr[1:-1] < arr[:-2]) & (arr[1:-1] < arr[2:])
+    
+    # 始点と終点は局地的極値とみなさない
+    minima[0] = False
+    minima[-1] = False
+    
+    # 極小値のインデックスと値を取得
+    minima_indices = np.where(minima)[0]
+    minima_values = arr[minima_indices]
+    
+    # 極小値を小さい順にソート
+    sorted_indices = np.argsort(minima_values)
+    minima_indices = minima_indices[sorted_indices]
+    minima_values = minima_values[sorted_indices]
+    
+    # 上位n個の極小値を取得
+    if top_n is not None:
+        minima_indices = minima_indices[:top_n]
+        minima_values = minima_values[:top_n]
+    
+    return minima_indices, minima_values
 
 
 def save_2d_array_to_file(data, list_name):
