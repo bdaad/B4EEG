@@ -526,7 +526,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     input_character_onece = 0
 
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
-    n= 5 #以下以外定数.
+    n= 1 #以下以外定数.
     m=1 #注視点注視、点滅非注視時の表示時間定数.
 
 
@@ -535,7 +535,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10/n > time.time(): # 10秒間ループ
+    while previous_time + 2/n > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -546,26 +546,26 @@ def func_visual_preparation(priority, measurement_command, lock):
     #/**********************************************************************************************/
     
 
-    previous_time = time.time()
-    with lock:
-        measurement_command.value = 2 # 計測開始命令.
+    # previous_time = time.time()
+    # with lock:
+    #     measurement_command.value = 2 # 計測開始命令.
 
-     # 15秒間注視点
-    print("60秒間注視点")
-    while previous_time + 60/n > time.time(): # 60秒間ループ
-        glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
-        for image in images: # 画像を描画
-            if not image.update(): # 表示時間が経過したら
-                images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
-        glfw.swap_buffers(window) # バッファを入れ替え
-        glfw.poll_events() # イベントを処理
+    #  # 15秒間注視点
+    # print("60秒間注視点")
+    # while previous_time + 15/n > time.time(): # 60秒間ループ
+    #     glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
+    #     for image in images: # 画像を描画
+    #         if not image.update(): # 表示時間が経過したら
+    #             images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+    #     glfw.swap_buffers(window) # バッファを入れ替え
+    #     glfw.poll_events() # イベントを処理
 
-    with lock:
-        measurement_command.value = 3 # 計測終了命令.
+    # with lock:
+    #     measurement_command.value = 3 # 計測終了命令.
 
-    while measurement_command.value != 0: #保存などの処理が終わるまで待機.
-        pass
-    print("1. done")
+    # while measurement_command.value != 0: #保存などの処理が終わるまで待機.
+    #     pass
+    # print("1. done")
     
     
 
@@ -574,7 +574,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     previous_time = time.time()
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10/n > time.time(): # 10秒間ループ
+    while previous_time + 2/n > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -596,7 +596,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 15秒間注視点
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
     previous_time = time.time()
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    while previous_time + 3/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -608,7 +608,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 10秒間10Hz表示.
     images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
     previous_time = time.time()
-    while previous_time + 10/n > time.time(): # 60秒間ループ
+    while previous_time + 3/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -620,7 +620,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 10秒間反転10Hz表示.
     images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
     previous_time = time.time()
-    while previous_time + 10/n > time.time(): # 60秒間ループ
+    while previous_time + 3/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -629,10 +629,23 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
 
 
+    # 10秒間10Hz表示.
+    images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
+    previous_time = time.time()
+    while previous_time + 3/n > time.time(): # 60秒間ループ
+        glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
+        for image in images: # 画像を描画
+            if not image.update(): # 表示時間が経過したら
+                images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+        glfw.swap_buffers(window) # バッファを入れ替え
+        glfw.poll_events() # イベントを処理
+
+
+
     # 15秒間注視点
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
     previous_time = time.time()
-    while previous_time + 15/n > time.time(): # 60秒間ループ
+    while previous_time + 3/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -651,20 +664,20 @@ def func_visual_preparation(priority, measurement_command, lock):
     
 
 
-    #/**********************************************************************************************/
-    #10秒間注視点のみ表示.(インターバル要員)
-    previous_time = time.time()
-    with lock:
-        measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 10/n > time.time(): # 10秒間ループ
-        glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
-        for image in images: # 画像を描画
-            if not image.update(): # 表示時間が経過したら
-                images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
-        glfw.swap_buffers(window) # バッファを入れ替え
-        glfw.poll_events() # イベントを処理
-    print("2nd interval done!!!!")
-    #/**********************************************************************************************/
+    # #/**********************************************************************************************/
+    # #10秒間注視点のみ表示.(インターバル要員)
+    # previous_time = time.time()
+    # with lock:
+    #     measurement_command.value = 1 # インターバル命令(計測なし).
+    # while previous_time + 10/n > time.time(): # 10秒間ループ
+    #     glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
+    #     for image in images: # 画像を描画
+    #         if not image.update(): # 表示時間が経過したら
+    #             images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+    #     glfw.swap_buffers(window) # バッファを入れ替え
+    #     glfw.poll_events() # イベントを処理
+    # print("2nd interval done!!!!")
+    # #/**********************************************************************************************/
 
 
 
@@ -835,7 +848,7 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #10Hz点滅→位相反転終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "measurement2")
+                    save_2d_array_to_file(store_list_look_6hz, "off3_10Hzon3_gyaku10Hzon3_10Hzon3_10Hzon3_off3")
                     #store_list_look_6hzの極大値を求める.
                     maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極大値top50を求める.
                     minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極小値top50を求める.
