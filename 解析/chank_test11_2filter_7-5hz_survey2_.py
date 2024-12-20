@@ -1973,17 +1973,20 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     # ここに位相分析の処理を書く
         # None.
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
+    threshold_amplitude_num = 12
+    within_index_num = 15
+    
     if range_ms == 100: #10Hzの場合
 
         
-        if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 12 or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 12):
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 50)]) >= 15 and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
+        if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num):
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 50)]) >= within_index_num and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 1
                
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 51) & (max_indices_per_row_2 <= 100)]) >= 15 and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 51) & (max_indices_per_row_2 <= 100)]) >= within_index_num and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -2010,13 +2013,13 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     elif range_ms == 133: #7-5Hzの場合
 
 
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= 12 or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= 12:
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 67) & (max_indices_per_row_2 <= 133)]) >= 15 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num:
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 67) & (max_indices_per_row_2 <= 133)]) >= within_index_num and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 66)]) >= 15 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 66)]) >= within_index_num and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
