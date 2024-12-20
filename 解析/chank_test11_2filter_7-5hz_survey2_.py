@@ -886,7 +886,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             
         # あ.
             if gaze_flag_1.value == False and flag_a == True:
-                if character_count >= 15 and character_count < interval_change_a_ka * 2 + delay_flame_a_ka:
+                if character_count >= 40 and character_count < interval_change_a_ka * 2 + delay_flame_a_ka:
                     print("あ")
                     input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                 # elif  images[4] == character_image1_2_on:
@@ -926,7 +926,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             
         # か.
             elif gaze_flag_1_2.value == False and flag_b == True:
-                if character_count >= 15 and character_count < interval_change_a_ka * 2 + delay_flame_a_ka:
+                if character_count >= 40 and character_count < interval_change_a_ka * 2 + delay_flame_a_ka:
                     print("か")
                     input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                 # elif  images[4] == character_image1_2_on:
@@ -968,7 +968,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
             
         # さ.
             elif gaze_flag_2.value == False and flag_c == True:
-                if character_count >= 15 and character_count < interval_change_sa_ta * 2 + delay_flame_sa_ta:
+                if character_count >= 40 and character_count < interval_change_sa_ta * 2 + delay_flame_sa_ta:
                     print("さ")
                     input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                 # elif images[6] == character_image3_2_on:
@@ -1009,7 +1009,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
         # た.
             elif gaze_flag_2_2.value == False and flag_d == True:
-                if character_count >= 15 and character_count < interval_change_sa_ta * 2 + delay_flame_sa_ta:
+                if character_count >= 40 and character_count < interval_change_sa_ta * 2 + delay_flame_sa_ta:
                     print("た")
                     input_character = BlinkingImage(position=(0, 0.2), size=(0.7, 0.7), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
                 # elif images[6] == character_image3_2_on:
