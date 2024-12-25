@@ -1419,15 +1419,17 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
     triga_count2 = 0
     time.sleep(3)
     print("分析")
+
+    seg_num = 30
     
     while True: # 20個のデータが溜まったら..分析を行う
-        if len(adjust_chank_list_1) >= 20 and len(adjust_chank_list_2) >= 20:
+        if len(adjust_chank_list_1) >= seg_num and len(adjust_chank_list_2) >= seg_num:
             break
 
     print("分析開始")
         
     # 分析を行う.変数.
-    seg_num = 30
+    
     while True:
         if analysis_flag_1.value == True:
             with lock:
