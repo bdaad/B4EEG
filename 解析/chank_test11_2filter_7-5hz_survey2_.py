@@ -670,7 +670,8 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     flag_b = False # 『か』用. 
     flag_c = False # 『さ』用. 
     flag_d = False # 『た』用. 
-    input_character = "None"
+    # input_character = "None"
+    input_character = None
     input_character_onece = 0
     ana_interval = 300 # 5秒間停止.
     ana_counter = 0
@@ -1531,11 +1532,11 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 
         # input_characterを60フレーム分表示して削除する.
-        if input_character != "None":
+        if input_character != None:
             if character_change_curennt_frame + 60 == blinking_image1.frame_count_not_reset: #60フレーム表示したら
                 # images.remove(input_character)
                 images[9] = black_image
-                input_character = "None"
+                input_character = None
                 character_change_curennt_frame = 0
                 print("input_characterを削除しました。")
     
@@ -2190,7 +2191,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     frame_count = 0
     fullscreen = True  # 現在の状態を管理
     character_count = 0 # 文字の表示を管理
-    input_character = "None"
+    input_character = None
     input_character_onece = 0
 
     images = [look_point_image]
@@ -2701,7 +2702,7 @@ def main():
 
         #標本データを作成するかどうか. trueの場合、標本データを作成する.
     setup_specimen = False
-    #setup_specimen = True
+    # setup_specimen = True
 
 
     # /************ 標本データ作成プロセス  preparation(準備) ****************/
