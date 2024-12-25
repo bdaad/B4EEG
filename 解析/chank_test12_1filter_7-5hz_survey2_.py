@@ -1426,30 +1426,31 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
 
     print("分析開始")
         
-    # 分析を行う.
+    # 分析を行う.変数.
+    seg_num = 30
     while True:
         if analysis_flag_1.value == True:
             with lock:
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                chank_copy = adjust_chank_list_1[-20:] #最後の20個のデータをコピー
-                chank_copy_2 = adjust_chank_list_1_2[-20:] #最後の20個のデータをコピー
+                chank_copy = adjust_chank_list_1[-seg_num:] #最後の20個のデータをコピー
+                chank_copy_2 = adjust_chank_list_1_2[-seg_num:] #最後の20個のデータをコピー
 
                 analysis_flag_1.value = False
             plot_multiple_lines(chank_copy_2, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 0, 0.1, 100)
             # plot_phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100)
-            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, triga_count = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, 20, 20, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, chank_copy_2, triga_count)
+            previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, triga_count = phase_ana(chank_copy, count, gaze_flag_1, gaze_flag_1_2, "10Hz", 1, seg_num, seg_num, 100, threshold_non_look_10hz_max, threshold_non_look_10hz_min, previous_state_10hz, previus_ave_max_10hz, previus_ave_min_10hz, down_count_10hz, chank_copy_2, triga_count)
             count = count + 1
 
 
         if analysis_flag_2.value == True:
             with lock:
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                chank_copy2 = adjust_chank_list_2[-20:] #最後の20個のデータをコピー
-                chank_copy2_2 = adjust_chank_list_2_2[-20:]
+                chank_copy2 = adjust_chank_list_2[-seg_num:] #最後の20個のデータをコピー
+                chank_copy2_2 = adjust_chank_list_2_2[-seg_num:]
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2_2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, triga_count2 = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, 20, 20, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2, triga_count2)    # fre_change_word.
+            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, triga_count2 = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, seg_num, seg_num, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2, triga_count2)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1497,19 +1498,19 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     # max_indices_per_rowが10~50に8個以上ある場合、gaze_flagをTrueにする # fre_change_word.
     # 変数
     threshold_amplitude_num = 12
-    within_index_num = 13
+    within_index_num = 20
     
     if range_ms == 100: #10Hzの場合
      
         
-        if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num):
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 50)]) >= within_index_num and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
+        # if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num):
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 30)]) >= within_index_num and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 1
                
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 51) & (max_indices_per_row_2 <= 100)]) >= within_index_num and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 70) & (max_indices_per_row_2 <= 100)]) >= within_index_num and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -1524,25 +1525,25 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                 previous_state = 0
                 triga_count= 0
                 
-        else:
-            gaze_flag.value = False
-            gaze_flag2.value = False
-            if previous_state != 0:
-                print("out3")
-            previous_state = 0
-            triga_count = 0
+        # else:
+            # gaze_flag.value = False
+            # gaze_flag2.value = False
+            # if previous_state != 0:
+            #     print("out3")
+            # previous_state = 0
+            # triga_count = 0
             
         
     elif range_ms == 133: #7-5Hzの場合
 
 
-        if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num:
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 67) & (max_indices_per_row_2 <= 133)]) >= within_index_num and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+        # if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num:
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >=40) & (max_indices_per_row_2 <= 90)]) >= within_index_num and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 66)]) >= within_index_num and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 20)]) + len(max_indices_per_row_2[(max_indices_per_row_2 >= 110) & (max_indices_per_row_2 <= 133)]) >= within_index_num and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -1557,14 +1558,14 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                 previous_state = 0
                 triga_count = 0
                 # print("out3")
-        else:
-            gaze_flag.value = False
-            gaze_flag2.value = False
-            if previous_state != 0:
-                print("out6")
-            previous_state = 0
-            triga_count = 0
-            # print("out4")
+        # else:
+        #     gaze_flag.value = False
+        #     gaze_flag2.value = False
+        #     if previous_state != 0:
+        #         print("out6")
+        #     previous_state = 0
+        #     triga_count = 0
+        #     # print("out4")
     
 
     previus_ave_max = ave_max_value
@@ -1597,7 +1598,7 @@ def plot_multiple_lines(y_values, count, gaze_flag, gaze_flag2, folder, start, e
     # グラフの描画
     # plt.figure(figsize=(10, 6)) # グラフのサイズを設定
     #print("count",count)
-    if count % 20 == 0:
+    if count % 30 == 0:
         for i, y in enumerate(y_values):
             plt.plot(x, y, label=f'Line {i+1}')
 
