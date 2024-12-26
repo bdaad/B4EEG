@@ -602,11 +602,12 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     # 画像の初期化
     look_point_image = BlinkingImage(position=(0.0, 0.6), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
 
-
-    blinking_image1 = BlinkingImage(position=(-1.2,-0.4),size=(0.4, 0.4), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_image2 = BlinkingImage(position=(-0.4, -0.4),size=(0.4, 0.4), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    blinking_image3 = BlinkingImage(position=(0.4, -0.4), size=(0.4, 0.4), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
-    blinking_image4 = BlinkingImage(position=(1.2, -0.4), size=(0.4, 0.4), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
+    blink_size1 = 0.49
+    blink_size2 = 0.45
+    blinking_image1 = BlinkingImage(position=(-1.1,-0.4),size=(blink_size1, blink_size1), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_image2 = BlinkingImage(position=(-0.4, -0.4),size=(blink_size2, blink_size2), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    blinking_image3 = BlinkingImage(position=(0.4, -0.4), size=(blink_size2, blink_size2), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
+    blinking_image4 = BlinkingImage(position=(1.1, -0.4), size=(blink_size1,blink_size1), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=False, projection=projection)# fre_change_word.
     
     # blinking_image1 = BlinkingImage(position=(0.0, 0.0), size=(0.6, 0.6), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     # blinking_image2 = BlinkingImage(position=(-0.5, 0.0), size=(0.5, 0.5), image_path="./black.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -615,41 +616,46 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
     blinking_image1_off = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./circle.png", display_time=None, frequency=0.000000000001, refresh_rate=refresh_rate, start_on=False, projection=projection)
     
-
-
-    character_image1 = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image1_on = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image1_2_on = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image1_3_on = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image1_4_on = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image1_5_on = BlinkingImage(position=(-1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    c_size = 0.3
+    y_position = -0.32
+    x_1_position = -1.24
+    x_2_position = -0.44
+    x_3_position = 0.44
+    x_4_position = 1.24
+    
+    character_image1 = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/a_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_on = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/a_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_2_on = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/i_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_3_on = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/u_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_4_on = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/e_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image1_5_on = BlinkingImage(position=(x_1_position, y_position), size=(c_size, c_size), image_path="./img_file/o_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
                
 
 
-    character_image2 = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image2_on = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image2_2_on = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image2_3_on = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image2_4_on = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ke_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image2_5_on = BlinkingImage(position=(-0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2 = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ka_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_on = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ka_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_2_on = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ki_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_3_on = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ku_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_4_on = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ke_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image2_5_on = BlinkingImage(position=(x_2_position, y_position), size=(c_size, c_size), image_path="./img_file/ko_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
 
 
-    character_image3 = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/sa_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image3_on = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image3_2_on = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image3_3_on = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image3_4_on = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/se_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    character_image3_5_on = BlinkingImage(position=(0.5, -0.2), size=(0.45, 0.45), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3 = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/sa_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_on = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/sa_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_2_on = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/si_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_3_on = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/su_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_4_on = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/se_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    character_image3_5_on = BlinkingImage(position=(x_3_position, y_position), size=(c_size, c_size), image_path="./img_file/so_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
 
 
 
-    character_image4 = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image4_on = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image4_2_on = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image4_3_on = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image4_4_on = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
-    character_image4_5_on = BlinkingImage(position=(1.0, -0.2), size=(0.45, 0.45), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4 = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/ta_off.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_on = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/ta_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_2_on = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/ti_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_3_on = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/tu_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_4_on = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/te_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
+    character_image4_5_on = BlinkingImage(position=(x_4_position, y_position), size=(c_size, c_size), image_path="./img_file/to_on.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
 
     # 入力文字の表示用.
     black_image = BlinkingImage(position=(0.0, 0.2), size=(0.7, 0.7), image_path="./black.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=False, projection=projection)
@@ -772,7 +778,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
 
 # 文字の表示を管理 # fre_change_word.
         # 変数
-        interval_change_a_ka = 90
+        interval_change_a_ka = 80
         interval_change_sa_ta = 90
         delay_flame_a_ka = 60
         delay_flame_sa_ta = 80
@@ -1421,6 +1427,7 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
     print("分析")
 
     seg_num = 30
+    seg_num2 =25
     
     while True: # 20個のデータが溜まったら..分析を行う
         if len(adjust_chank_list_1) >= seg_num and len(adjust_chank_list_2) >= seg_num:
@@ -1447,12 +1454,12 @@ def func_analysis2(priority, adjust_chank_list_1, analysis_flag_1, gaze_flag_1, 
         if analysis_flag_2.value == True:
             with lock:
                 # chank_copy = copy.deepcopy(list(adjust_chank_list[-20:])) #最後の20個のデータをコピー
-                chank_copy2 = adjust_chank_list_2[-seg_num:] #最後の20個のデータをコピー
-                chank_copy2_2 = adjust_chank_list_2_2[-seg_num:]
+                chank_copy2 = adjust_chank_list_2[-seg_num2:] #最後の20個のデータをコピー
+                chank_copy2_2 = adjust_chank_list_2_2[-seg_num2:]
                 analysis_flag_2.value = False
             plot_multiple_lines(chank_copy2_2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 0, 0.133, 133) # fre_change_word.
             # plot_phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "6Hz", 1, 20, 20, 167)    # fre_change_word.
-            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, triga_count2 = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, seg_num, seg_num, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2, triga_count2)    # fre_change_word.
+            previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, triga_count2 = phase_ana(chank_copy2, count2, gaze_flag_2, gaze_flag_2_2, "7-5Hz", 1, seg_num2, seg_num2, 133, threshold_non_look_6hz_max, threshold_non_look_6hz_min, previous_state_6hz, previus_ave_max_6hz, previus_ave_min_6hz, down_count_6hz, chank_copy2_2, triga_count2)    # fre_change_word.
             count2 = count2 + 1
 
 
@@ -1501,18 +1508,19 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     # 変数
     threshold_amplitude_num = 12
     within_index_num = 20
+    within_index_num2 = 14
     
     if range_ms == 100: #10Hzの場合
      
         
         # if (len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num):
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 30)]) >= within_index_num and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 35)]) >= within_index_num and (previous_state==0 or previous_state==1): #10~50の範囲に11個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 1
                
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 70) & (max_indices_per_row_2 <= 100)]) >= within_index_num and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 65) & (max_indices_per_row_2 <= 100)]) >= within_index_num and (previous_state==0 or previous_state==2): #51~90の範囲に11個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -1540,12 +1548,12 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
 
 
         # if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num:
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >=40) & (max_indices_per_row_2 <= 90)]) >= within_index_num and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >=80) & (max_indices_per_row_2 <= 123)]) >= within_index_num2 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 0) & (max_indices_per_row_2 <= 20)]) + len(max_indices_per_row_2[(max_indices_per_row_2 >= 110) & (max_indices_per_row_2 <= 133)]) >= within_index_num and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 10) & (max_indices_per_row_2 <= 60)]) >= within_index_num2 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -2221,7 +2229,7 @@ def main():
     com = "COM4"
     
     com = "COM9"
-    com = "COM8"
+    # com = "COM8"
     # com = input_com()
     # print(com)
 
