@@ -2217,6 +2217,7 @@ def main():
     # com = input_com()# COMポート接続の初期化
     com = "COM4"
     com = "COM9"
+    com = "COM8"
     # com = input_com()
     # print(com)
 

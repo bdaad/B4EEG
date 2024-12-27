@@ -603,7 +603,7 @@ def func_visual(priority, flag_blink_1, flag_blink_2, lock, chank_list_1, adjust
     look_point_image = BlinkingImage(position=(0.0, 0.6), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
 
     blink_size1 = 0.49
-    blink_size2 = 0.45
+    blink_size2 = 0.49
     blinking_image1 = BlinkingImage(position=(-1.1,-0.4),size=(blink_size1, blink_size1), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
     blinking_image2 = BlinkingImage(position=(-0.4, -0.4),size=(blink_size2, blink_size2), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=False, projection=projection)
     blinking_image3 = BlinkingImage(position=(0.4, -0.4), size=(blink_size2, blink_size2), image_path="./circle.png", display_time=None, frequency=7.5, refresh_rate=refresh_rate, start_on=True, projection=projection)# fre_change_word.
@@ -1508,8 +1508,8 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
     # 変数
     threshold_amplitude_num = 12
     within_index_num = 20
-    within_index_num2 = 14
-    
+    within_index_num2 = 16
+    within_index_num2_2 = 15
     if range_ms == 100: #10Hzの場合
      
         
@@ -1545,15 +1545,34 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
             
         
     elif range_ms == 133: #7-5Hzの場合
+            # 被験者形部用.
+            # if len(max_indices_per_row_2[(max_indices_per_row_2 >=80) & (max_indices_per_row_2 <= 123)]) >= within_index_num2 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+            #     triga_count += 1
+            #     if triga_count_threshold <= triga_count:
+            #         gaze_flag.value = True
+            #     previous_state = 3
+            # elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 10) & (max_indices_per_row_2 <= 60)]) >= within_index_num2 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            #     triga_count += 1
+            #     if triga_count_threshold <= triga_count:
+            #         gaze_flag2.value = True
+            #     previous_state = 4
+            # else:
+            #     gaze_flag.value = False
+            #     gaze_flag2.value = False
+            #     if previous_state == 1:
+            #         print("out4")
+            #     elif previous_state == 2:
+            #         print("out5")
+            #     previous_state = 0
+            #     triga_count = 0
 
-
-        # if len(max_value_per_row[max_value_per_row >= threshold_max.value]) >= threshold_amplitude_num or len(min_value_per_row[min_value_per_row <= threshold_min.value]) >= threshold_amplitude_num:
-            if len(max_indices_per_row_2[(max_indices_per_row_2 >=80) & (max_indices_per_row_2 <= 123)]) >= within_index_num2 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
+            # 被験者松良用.
+            if len(max_indices_per_row_2[(max_indices_per_row_2 >=100) & (max_indices_per_row_2 <= 133)])+ len(max_indices_per_row_2[(max_indices_per_row_2 >=0) & (max_indices_per_row_2 <= 10)]) >= within_index_num2 and (previous_state==0 or previous_state==3): #16~83の範囲に15個以上ある場合  : 位相非反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag.value = True
                 previous_state = 3
-            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 10) & (max_indices_per_row_2 <= 60)]) >= within_index_num2 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
+            elif len(max_indices_per_row_2[(max_indices_per_row_2 >= 60) & (max_indices_per_row_2 <= 100)]) >= within_index_num2_2 and (previous_state==0 or previous_state==4): #84~151の範囲に15個以上ある場合  : 位相反転
                 triga_count += 1
                 if triga_count_threshold <= triga_count:
                     gaze_flag2.value = True
@@ -1567,16 +1586,6 @@ def phase_ana(y_values, count, gaze_flag, gaze_flag2, folder, start, end, num_po
                     print("out5")
                 previous_state = 0
                 triga_count = 0
-                # print("out3")
-        # else:
-        #     gaze_flag.value = False
-        #     gaze_flag2.value = False
-        #     if previous_state != 0:
-        #         print("out6")
-        #     previous_state = 0
-        #     triga_count = 0
-        #     # print("out4")
-    
 
     previus_ave_max = ave_max_value
     previus_ave_min = ave_min_value
@@ -2229,7 +2238,7 @@ def main():
     com = "COM4"
     
     com = "COM9"
-    # com = "COM8"
+    com = "COM8"
     # com = input_com()
     # print(com)
 

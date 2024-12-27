@@ -30,6 +30,13 @@ import glm  # OpenGL Mathematicsライブラリを使用
 import copy
 import matplotlib.pyplot as plt
 
+# 繰り返す用
+# save_file_name = [
+#     "off3_10Hzon3_top3(10Hz_on)_off3",
+#     "off3_10Hzon3_bottom3(10Hz_on)_off3",
+#     "off3_10Hzon3_left3(10Hz_on)_off3",
+#     "off3_10Hzon3_right3(10Hz_on)_off3",
+# ]
 
 # 極大値.
 def find_local_maxima(arr, top_n=None):
@@ -496,10 +503,10 @@ def func_visual_preparation(priority, measurement_command, lock):
     top_look_point_image = BlinkingImage(position=(0.0, 0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     bottom_look_point_image = BlinkingImage(position=(0.0, -0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     left_look_point_image = BlinkingImage(position=(-0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_left_image = BlinkingImage(position=(-0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_righit_image = BlinkingImage(position=(0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_top_image = BlinkingImage(position=(0.0, 0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_bottom_image = BlinkingImage(position=(0.0, -0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=10, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_left_image = BlinkingImage(position=(-0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_righit_image = BlinkingImage(position=(0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_top_image = BlinkingImage(position=(0.0, 0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_bottom_image = BlinkingImage(position=(0.0, -0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     
     
     right_look_point_image = BlinkingImage(position=(0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -595,7 +602,7 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
 
-
+    # print('時間確認', time.time() - previous_time)
     # 10Hz点滅→位相反転
     with lock:
         measurement_command.value = 4 # 6Hz計測開始命令.
@@ -611,6 +618,8 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.poll_events() # イベントを処理
     
 
+    # print('時間確認', time.time() - previous_time)
+
     # 10秒間10Hz表示.
     images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
     previous_time = time.time()
@@ -622,16 +631,28 @@ def func_visual_preparation(priority, measurement_command, lock):
         glfw.swap_buffers(window) # バッファを入れ替え
         glfw.poll_events() # イベントを処理
 
+    # print('時間確認', time.time() - previous_time)
 
     # 10秒間反転10Hz表示.
     # images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
     previous_time = time.time()
     # images[2] = blinking_left_image
     # images[3] = blinking_righit_image
-    images[0] = blinking_top_image
-    # images[1] = blinking_bottom_image
+    # images[0] = blinking_top_image
+    images[1] = blinking_bottom_image
 
-    while previous_time + 9/n > time.time(): # 60秒間ループ
+    # 繰り返す場合
+    # PlaceImages = [top_look_image, bottom_look_image, left_look_image, right_look_image]
+    # while previous_time + 3/n > time.time(): # 60秒間ループ
+    #     glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
+    #     for Pimage in PlaceImages: # 画像を描画
+    #         if not Pimage.update(): # 表示時間が経過したら
+    #             Pimages.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+    #     glfw.swap_buffers(window) # バッファを入れ替え
+    #     glfw.poll_events() # イベントを処理
+    
+
+    while previous_time + 3/n > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -652,6 +673,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #     glfw.poll_events() # イベントを処理
 
 
+    # print('時間確認', time.time() - previous_time)
 
     # 15秒間注視点
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
@@ -702,7 +724,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     print("End of the visual function.")
     glfw.destroy_window(window) # ウィンドウを破棄
     glfw.terminate() # GLFWを終了
-    time.sleep(2) # 1秒待つ.
+    # time.sleep() # 1秒待つ.
 
 
 
@@ -859,7 +881,9 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #10Hz点滅→位相反転終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "off3_10Hzon3_gyaku10Hzon3_10Hzon3_10Hzon3_off3")
+                    save_2d_array_to_file(store_list_look_6hz, "off3_10Hzon3_bottom3(10Hz_on)_off3")
+                    # save_2d_array_to_file(store_list_look_6hz, save_file_name[file_name_number])  # 繰り返す用
+                    
                     #store_list_look_6hzの極大値を求める.
                     maxima_indices_topn, maxima_values_topn = find_local_maxima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極大値top50を求める.
                     minima_indices_topn, minima_values_topn = find_local_minima(np.array(store_list_look_6hz)[:, 0], top_n=30) #極小値top50を求める.
