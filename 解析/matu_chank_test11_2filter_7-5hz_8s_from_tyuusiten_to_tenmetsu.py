@@ -878,7 +878,7 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #10Hz点滅→位相反転終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "off3_10Hzon3_bottom3(10Hz_on)_off3")
+                    save_2d_array_to_file(store_list_look_6hz, "8s_from_tyuusiten_to_tenmetsu_bottom")
                     # save_2d_array_to_file(store_list_look_6hz, save_file_name[file_name_number])  # 繰り返す用
                     
                     #store_list_look_6hzの極大値を求める.
@@ -1069,7 +1069,7 @@ def main():
         # 配列に値を格納する.
         thresholds = [threshold_look_10hz_max.value, threshold_look_10hz_min.value, threshold_look_6hz_max.value, threshold_look_6hz_min.value, threshold_non_look_10hz_max.value, threshold_non_look_10hz_min.value, threshold_non_look_6hz_max.value, threshold_non_look_6hz_min.value]        # ファイルに保存する.
         save_2d_array_to_file(thresholds, "thresholds")
-        time.sleep(10)
+        # time.sleep(10)
     elif setup_specimen == False:
         threshold_look_10hz_max.value = 0
         threshold_look_6hz_max.value = 0
