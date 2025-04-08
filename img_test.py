@@ -2,7 +2,7 @@ from PIL import Image
 
 # 画像を開く
 # image = Image.open('./解析/img_file/a_off.png')
-image = Image.open('./解析/circle.png')
+image = Image.open('./解析/img_file/circle_2.png')
 
 # 画像の基本情報を表示
 print(f"Format: {image.format}")

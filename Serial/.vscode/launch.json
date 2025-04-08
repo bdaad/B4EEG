@@ -1,0 +1,13 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "lldb",
+      "request": "launch",
+      "args": [],
+      "cwd": "/Users/gyobu/Documents/EEG/git/B4EEG/Serial",
+      "program": "/Users/gyobu/Documents/EEG/git/B4EEG/Serial/build/Debug/outDebug"
+    }
+  ]
+}

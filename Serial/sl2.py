@@ -37,7 +37,7 @@ def sampling_rate_calculator():
     next_call = time.time()
     while True:
         # Schedule the next call time
-        next_call += 1
+        next_call += 10
         # Sleep until the next scheduled time
         time.sleep(max(0, next_call - time.time()))
         sampling_rate = data_count

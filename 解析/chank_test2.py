@@ -2,6 +2,7 @@
 
 
 # グローバル変数として受信データを格納するリスト
+
 # 現在の日時をファイル名に追加
 import time
 from datetime import datetime
