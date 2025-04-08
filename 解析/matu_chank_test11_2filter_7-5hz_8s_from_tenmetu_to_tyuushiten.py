@@ -446,7 +446,8 @@ def setup_projection_for_circle(width, height):
 
 
 
-
+global change_number
+change_number = 3
 
 
 
@@ -635,10 +636,15 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 10秒間反転10Hz表示.
     # images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
     previous_time = time.time()
+    change_images = [blinking_top_image, blinking_bottom_image, blinking_left_image, blinking_righit_image]
     # images[2] = blinking_left_image
-    images[3] = blinking_righit_image
+    # images[3] = blinking_righit_image
     # images[0] = blinking_top_image
     # images[1] = blinking_bottom_image
+    global change_number
+    # change_number = 0
+    images[change_number] = change_images[change_number]
+
 
     # 繰り返す場合
     # PlaceImages = [top_look_image, bottom_look_image, left_look_image, right_look_image]
@@ -881,7 +887,9 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #10Hz点滅→位相反転終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "8s_from_tenmetu_to_tyuushiten_r")
+                    global change_number
+                    shuhen = ['t', 'b', 'l', 'r']
+                    save_2d_array_to_file(store_list_look_6hz, "8s_from_tenmetu_to_tyuushiten_"+ shuhen[change_number])
                     # save_2d_array_to_file(store_list_look_6hz, save_file_name[file_name_number])  # 繰り返す用
                     
                     #store_list_look_6hzの極大値を求める.

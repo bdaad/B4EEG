@@ -445,9 +445,10 @@ def setup_projection_for_circle(width, height):
 
 
 
-
-
-
+# 上下左右の指定、(0, 1, 2, 3)=(上、下、左、右)
+global change_number
+change_number = 3
+# ファイル名は末尾にt,b,l,r
 
 
 def func_visual_preparation(priority, measurement_command, lock):
@@ -503,10 +504,10 @@ def func_visual_preparation(priority, measurement_command, lock):
     top_look_point_image = BlinkingImage(position=(0.0, 0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     bottom_look_point_image = BlinkingImage(position=(0.0, -0.4), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     left_look_point_image = BlinkingImage(position=(-0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_left_image = BlinkingImage(position=(-0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_righit_image = BlinkingImage(position=(0.4, 0.0), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_top_image = BlinkingImage(position=(0.0, 0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
-    blinking_bottom_image = BlinkingImage(position=(0.0, -0.3), size=(0.5, 0.5), image_path="./circle.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_left_image = BlinkingImage(position=(-0.4, 0.0), size=(0.2, 0.2), image_path="./circle_2.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_righit_image = BlinkingImage(position=(0.4, 0.0), size=(0.2, 0.2), image_path="./circle_2.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_top_image = BlinkingImage(position=(0.0, 0.4), size=(0.2, 0.2), image_path="./circle_2.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
+    blinking_bottom_image = BlinkingImage(position=(0.0, -0.4), size=(0.2, 0.2), image_path="./circle_2.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
     
     
     right_look_point_image = BlinkingImage(position=(0.4, 0.0), size=(0.2, 0.2), image_path="./img_file/look_point.png", display_time=None, frequency=0, refresh_rate=refresh_rate, start_on=True, projection=projection)
@@ -548,7 +549,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #10秒間注視点のみ表示.(インターバル要員)
     with lock:
         measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 2/n > time.time(): # 10秒間ループ
+    while previous_time + 1 > time.time(): # 10秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -583,18 +584,18 @@ def func_visual_preparation(priority, measurement_command, lock):
     
 
     #/**********************************************************************************************/
-    #10秒間注視点のみ表示.(インターバル要員)
-    previous_time = time.time()
-    with lock:
-        measurement_command.value = 1 # インターバル命令(計測なし).
-    while previous_time + 2/n > time.time(): # 10秒間ループ
-        glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
-        for image in images: # 画像を描画
-            if not image.update(): # 表示時間が経過したら
-                images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
-        glfw.swap_buffers(window) # バッファを入れ替え
-        glfw.poll_events() # イベントを処理
-    print("2nd interval done!!!!")
+    # #10秒間注視点のみ表示.(インターバル要員)
+    # previous_time = time.time()
+    # with lock:
+    #     measurement_command.value = 1 # インターバル命令(計測なし).
+    # while previous_time + 2/n > time.time(): # 10秒間ループ
+    #     glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
+    #     for image in images: # 画像を描画
+    #         if not image.update(): # 表示時間が経過したら
+    #             images.remove(image)  # リストから削除する理由は、リストの要素を削除すると、リストの要素が前に詰められるため、forループが正しく動作するため.本当?
+    #     glfw.swap_buffers(window) # バッファを入れ替え
+    #     glfw.poll_events() # イベントを処理
+    # print("2nd interval done!!!!")
     #/**********************************************************************************************/
 
 
@@ -603,11 +604,11 @@ def func_visual_preparation(priority, measurement_command, lock):
 
 
     with lock:
-        measurement_command.value = 4 # 6Hz計測開始命令.
+        measurement_command.value = 4 # 計測開始命令.
     # 2秒間注視点のみ表示
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
     previous_time = time.time()
-    while previous_time + 2/n > time.time(): # 60秒間ループ
+    while previous_time + 2 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -619,10 +620,14 @@ def func_visual_preparation(priority, measurement_command, lock):
     # print('時間確認', time.time() - previous_time)
     images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, re_blinking_image1]
     previous_time = time.time()
+    change_images = [blinking_top_image, blinking_bottom_image, blinking_left_image, blinking_righit_image]
     # images[2] = blinking_left_image
     # images[3] = blinking_righit_image
     # images[0] = blinking_top_image
-    images[1] = blinking_bottom_image
+    # images[1] = blinking_bottom_image
+    global change_number
+    images[change_number] = change_images[change_number]
+
 
     # 繰り返す場合
     # PlaceImages = [top_look_image, bottom_look_image, left_look_image, right_look_image]
@@ -635,7 +640,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     #     glfw.poll_events() # イベントを処理
     
     #上下左右を見てもらう
-    while previous_time + 2/n > time.time(): # 60秒間ループ
+    while previous_time + 2 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -645,7 +650,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 2間10Hz表示.
     images = [top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image, blinking_image1]
     previous_time = time.time()
-    while previous_time + 2/n > time.time():
+    while previous_time + 2 > time.time():
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -675,7 +680,7 @@ def func_visual_preparation(priority, measurement_command, lock):
     # 2秒間注視
     images = [center_look_point_image, top_look_point_image, bottom_look_point_image, left_look_point_image, right_look_point_image]
     previous_time = time.time()
-    while previous_time + 2/n > time.time(): # 60秒間ループ
+    while previous_time + 2 > time.time(): # 60秒間ループ
         glClear(GL_COLOR_BUFFER_BIT) # カラーバッファをクリア
         for image in images: # 画像を描画
             if not image.update(): # 表示時間が経過したら
@@ -878,7 +883,9 @@ def communicate_and_count_test_preparation(ser ,lock, measurement_command, thres
                     measurement_command.value = 0 #初期状態.
 
                 elif measurement_command.value == 5: #10Hz点滅→位相反転終了命令
-                    save_2d_array_to_file(store_list_look_6hz, "8s_from_tyuusiten_to_tenmetsu_bottom")
+                    global change_number
+                    shuhen = ['t', 'b', 'l', 'r']
+                    save_2d_array_to_file(store_list_look_6hz, "8s_from_tyuusiten_to_tenmetsu_" + shuhen[change_number])
                     # save_2d_array_to_file(store_list_look_6hz, save_file_name[file_name_number])  # 繰り返す用
                     
                     #store_list_look_6hzの極大値を求める.
