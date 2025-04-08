@@ -2,7 +2,7 @@ import os
 from PIL import Image
 
 # フォルダのパスを指定
-folder_path = './解析/img_file'
+folder_path = './解析'
 
 # 背景色を指定（白色: (255, 255, 255)、黒色: (0, 0, 0)など）
 background_color = (255, 255, 255)  # 例: 白色
